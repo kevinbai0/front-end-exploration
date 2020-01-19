@@ -1,6 +1,7 @@
-import styled from 'styled-components';
-import { SystemButton } from '../SystemComponents';
+import styled from "./styled";
+import { SystemButton } from './SystemComponents';
 import { variant, color, space } from 'styled-system';
+import { KTheme } from "../theme";
 
 const Button = styled(SystemButton)(
     {

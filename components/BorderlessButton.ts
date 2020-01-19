@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { variant } from 'styled-system';
 
-import Button from './components/Button';
+import Button from './Button';
 
 const BorderlessButton = styled(Button)(
     {

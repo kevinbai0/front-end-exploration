@@ -1,15 +1,16 @@
 {
-  "name": "design-system",
-  "version": "0.1.0",
+  "name": "@kbai/design-system",
+  "version": "0.1.2",
   "description": "My design system",
-  "main": "index.js",
+  "main": "dist/main.bundle.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "build": "webpack && npm run tsc",
     "tsc": "tsc",
     "prepublishOnly": "npm run build"
   },
   "keywords": [],
-  "author": "@kevinbai0",
+  "author": "Kevin Bai <kevin.c.bai0@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.5.5",
@@ -30,5 +31,5 @@
     "styled-components": "^5.0.0",
     "styled-system": "^5.1.4"
   },
-  "files": ["dist/**/*"]
+  "files": ["dist"]
 }

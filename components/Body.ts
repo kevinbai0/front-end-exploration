@@ -5,6 +5,7 @@ import { variant, space } from 'styled-system';
 const Body = styled(SystemBody)(
     {
         margin: 0,
+        variant: "default"
     },
     variant({
         variants: {
@@ -17,8 +18,6 @@ const Body = styled(SystemBody)(
     space
 );
 
-Body.defaultProps = {
-    variant: 'default'
-};
+
 
 export default Body;
