@@ -1,9 +1,15 @@
-import generateTheme from "./theme";
-import { SystemComponent } from "./components/SystemComponents";
-import styled from "./components/styled";
+import { ThemeExtension, createTheme, Theme, ThemeColor } from "./src/theme/index";
+import styled from "styled-components";
 
-export {
-    generateTheme, SystemComponent
+const newTheme = {
+    colors: {
+        blue: "blue"
+    }
 }
-export default styled;
-Body
+
+type NewTheme = typeof newTheme
+export interface Extension extends ThemeExtension, NewTheme {
+
+}
+
+const theme = createTheme(newTheme)
