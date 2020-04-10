@@ -1,10 +1,7 @@
-import { Spacing, injectSpace } from "./spacing";
-import { Style, injectStyle } from "./styling";
+import { injectSpace } from "./spacing";
+import { injectStyle } from "./styling";
 import { injectFonts } from "./fonts";
-import { ThemeObject } from "../theme/types";
-import { ThemeExtension } from "../theme/index";
-
-export type DNA = Spacing & Style
+import { ThemeObject, ThemeExtension, DNA } from "../theme/index.d";
 
 export const injectDNA = <T extends DNA & ThemeObject<ThemeExtension>>(props: T) => `
     ${injectSpace(props)}

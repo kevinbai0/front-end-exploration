@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { DNA, injectDNA } from "../dna/index";
+import { injectDNA } from "../dna/index";
+import { DNA } from "../theme/index.d";
 
 export default styled.p<DNA>`
     color: ${props => props.theme.colors.foreground};

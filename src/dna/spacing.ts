@@ -1,17 +1,4 @@
-import { ThemeObject } from "../theme/types";
-
-export interface Spacing {
-    m?: string,
-    p?: string
-    mt?: number
-    mb?: number
-    ml?: number
-    mr?: number
-    pt?: number
-    pb?: number
-    pl?: number
-    pr?: number
-}
+import { ThemeObject, Spacing } from "../theme/index.d";
 
 export const injectSpace = <T extends Spacing & ThemeObject<{}>>(props: T) => `
     ${props.ml && `margin-left: ${props.ml}px`};

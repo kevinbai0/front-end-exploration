@@ -1,15 +1,19 @@
-import { ThemeExtension, createTheme, Theme, ThemeColor } from "./src/theme/index";
-import styled from "styled-components";
+import Body from "./src/atoms/Body";
+import Card from "./src/atoms/Card";
+import Header from "./src/atoms/Header";
+import Input from "./src/atoms/Input";
+import Row from "./src/atoms/Row";
+import { createTheme } from "./src/theme/index";
+import styled, { ThemeProvider } from "styled-components"
 
-const newTheme = {
-    colors: {
-        blue: "blue"
-    }
+
+export {
+    Body,
+    Card,
+    Header,
+    Input,
+    Row,
+    createTheme,
+    styled,
+    ThemeProvider
 }
-
-type NewTheme = typeof newTheme
-export interface Extension extends ThemeExtension, NewTheme {
-
-}
-
-const theme = createTheme(newTheme)

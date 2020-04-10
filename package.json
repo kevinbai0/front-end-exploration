@@ -1,11 +1,11 @@
 {
-  "name": "@kbai/design-system",
+  "name": "style-x",
   "version": "0.1.2",
   "description": "My design system",
   "main": "dist/main.bundle.js",
-  "types": "dist/types/index.d.ts",
+  "types": "./src/theme/index.d.ts",
   "scripts": {
-    "build": "webpack && npm run tsc",
+    "build": "webpack",
     "tsc": "tsc",
     "prepublishOnly": "npm run build"
   },
@@ -22,14 +22,23 @@
     "@types/styled-components": "^4.4.2",
     "@types/styled-system": "^5.1.4",
     "babel-loader": "^8.0.6",
+    "react": "^16.13.1",
+    "styled-components": "^5.1.0",
     "typescript": "^3.7.5",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
   "peerDependencies": {
-    "react": "^16.12.0",
-    "styled-components": "^5.0.0",
-    "styled-system": "^5.1.4"
+    "react": ">= 16.0",
+    "styled-components": ">= 5.0.0"
   },
-  "files": ["dist"]
+  "resolutions": {
+    "@babel/preset-env": "^7.8.7"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-numeric-separator": ">= 7.0.0"
+  },
+  "files": [
+    "dist"
+  ]
 }

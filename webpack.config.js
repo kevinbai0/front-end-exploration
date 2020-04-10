@@ -14,11 +14,14 @@ module.exports = {
         libraryTarget: "umd",
         globalObject: "this"
     },
+    externals : {
+        react: 'react'
+    },
     module: {
         rules: [
             {
                 test: /\.m?(ts|js)$/,
-                exclude: /(node_modules|bower_components)/,
+                exclude: /(node_modules|bower_components|examples)/,
                 use: {
                     loader: "babel-loader",
                     options: {
@@ -27,5 +30,5 @@ module.exports = {
                 }
             }
         ]
-    }
+    },
 }

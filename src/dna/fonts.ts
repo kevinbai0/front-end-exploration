@@ -1,5 +1,4 @@
-import { ThemeFontFamily, ThemeFontSize, ThemeFont, ThemeExtension } from "../theme/index"
-import { ThemeObject } from "../theme/types";
+import { ThemeFontFamily, ThemeFontSize, ThemeFont, ThemeExtension, ThemeObject } from "../theme/index.d"
 
 export interface Font<T> {
     font?: ThemeFont<T>

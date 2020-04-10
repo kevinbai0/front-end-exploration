@@ -1,3 +1,5 @@
+import { Theme } from "./index.d"
+
 export const colors = {
     primary: "#E631E9",
     action: "#129AEC",
@@ -66,7 +68,7 @@ const borders = {
     ghost: "1px solid foreground"
 }
 
-export const defaultTheme = {
+const defaultTheme = {
     colors, 
     fonts, 
     fontFamily, 
@@ -77,58 +79,45 @@ export const defaultTheme = {
     borders
 }
 
+export type InitialTheme = typeof defaultTheme
+
 export const createTheme = <NewTheme>(props: NewTheme) => {
     return extendTheme(props);
 }
 
-const extendTheme = <T extends Partial<Theme<T>>>(themeOptions: T): Theme<T> => ({
-    colors: {
-        ...defaultTheme.colors,
-        ...themeOptions.colors
-    },
-    space: {
-        ...defaultTheme.space,
-        ...themeOptions.space
-    },
-    fontFamily: {
-        ...defaultTheme.fontFamily,
-        ...themeOptions.fontFamily
-    },
-    fontSizes: {
-        ...defaultTheme.fontSizes,
-        ...themeOptions.fontSizes
-    },
-    fonts: {
-        ...defaultTheme.fonts,
-        ...themeOptions.fonts
-    },
-    borderRadius: {
-        ...defaultTheme.borderRadius,
-        ...themeOptions.borderRadius
-    },
-    borders: {
-        ...defaultTheme.borders,
-        ...themeOptions.borders
-    },
-    shadows: {
-        ...defaultTheme.shadows,
-        ...themeOptions.fontFamily
-    },
-    ...themeOptions
-})
-
-
-export interface ThemeExtension {
-
+const extendTheme = <T extends Partial<Theme<{}>>>(themeOptions: T): Theme<any> => {
+    return {
+        colors: {
+            ...defaultTheme.colors,
+            ...themeOptions.colors
+        },
+        space: {
+            ...defaultTheme.space,
+            ...themeOptions.space
+        },
+        fontFamily: {
+            ...defaultTheme.fontFamily,
+            ...themeOptions.fontFamily
+        },
+        fontSizes: {
+            ...defaultTheme.fontSizes,
+            ...themeOptions.fontSizes
+        },
+        fonts: {
+            ...defaultTheme.fonts,
+            ...themeOptions.fonts
+        },
+        borderRadius: {
+            ...defaultTheme.borderRadius,
+            ...themeOptions.borderRadius
+        },
+        borders: {
+            ...defaultTheme.borders,
+            ...themeOptions.borders
+        },
+        shadows: {
+            ...defaultTheme.shadows,
+            ...themeOptions.fontFamily
+        }
+    }
 }
-
-export type Theme<T> = typeof defaultTheme & T
-
-export type ThemeColor<T> = keyof Theme<T>["colors"]
-export type ThemeFont<T> = keyof Theme<T>["fonts"]
-export type ThemeFontFamily<T> = keyof Theme<T>["fontFamily"]
-export type ThemeFontSize<T> = keyof Theme<T>["fontSizes"]
-export type ThemeBorderRadius<T> = keyof Theme<T>["borderRadius"]
-export type ThemeBorder<T> = keyof Theme<T>["borders"]
-
-export type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800;

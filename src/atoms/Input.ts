@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { DNA, injectDNA } from "../dna/index";
+import { DNA } from "../theme/index.d";
+import { injectDNA } from "../dna/index";
 
 export default styled.input<DNA>`
     font-size: 16px;

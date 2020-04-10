@@ -1,12 +1,4 @@
-import { DNA } from "./index"
-import { ThemeColor, ThemeBorder, ThemeExtension } from "../theme/index"
-import { ThemeObject } from "../theme/types"
-
-export interface Style {
-    fg?: ThemeColor<ThemeExtension>
-    bg?: ThemeColor<ThemeExtension>
-    border?: ThemeBorder<ThemeExtension>
-}
+import { ThemeColor, ThemeBorder, ThemeExtension, ThemeObject, DNA, Style } from "../theme/index.d"
 
 const style: Style = {
     fg: "foreground",
