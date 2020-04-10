@@ -85,7 +85,7 @@ export const createTheme = <NewTheme>(props: NewTheme) => {
     return extendTheme(props);
 }
 
-const extendTheme = <T extends Partial<Theme<{}>>>(themeOptions: T): Theme<any> => {
+const extendTheme = <T extends Partial<Theme<{}>>>(themeOptions: T): Theme<T> => {
     return {
         colors: {
             ...defaultTheme.colors,

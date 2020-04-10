@@ -1,4 +1,4 @@
-import { ThemeColor, ThemeBorder, ThemeExtension, ThemeObject, DNA, Style } from "../theme/index.d"
+import { ThemeObject, ThemeExtension, ThemeColor, Style, ThemeBorder, DNA } from "../theme/index.d"
 
 const style: Style = {
     fg: "foreground",

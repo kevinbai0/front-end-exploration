@@ -5,19 +5,20 @@ import { Header, createTheme, ThemeProvider, styled } from "style-x";
 
 const newTheme = {
     colors: {
-        blue: "#00ff00"
+        green: "#00ff00"
     }
 }
 
-declare module "style-x" {
+declare module "../../../src/theme/index.d" {
     type NewTheme = typeof newTheme
     export interface ThemeExtension extends NewTheme {}
 }
 
+
 const theme = createTheme(newTheme)
 
 const A = styled.div`
-    background-color: ${props => props.theme.colors.action};
+    background-color: ${props => props.theme.colors.green};
     ${props => { console.log(props.theme); return ""} };
 `
 
@@ -26,7 +27,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <div className="App">
                 <A>asdf2</A>
-                <Header fg="primary">asdf</Header>
+                <Header fg="green">asdf</Header>
                 <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
                 <p>

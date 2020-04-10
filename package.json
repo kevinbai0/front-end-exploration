@@ -2,10 +2,10 @@
   "name": "style-x",
   "version": "0.1.2",
   "description": "My design system",
-  "main": "dist/main.bundle.js",
-  "types": "./src/theme/index.d.ts",
+  "main": "./dist/main.bundle.js",
+  "types": "./dist/theme/index.d.ts",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack && cp ./src/theme/index.d.ts ./dist/index.d.ts",
     "tsc": "tsc",
     "prepublishOnly": "npm run build"
   },

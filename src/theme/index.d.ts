@@ -1,11 +1,9 @@
 import { InitialTheme } from "./index"
-
 export interface Style {
     fg?: ThemeColor<ThemeExtension>
     bg?: ThemeColor<ThemeExtension>
     border?: ThemeBorder<ThemeExtension>
 }
-
 
 export interface Spacing {
     m?: string,
@@ -22,9 +20,7 @@ export interface Spacing {
 
 export type DNA = Spacing & Style
 
-export interface ThemeExtension {
-    
-}
+export interface ThemeExtension {}
 
 export type Theme<T> = InitialTheme & T
 

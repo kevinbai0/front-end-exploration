@@ -1,6 +1,6 @@
-import { ThemeObject, Spacing } from "../theme/index.d";
+import { Spacing, ThemeObject, ThemeExtension } from "../theme/index.d";
 
-export const injectSpace = <T extends Spacing & ThemeObject<{}>>(props: T) => `
+export const injectSpace = <T extends Spacing & ThemeObject<ThemeExtension>>(props: T) => `
     ${props.ml && `margin-left: ${props.ml}px`};
     ${props.mr && `margin-right: ${props.mr}px`};
     ${props.mt && `margin-top: ${props.mt}px`};
