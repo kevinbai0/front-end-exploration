@@ -1,4 +1,4 @@
-import { Theme } from "./index.d"
+import { Theme, ThemeExtension } from "./index.d"
 
 export const colors = {
     primary: "#E631E9",
@@ -47,11 +47,7 @@ const fonts = {
 
 const shadows = {
     default: `
-        shadow-opacity: 0.2;
-        shadow-color: black;
-        shadow-offset: 0 3px;
-        shadow-radius: 8px;
-        elevation: 3;
+        box-shadow: 0 2px 10px 0 rgba(0,0,0,0.2);
     `
 }
 
@@ -85,8 +81,9 @@ export const createTheme = <NewTheme>(props: NewTheme) => {
     return extendTheme(props);
 }
 
-const extendTheme = <T extends Partial<Theme<{}>>>(themeOptions: T): Theme<T> => {
+const extendTheme = <T extends Partial<Theme<ThemeExtension>>>(themeOptions: T): Theme<T> => {
     return {
+        ...themeOptions,
         colors: {
             ...defaultTheme.colors,
             ...themeOptions.colors
@@ -118,6 +115,6 @@ const extendTheme = <T extends Partial<Theme<{}>>>(themeOptions: T): Theme<T> =>
         shadows: {
             ...defaultTheme.shadows,
             ...themeOptions.fontFamily
-        }
+        },
     }
 }

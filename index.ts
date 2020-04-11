@@ -5,7 +5,8 @@ import Input from "./src/atoms/Input";
 import Row from "./src/atoms/Row";
 import { createTheme } from "./src/theme/index";
 import styled, { ThemeProvider } from "styled-components"
-
+import Grid from "./src/atoms/Grid";
+import Column from "./src/atoms/Column";
 
 export {
     Body,
@@ -13,6 +14,8 @@ export {
     Header,
     Input,
     Row,
+    Column,
+    Grid,
     createTheme,
     styled,
     ThemeProvider

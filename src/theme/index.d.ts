@@ -6,8 +6,12 @@ export interface Style {
 }
 
 export interface Spacing {
-    m?: string,
-    p?: string
+    m?: number,
+    p?: number
+    mx?: number
+    my?: number
+    px?: number
+    py?: number
     mt?: number
     mb?: number
     ml?: number
@@ -18,7 +22,21 @@ export interface Spacing {
     pr?: number
 }
 
-export type DNA = Spacing & Style
+export interface Font<T> {
+    font?: ThemeFont<T>
+}
+
+export interface FlexGridDisplayOptions {
+    align?: "center" | "flex-start" | "flex-end" | "stretch" | "baseline"| "initial"| "inherit";
+    justify?: "center" | "space-between" | "space-around" | "flex-start" | "flex-end" | "initial" | "inherit"
+    rows?: string
+    columns?: string
+    gap?: number
+    rowGap?: number
+    columnGap?: number
+}
+
+export type DNA = Spacing & Style & Font<ThemeExtension>
 
 export interface ThemeExtension {}
 

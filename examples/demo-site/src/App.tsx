@@ -1,49 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { Header, createTheme, ThemeProvider, styled } from "style-x";
-
-const newTheme = {
-    colors: {
-        green: "#00ff00"
-    }
-}
-
-declare module "../../../src/theme/index.d" {
-    type NewTheme = typeof newTheme
-    export interface ThemeExtension extends NewTheme {}
-}
-
-
-const theme = createTheme(newTheme)
-
-const A = styled.div`
-    background-color: ${props => props.theme.colors.green};
-    ${props => { console.log(props.theme); return ""} };
-`
+import { Header, Card, Grid, Column, Row } from "style-x";
 
 function App() {
     return (
-        <ThemeProvider theme={theme}>
-            <div className="App">
-                <A>asdf2</A>
-                <Header fg="green">asdf</Header>
-                <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Learn React
-                </a>
-                </header>
-            </div>
-        </ThemeProvider>
+        <Column p={20}>
+            <Grid as={Card}>
+                <Header fg="primary">asdf</Header>
+            </Grid>
+            <Header mt={10} fg="action">Next</Header>
+
+            <Row justify="space-around" my={5} bg="greys">
+                <Card>
+                    Hello
+                </Card>
+                <Card>
+                    World
+                </Card>
+            </Row>
+        </Column>
     );
 }
 

@@ -1,8 +1,4 @@
-import { ThemeFont, ThemeExtension, ThemeFontFamily, ThemeObject, ThemeFontSize } from "../theme/index.d"
-
-export interface Font<T> {
-    font?: ThemeFont<T>
-}
+import { ThemeFont, ThemeExtension, ThemeFontFamily, ThemeObject, ThemeFontSize, Font } from "../theme/index.d"
 
 const matchFontToTheme = <T extends Font<ThemeExtension> & ThemeObject<ThemeExtension>>(props: T, prop: ThemeFont<ThemeExtension>) => {
     if (!props.theme.fonts[prop]) return "";
