@@ -6,7 +6,7 @@ export interface Style {
 }
 
 export interface Spacing {
-    m?: number,
+    m?: number
     p?: number
     mx?: number
     my?: number

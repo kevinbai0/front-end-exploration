@@ -4,13 +4,13 @@ import { Header, Card, Grid, Column, Row } from "style-x";
 
 function App() {
     return (
-        <Column p={20}>
+        <Column p={20} bg="background">
             <Grid as={Card}>
                 <Header fg="primary">asdf</Header>
             </Grid>
             <Header mt={10} fg="action">Next</Header>
 
-            <Row justify="space-around" my={5} bg="greys">
+            <Row justify="space-around" my={5} bg="grey.2">
                 <Card>
                     Hello
                 </Card>

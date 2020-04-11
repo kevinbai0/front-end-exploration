@@ -1,19 +1,20 @@
 import { Theme, ThemeExtension } from "./index.d"
 
-export const colors = {
+const breakpoints = [0, 576, 768, 992, 1200]
+
+const colors = {
     primary: "#E631E9",
     action: "#129AEC",
     foreground: "#131313",
     background: "#FFFFFF",
-    greys: [
-        "#FFFFFF",
-        "#C1C1C1",
-        "#AAAAAA",
-        "#888888",
-        "#333333",
-        "#131313",
-        "#000000"
-    ]
+    "grey.0": "#FFFFFF",
+    "grey.1": "#F2F2F2",
+    "grey.2": "#C1C1C1",
+    "grey.3": "#AAAAAA",
+    "grey.4": "#888888",
+    "grey.5": "#333333",
+    "grey.6": "#131313",
+    "grey.7": "#000000"
 }
 
 const fontFamily = {
@@ -21,11 +22,12 @@ const fontFamily = {
 }
 
 const fontSizes = {
-    title: 32,
-    body: 16,
-    bigBody: 18,
-    header: 32
+    title: [32, 32, 32, 48],
+    body: [14, 14, 14, 16],
+    bigBody: [16, 16, 16, 18],
+    header: [24, 24, 24, 32]
 }
+
 
 const fonts = {
     header: {
@@ -61,10 +63,22 @@ const borderRadius = {
 }
 
 const borders = {
-    ghost: "1px solid foreground"
+    none: "",
+    ghost: {
+        width: 1,
+        style: "solid",
+        color: "foreground"
+    },
+    mobileOutline: [
+        { width: 1, style: "solid", color: "foreground" },
+        { width: 1, style: "solid", color: "foreground" },
+        { width: 1, style: "solid", color: "foreground" },
+        "none"
+    ]
 }
 
 const defaultTheme = {
+    breakpoints,
     colors, 
     fonts, 
     fontFamily, 
@@ -84,6 +98,9 @@ export const createTheme = <NewTheme>(props: NewTheme) => {
 const extendTheme = <T extends Partial<Theme<ThemeExtension>>>(themeOptions: T): Theme<T> => {
     return {
         ...themeOptions,
+        breakpoints: [
+            ...defaultTheme.breakpoints
+        ],
         colors: {
             ...defaultTheme.colors,
             ...themeOptions.colors

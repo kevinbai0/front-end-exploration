@@ -7,7 +7,14 @@ import { createTheme, ThemeProvider } from 'style-x'
 
 const newTheme = {
   colors: {
-      green: "#00ff00"
+      green: "#00ff00",
+      background: [
+        "#FFFFFF",
+        "#EEEEEE",
+        "#888888",
+        "#333333",
+        "#131313",
+    ],
   }
 }
 

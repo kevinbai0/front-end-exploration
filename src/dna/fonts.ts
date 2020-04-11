@@ -16,5 +16,5 @@ const matchFontToTheme = <T extends Font<ThemeExtension> & ThemeObject<ThemeExte
 export const injectFont = <T extends Font<ThemeExtension> & ThemeObject<ThemeExtension>>(props: T, font: ThemeFont<ThemeExtension>) => matchFontToTheme(props, font)
 
 export const injectFonts = <T extends Font<ThemeExtension> & ThemeObject<ThemeExtension>>(props: T) => `
-    ${props.font && matchFontToTheme(props, props.font)}
+    ${props.font ? `${matchFontToTheme(props, props.font)};` : ""}
 `
