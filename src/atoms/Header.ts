@@ -5,10 +5,9 @@ import { DNA } from "../theme/index.d";
 import { matchColorToTheme } from "../dna/styling";
 
 export default styled.h1<DNA>`
-    margin: 0;
-
     ${props => injectFont(props, "header")}
     ${props => injectDNA(props, {
-        fg: "foreground"
+        fg: "foreground",
+        m: 0
     })}
 `

@@ -1,32 +1,34 @@
 import { InitialTheme } from "./index"
-export interface Style {
-    fg?: ThemeColor<ThemeExtension>
-    bg?: ThemeColor<ThemeExtension>
-    border?: ThemeBorder<ThemeExtension>
+
+export interface PrimitiveInjection {}
+export interface Style<T> extends PrimitiveInjection {
+    fg?: ThemeColor<T>
+    bg?: ThemeColor<T>
+    border?: ThemeBorder<T>
 }
 
-export interface Spacing {
-    m?: number
-    p?: number
-    mx?: number
-    my?: number
-    px?: number
-    py?: number
-    mt?: number
-    mb?: number
-    ml?: number
-    mr?: number
-    pt?: number
-    pb?: number
-    pl?: number
-    pr?: number
+export interface Spacing<T> extends PrimitiveInjection {
+    m?: number | number[] | ThemeSpace<T>
+    p?: number | number[] | ThemeSpace<T>
+    mx?: number | number[] | ThemeSpace<T>
+    my?: number | number[] | ThemeSpace<T>
+    px?: number | number[] | ThemeSpace<T>
+    py?: number | number[] | ThemeSpace<T>
+    mt?: number | number[] | ThemeSpace<T>
+    mb?: number | number[] | ThemeSpace<T>
+    ml?: number | number[] | ThemeSpace<T>
+    mr?: number | number[] | ThemeSpace<T>
+    pt?: number | number[] | ThemeSpace<T>
+    pb?: number | number[] | ThemeSpace<T>
+    pl?: number | number[] | ThemeSpace<T>
+    pr?: number | number[] | ThemeSpace<T>
 }
 
-export interface Font<T> {
+export interface Font<T> extends PrimitiveInjection {
     font?: ThemeFont<T>
 }
 
-export interface FlexGridDisplayOptions {
+export interface FlexGridDisplayOptions extends PrimitiveInjection {
     align?: "center" | "flex-start" | "flex-end" | "stretch" | "baseline"| "initial"| "inherit";
     justify?: "center" | "space-between" | "space-around" | "flex-start" | "flex-end" | "initial" | "inherit"
     rows?: string
@@ -36,13 +38,14 @@ export interface FlexGridDisplayOptions {
     columnGap?: number
 }
 
-export type DNA = Spacing & Style & Font<ThemeExtension>
+export type DNA = Spacing<ThemeExtension> & Style & Font<ThemeExtension>
 
 export interface ThemeExtension {}
 
 export type Theme<T> = InitialTheme & T
 
 export type ThemeColor<T> = keyof Theme<T>["colors"]
+export type ThemeSpace<T> = keyof Theme<T>["space"]
 export type ThemeFont<T> = keyof Theme<T>["fonts"]
 export type ThemeFontFamily<T> = keyof Theme<T>["fontFamily"]
 export type ThemeFontSize<T> = keyof Theme<T>["fontSizes"]

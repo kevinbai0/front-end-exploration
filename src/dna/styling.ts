@@ -1,6 +1,7 @@
 import { ThemeObject, ThemeExtension, ThemeColor, Style, ThemeBorder, DNA } from "../theme/index.d"
+import { InjectProperties } from "./index"
 
-const style: Style = {
+const style: Style<ThemeExtension> = {
     fg: "foreground",
     bg: "background",
     border: "ghost"
@@ -27,7 +28,7 @@ export const matchColorToTheme = <Theme extends ThemeObject<ThemeExtension>>({th
     return colors
 }
 
-export const matchBorderToTheme = <T extends Style & ThemeObject<ThemeExtension>>(props: T, prop: ThemeBorder<ThemeExtension>) => {
+export const matchBorderToTheme = <T extends Style<ThemeExtension> & ThemeObject<ThemeExtension>>(props: T, prop: ThemeBorder<ThemeExtension>) => {
     const border = props.theme.borders[prop]
     // border is either a string, an object containing width, style, color, or array of objects denoting breakpoints
     if (!border) return []
@@ -54,11 +55,10 @@ export const matchBorderToTheme = <T extends Style & ThemeObject<ThemeExtension>
     return color.map(c => `${value.width}px ${value.style} ${c}`)
 }
 
-export const injectStyle = <T extends Style & ThemeObject<T["theme"]>>(props: T, defaultProps?: Partial<DNA>): {[key: string]: string}[] => {
+export const injectStyle: InjectProperties<Style<ThemeExtension>> = (props, defaultProps) => {
     const bg = (props.bg || defaultProps?.bg) && matchColorToTheme(props, (props.bg || defaultProps?.bg)!)
     const fg = (props.fg || defaultProps?.fg) && matchColorToTheme(props, (props.fg || defaultProps?.fg)!)
     const border = (props.border || defaultProps?.border) && matchBorderToTheme(props, (props.border || defaultProps?.border)!)
-    console.log(props.bg)
     return props.theme.breakpoints.map((_, i) => ({
         ...(bg && bg[i] && { "background-color": bg[i]}),
         ...(fg && fg[i] && { "color": fg[i]}),
@@ -66,13 +66,13 @@ export const injectStyle = <T extends Style & ThemeObject<T["theme"]>>(props: T,
     }))
 }
 
-export const extractStyles = (props: DNA, keysToInclude?: (keyof Style)[]) => {
-    return Object.keys(props).filter(key => style[key as (keyof Style)]).reduce((accum, key) => {
+export const extractStyles = (props: DNA, keysToInclude?: (keyof Style<ThemeExtension>)[]) => {
+    return Object.keys(props).filter(key => style[key as (keyof Style<ThemeExtension>)]).reduce((accum, key) => {
         const inArr = keysToInclude?.find(k => k == key)
         if (inArr || !keysToInclude) {
             accum[key] = (props as any)[key]
         }
 
         return accum;
-    }, {} as any) as Partial<Style>
+    }, {} as any) as Partial<Style<ThemeExtension>>
 }

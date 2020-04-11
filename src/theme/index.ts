@@ -53,7 +53,14 @@ const shadows = {
     `
 }
 
-const space = [0, 5, 10, 15, 20, 25, 30, 35, 40];
+const space = {
+    none: 0,
+    nudge: 2,
+    shift: 5,
+    push: [5, 5, 5, 10],
+    breathe: [10, 10, 10, 20],
+    gap: [20, 20, 20, 40]
+}
 
 const borderRadius = {
     none: 0, 
