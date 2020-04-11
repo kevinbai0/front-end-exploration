@@ -1,4 +1,4 @@
-import { Theme, ThemeExtension } from "./index.d"
+import { Theme, ThemeExtension, AppTheme } from "./index.d"
 
 const breakpoints = [0, 576, 768, 992, 1200]
 
@@ -93,7 +93,7 @@ const defaultTheme = {
     space, 
     borderRadius, 
     shadows, 
-    borders
+    borders,
 }
 
 export type InitialTheme = typeof defaultTheme
@@ -102,7 +102,7 @@ export const createTheme = <NewTheme>(props: NewTheme) => {
     return extendTheme(props);
 }
 
-const extendTheme = <T extends Partial<Theme<ThemeExtension>>>(themeOptions: T): Theme<T> => {
+const extendTheme = <T extends Partial<Theme>>(themeOptions: T): AppTheme<T> => {
     return {
         ...themeOptions,
         breakpoints: [

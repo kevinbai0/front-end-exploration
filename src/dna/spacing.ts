@@ -1,19 +1,20 @@
 import { Spacing, ThemeObject, ThemeExtension, ThemeSpace, DNA } from "../theme/index.d";
 import { InjectProperties } from "./index";
+import { splitStyle, MatchFunction } from "./helpers";
 
-const matchSpaceToTheme =  <Theme extends ThemeObject<ThemeExtension>>(props: Theme, space: number | number[] | ThemeSpace<ThemeExtension> | ThemeSpace<ThemeExtension>[]) => {
-    if (typeof(space) == "number") return [space]
+const matchSpaceToTheme = (props: DNA & ThemeObject, space: number | number[] | ThemeSpace | ThemeSpace[]) => {
+    if (typeof(space) == "number") return [space + "px"]
     if (typeof(space) == "string") {
-        const themeSpace = props.theme.space[space as ThemeSpace<ThemeExtension>] ?? []
-        if (typeof(themeSpace) == "number") return [themeSpace]
-        return themeSpace
+        const themeSpace = props.theme.space[space as ThemeSpace] ?? []
+        if (typeof(themeSpace) == "number") return [themeSpace + "px"]
+        return themeSpace.map((value: number) => value + "px")
     }
     if (space.length == 0) return []
     if (typeof(space[0]) == "number") {
-        return space as number[]
+        return (space as number[]).map(value => value + "px")
     }
     // add up the spacing
-    const expansion = (space as ThemeSpace<ThemeExtension>[]).map(value => {
+    const expansion = (space as ThemeSpace[]).map(value => {
         const themeSpace = props.theme.space[value] ?? props.theme.breakpoints.map(() => 0)
         if (typeof(themeSpace) == "number") return props.theme.breakpoints.map(() => themeSpace)
         let returnArr: number[] = []
@@ -31,43 +32,25 @@ const matchSpaceToTheme =  <Theme extends ThemeObject<ThemeExtension>>(props: Th
     return expansion.map((_, i) => {
         let sum = 0
         for (let row = 0; row < expansion.length; ++row) sum += expansion[col][i]
-        return sum
+        return sum + "px"
     })
 }
 
-export const injectSpace: InjectProperties<Spacing<ThemeExtension>>  = (props, defaultProps) => {
-    const m = (props.m ?? defaultProps?.m) != undefined && matchSpaceToTheme(props, (props.m || defaultProps?.m)!)
-    const p = (props.p ?? defaultProps?.p) != undefined && matchSpaceToTheme(props, (props.p || defaultProps?.p)!)
-
-    const mx = (props.mx ?? defaultProps?.mx) != undefined && matchSpaceToTheme(props, (props.mx || defaultProps?.mx)!)
-    const my = (props.my ?? defaultProps?.my) != undefined && matchSpaceToTheme(props, (props.my || defaultProps?.my)!)
-    const px = (props.px ?? defaultProps?.px) != undefined && matchSpaceToTheme(props, (props.px || defaultProps?.px)!)
-    const py = (props.py ?? defaultProps?.py) != undefined && matchSpaceToTheme(props, (props.py || defaultProps?.py)!)
-    
-    const ml = (props.ml ?? defaultProps?.ml) != undefined && matchSpaceToTheme(props, (props.ml || defaultProps?.ml)!)
-    const mr = (props.mr ?? defaultProps?.mr) != undefined && matchSpaceToTheme(props, (props.mr || defaultProps?.mr)!)
-    const mt = (props.mt ?? defaultProps?.mt) != undefined && matchSpaceToTheme(props, (props.mt || defaultProps?.mt)!)
-    const mb = (props.mb ?? defaultProps?.mb) != undefined && matchSpaceToTheme(props, (props.mb || defaultProps?.mb)!)
-
-    const pl = (props.pl ?? defaultProps?.pl) != undefined && matchSpaceToTheme(props, (props.pl || defaultProps?.pl)!)
-    const pr = (props.pr ?? defaultProps?.pr) != undefined && matchSpaceToTheme(props, (props.pr || defaultProps?.pr)!)
-    const pt = (props.pt ?? defaultProps?.pt) != undefined && matchSpaceToTheme(props, (props.pt || defaultProps?.pt)!)
-    const pb = (props.pb ?? defaultProps?.pb) != undefined && matchSpaceToTheme(props, (props.pb || defaultProps?.pb)!)
-
-    return props.theme.breakpoints.map((_, i) => ({
-        ...(m && m[i] != undefined && { margin: `${m[i]}px`}),
-        ...(p && p[i] != undefined && { padding: `${p[i]}px`}),
-        ...(mx && mx[i] != undefined && { "margin-left": `${mx[i]}px`, "margin-right": `${mx[i]}px` }),
-        ...(my && my[i] != undefined && { "margin-top": `${my[i]}px`, "margin-bottom": `${my[i]}px` }),
-        ...(px && px[i] != undefined && { "padding-left": `${px[i]}px`, "padding-right": `${px[i]}px` }),
-        ...(py && py[i] != undefined && { "padding-top": `${py[i]}px`, "padding-bottom": `${py[i]}px` }),
-        ...(ml && ml[i] != undefined && { "margin-left": `${ml[i]}px` }),
-        ...(mr && mr[i] != undefined && { "margin-right": `${mr[i]}px` }),
-        ...(mt && mt[i] != undefined && { "margin-top": `${mt[i]}px` }),
-        ...(mb && mb[i] != undefined && { "margin-bottom": `${mb[i]}px` }),
-        ...(pl && pl[i] != undefined && { "padding-left": `${pl[i]}px` }),
-        ...(pr && pr[i] != undefined && { "padding-right": `${pr[i]}px` }),
-        ...(pt && pt[i] != undefined && { "padding-top": `${pt[i]}px` }),
-        ...(pb && pb[i] != undefined && { "padding-bottom": `${pb[i]}px` }),
-    }))
+export const injectSpace: InjectProperties<Spacing>  = (props, defaultProps) => {
+    return [
+        splitStyle("m", ["margin"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("p", ["padding"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("mx", ["margin-left", "margin-right"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("my", ["margin-top", "margin-bottom"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("px", ["padding-left", "padding-right"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("py", ["padding-top", "padding-bottom"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("ml", ["margin-left"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("mr", ["margin-right"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("mt", ["margin-top"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("mb", ["margin-bottom"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("pl", ["padding-left"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("pr", ["padding-right"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("pt", ["padding-top"], matchSpaceToTheme, props, defaultProps),
+        splitStyle("pb", ["padding-bottom"], matchSpaceToTheme, props, defaultProps),
+    ]
 }

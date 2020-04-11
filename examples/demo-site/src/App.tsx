@@ -10,7 +10,7 @@ function App() {
             </Grid>
             <Header mt="breathe" fg="action">Next</Header>
 
-            <Row justify="space-around" my={5} bg="grey.2" mx="breathe">
+            <Row justify="space-around" my={5} bg="grey.2" mx="breathe" py="push">
                 <Card>
                     <Body>Hello</Body>
                 </Card>

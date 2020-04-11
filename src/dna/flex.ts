@@ -1,6 +1,6 @@
 import { ThemeObject, ThemeExtension, FlexGridDisplayOptions } from "../theme/index.d";
 
-export const injectFlexGridDisplayOptions = <T extends FlexGridDisplayOptions & ThemeObject<ThemeExtension>>(props: T) => `
+export const injectFlexGridDisplayOptions = <T extends FlexGridDisplayOptions & ThemeObject>(props: T) => `
     ${props.align ? `align-items: ${props.align};` : ""}
     ${props.justify ? `
         justify-items: ${props.justify};
