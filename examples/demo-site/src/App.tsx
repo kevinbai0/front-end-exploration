@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Header, Card, Grid, Column, Row, Body } from "style-x";
+import { Header, Card, Grid, Column, Row, Body, Button } from "style-x";
 
 function App() {
     return (
@@ -17,7 +17,8 @@ function App() {
                 <Card>
                     <Body>World</Body>
                 </Card>
-            </Row>
+                <Button>Button</Button>
+            </Row>            
         </Column>
     );
 }

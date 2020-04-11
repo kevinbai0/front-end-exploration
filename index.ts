@@ -7,11 +7,13 @@ import { createTheme } from "./src/theme/index";
 import styled, { ThemeProvider } from "styled-components"
 import Grid from "./src/atoms/Grid";
 import Column from "./src/atoms/Column";
+import Button from "./src/atoms/Button";
 
 export {
     Body,
     Card,
     Header,
+    Button,
     Input,
     Row,
     Column,

@@ -23,8 +23,8 @@ const fontFamily = {
 
 const fontSizes = {
     title: [32, 32, 32, 48],
-    body: [14, 14, 14, 16],
-    bigBody: [16, 16, 16, 18],
+    body: 14,
+    bigBody: 16,
     header: [24, 24, 24, 32]
 }
 

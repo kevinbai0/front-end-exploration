@@ -5,7 +5,7 @@ const matchFontToTheme = <T extends Font<ThemeExtension> & ThemeObject<ThemeExte
     if (!props.theme.fonts[prop]) return [];
     const { family, size, weight } = props.theme.fonts[prop]
     const fontFamily = props.theme.fontFamily[family as ThemeFontFamily<ThemeExtension>] || family
-    const fontSize = props.theme.fontSizes[size as ThemeFontSize<ThemeExtension>] || size
+    const fontSize = props.theme.fontSizes[size as ThemeFontSize<ThemeExtension>] || []
 
     if (typeof(fontSize) == "number") {
         return [{
