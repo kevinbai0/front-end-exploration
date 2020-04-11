@@ -1,21 +1,21 @@
 import React from 'react';
 import './App.css';
-import { Header, Card, Grid, Column, Row } from "style-x";
+import { Header, Card, Grid, Column, Row, Body } from "style-x";
 
 function App() {
     return (
-        <Column p="shift" bg="background">
+        <Column p="breathe" bg="background">
             <Grid as={Card}>
-                <Header fg="primary">asdf</Header>
+                <Body fg="primary">asdf</Body>
             </Grid>
-            <Header mt={10} fg="action">Next</Header>
+            <Header mt="breathe" fg="action">Next</Header>
 
             <Row justify="space-around" my={5} bg="grey.2" mx="breathe">
                 <Card>
-                    Hello
+                    <Body>Hello</Body>
                 </Card>
                 <Card>
-                    World
+                    <Body>World</Body>
                 </Card>
             </Row>
         </Column>

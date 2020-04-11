@@ -6,33 +6,26 @@ import * as serviceWorker from './serviceWorker';
 import { createTheme, ThemeProvider } from 'style-x'
 
 const newTheme = {
-  colors: {
-      green: "#00ff00",
-      background: [
-        "#FFFFFF",
-        "#EEEEEE",
-        "#888888",
-        "#333333",
-        "#131313",
-    ],
-  }
+    colors: {
+        green: "#00ff00",
+    }
 }
 
 
 const theme = createTheme(newTheme)
 
 declare module "../../../src/theme/index.d" {
-  type NewTheme = typeof newTheme
-  export interface ThemeExtension extends NewTheme {}
+    type NewTheme = typeof newTheme
+    export interface ThemeExtension extends NewTheme {}
 }
 
 ReactDOM.render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <ThemeProvider theme={theme}>
+            <App />
+        </ThemeProvider>
+    </React.StrictMode>,
+    document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change

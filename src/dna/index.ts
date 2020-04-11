@@ -23,8 +23,7 @@ const injectStyles = (props: DNA & ThemeObject<ThemeExtension>, defaultProps: Pa
 
 export const injectDNA = (props: DNA & ThemeObject<ThemeExtension>, defaultProps?: Partial<DNA>) => {
     const dna = `
-        ${injectFonts(props)}
-        ${injectStyles(props, defaultProps || {}, injectSpace, injectStyle)}
+        ${injectStyles(props, defaultProps || {}, injectSpace, injectStyle, injectFonts)}
     `.replace(/^\s+|\s+$|\s+(?=\s)/g, "")
     return dna
 }

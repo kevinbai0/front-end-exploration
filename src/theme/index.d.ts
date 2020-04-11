@@ -38,7 +38,7 @@ export interface FlexGridDisplayOptions extends PrimitiveInjection {
     columnGap?: number
 }
 
-export type DNA = Spacing<ThemeExtension> & Style & Font<ThemeExtension>
+export type DNA = Spacing<ThemeExtension> & Style<ThemeExtension> & Font<ThemeExtension>
 
 export interface ThemeExtension {}
 
