@@ -7,7 +7,11 @@ import { createTheme, ThemeProvider } from 'style-x'
 
 const newTheme = {
     colors: {
-        green: "#00ff00",
+       primary: "#B399F8",
+       background: "#F9F9F9"
+    },
+    fontFamily: {
+        mainFont: "Roboto"
     }
 }
 

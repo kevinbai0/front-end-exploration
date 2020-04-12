@@ -1,25 +1,31 @@
 import React from 'react';
 import './App.css';
-import { Header, Card, Column, Row, Body, Button, Box } from "style-x";
+import { Header, Card, Body, Button, Box, styled, Input } from "style-x";
+
+// todo
+const LeftPanel = styled(Box)`
+    height: 98vh;
+    width: 100px;
+`
+
+const SearchButton = styled(Button)`
+    width: 40px;
+    height: 40px;
+`
 
 function App() {
     return (
-        <Box layout="col" p="breathe" bg="background">
-            <Card layout="row" gap="breathe" justifyContent="start">
-                <Body fg="primary" as="span">asdf</Body>
-                <Body fg="primary" as="span">haha</Body>
-            </Card>
-            <Header mt="breathe" fg="action">Next</Header>
-
-            <Box layout="row" justifyContent="space-around" my={5} bg="grey.2" mx="breathe" py="push">
-                <Card>
-                    <Body>Hello</Body>
-                </Card>
-                <Card>
-                    <Body>World</Body>
-                </Card>
-                <Button>Button</Button>
-            </Box>   
+        <Box layout="row" bg="background" justifyItems="start" justifyContent="stretch">
+            <LeftPanel layout="col" bg="primary" radius="big" my="1vh">
+                
+            </LeftPanel>
+            <Box layout="col" ml="breathe" alignContent="start" my="breathe">
+                <Box layout="row" alignItems="center" justifyContent="space-evenly">
+                    <SearchButton bg="background" fg="foreground" shadow="default" px="none"></SearchButton>
+                    <Input ml="breathe" type="text" placeholder="Search..." />
+                    <Body>17 March 2020, Tuesday</Body>
+                </Box>
+            </Box>
         </Box>
     );
 }

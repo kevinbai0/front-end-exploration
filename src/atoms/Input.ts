@@ -1,15 +1,20 @@
 import styled from "styled-components";
 import { DNA } from "../theme/index.d";
 import { injectDNA } from "../dna/index";
-import { matchColorToTheme } from "../dna/styling";
 
 export default styled.input<DNA>`
-    padding: 10px 8px;
-    border-radius: 3px;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid ${props => props.theme.colors["grey.2"]};
+
+    transition: all 0.2s ease;
+    :focus {
+        border-bottom: 2px solid ${props => props.theme.colors.primary};
+    }
 
     ${props => injectDNA(props, {
         bg: "background",
-        border: "ghost",
-        font: "body"
+        font: "bigBody",
+        py: "shift"
     })}
 `

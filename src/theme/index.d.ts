@@ -6,23 +6,24 @@ export interface Style extends PrimitiveInjection {
     bg?: ThemeColor
     border?: ThemeBorder
     radius?: number | ThemeBorderRadius
+    shadow?: ThemeShadow
 }
 
 export interface Spacing extends PrimitiveInjection {
-    m?: number | number[] | ThemeSpace
-    p?: number | number[] | ThemeSpace
-    mx?: number | number[] | ThemeSpace
-    my?: number | number[] | ThemeSpace
-    px?: number | number[] | ThemeSpace
-    py?: number | number[] | ThemeSpace
-    mt?: number | number[] | ThemeSpace
-    mb?: number | number[] | ThemeSpace
-    ml?: number | number[] | ThemeSpace
-    mr?: number | number[] | ThemeSpace
-    pt?: number | number[] | ThemeSpace
-    pb?: number | number[] | ThemeSpace
-    pl?: number | number[] | ThemeSpace
-    pr?: number | number[] | ThemeSpace
+    m?: number | number[] | ThemeSpace | string | string[]
+    p?: number | number[] | ThemeSpace | string | string[]
+    mx?: number | number[] | ThemeSpace | string | string[]
+    my?: number | number[] | ThemeSpace | string | string[]
+    px?: number | number[] | ThemeSpace | string | string[]
+    py?: number | number[] | ThemeSpace | string | string[]
+    mt?: number | number[] | ThemeSpace | string | string[]
+    mb?: number | number[] | ThemeSpace | string | string[]
+    ml?: number | number[] | ThemeSpace | string | string[]
+    mr?: number | number[] | ThemeSpace | string | string[]
+    pt?: number | number[] | ThemeSpace | string | string[]
+    pb?: number | number[] | ThemeSpace | string | string[]
+    pl?: number | number[] | ThemeSpace | string | string[]
+    pr?: number | number[] | ThemeSpace | string | string[]
 }
 
 export interface Font extends PrimitiveInjection {
@@ -35,7 +36,7 @@ export interface Layout extends PrimitiveInjection {
     justifyItems?: LayoutItems
     alignContent?: LayoutContent
     justifyContent?: LayoutContent
-    gap?: number | number[] | ThemeSpace
+    gap?: number | number[] | ThemeSpace | string | string[]
 }
 
 export type LayoutContent = "start" | "end" | "center" | "stretch" | "space-around" | "space-between" | "space-evenly"
@@ -65,6 +66,7 @@ export type ThemeFontSize = keyof Theme["fontSizes"]
 export type ThemeBorderRadius = keyof Theme["borderRadius"]
 export type ThemeBorder = keyof Theme["borders"]
 export type ThemeLayout = keyof Theme["layout"]
+export type ThemeShadow = keyof Theme["shadows"]
 
 export type ThemeProperties = ThemeColor | ThemeSpace | ThemeFont | ThemeFontFamily | ThemeFontSize | ThemeBorderRadius | ThemeBorder
 

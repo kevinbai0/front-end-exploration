@@ -2,16 +2,20 @@ import { Spacing, ThemeObject, ThemeExtension, ThemeSpace, DNA } from "../theme/
 import { InjectProperties } from "./index";
 import { splitStyle, MatchFunction } from "./helpers";
 
-export const matchSpaceToTheme = (props: DNA & ThemeObject, space: number | number[] | ThemeSpace | ThemeSpace[]) => {
+export const matchSpaceToTheme = (props: DNA & ThemeObject, space: number | number[] | ThemeSpace | ThemeSpace[] | string | string[]) => {
     if (typeof(space) == "number") return [space + "px"]
     if (typeof(space) == "string") {
-        const themeSpace = props.theme.space[space as ThemeSpace] ?? []
+        const themeSpace = (props.theme.space[space as ThemeSpace] ?? [space]) as (number | (number | string)[])
         if (typeof(themeSpace) == "number") return [themeSpace + "px"]
-        return themeSpace.map((value: number) => value + "px")
+        return themeSpace.map((value) => typeof(value) == "string" ? value : value + "px")
     }
     if (space.length == 0) return []
     if (typeof(space[0]) == "number") {
         return (space as number[]).map(value => value + "px")
+    }
+
+    if (typeof(space[0]) == "string" && props.theme.space[space[0] as ThemeSpace] == undefined) {
+        return (space as string[]).map(value => value)
     }
     // add up the spacing
     const expansion = (space as ThemeSpace[]).map(value => {
