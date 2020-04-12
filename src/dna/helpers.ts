@@ -1,4 +1,4 @@
-import { ThemeProperties, ThemeExtension, Style, DNA, ThemeObject, Spacing, DNAType, Theme } from "../theme/index.d"
+import { ThemeProperties, DNA, ThemeObject } from "../theme/index.d"
 
 export type MatchFunction<T, K> = <S extends K & ThemeObject>(props: S, prop: T) => string[]
 

@@ -70,7 +70,7 @@ const borderRadius = {
 }
 
 const borders = {
-    none: "",
+    none: "none",
     ghost: {
         width: 1,
         style: "solid",
@@ -94,6 +94,26 @@ const defaultTheme = {
     borderRadius, 
     shadows, 
     borders,
+    layout: {
+        row: `
+            display: grid;
+            grid-template-rows: 1fr;
+            justify-items: start;
+            grid-auto-flow: column;
+        `,
+        col: `
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-auto-flow: row;
+        `,
+        box: `
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: auto;
+            align-content: center;
+            justify-content: center;
+        `
+    }
 }
 
 export type InitialTheme = typeof defaultTheme
@@ -140,5 +160,9 @@ const extendTheme = <T extends Partial<Theme>>(themeOptions: T): AppTheme<T> => 
             ...defaultTheme.shadows,
             ...themeOptions.fontFamily
         },
+        layout: {
+            ...defaultTheme.layout,
+            ...themeOptions.layout
+        }
     }
 }

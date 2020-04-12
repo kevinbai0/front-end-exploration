@@ -29,18 +29,20 @@ export interface Font extends PrimitiveInjection {
     font?: ThemeFont
 }
 
-export interface FlexGridDisplayOptions extends PrimitiveInjection {
-    align?: "center" | "flex-start" | "flex-end" | "stretch" | "baseline"| "initial"| "inherit";
-    justify?: "center" | "space-between" | "space-around" | "flex-start" | "flex-end" | "initial" | "inherit"
-    rows?: string
-    columns?: string
-    gap?: number
-    rowGap?: number
-    columnGap?: number
+export interface Layout extends PrimitiveInjection {
+    layout?: ThemeLayout
+    alignItems?: LayoutItems
+    justifyItems?: LayoutItems
+    alignContent?: LayoutContent
+    justifyContent?: LayoutContent
+    gap?: number | number[] | ThemeSpace
 }
 
-export type DNA = Spacing & Style & Font
-export type DNAType = Spacing | Style | Font
+export type LayoutContent = "start" | "end" | "center" | "stretch" | "space-around" | "space-between" | "space-evenly"
+export type LayoutItems = "center" | "start" | "end" | "stretch"
+
+export type DNA = Spacing & Style & Font & Layout
+export type DNATypes = Spacing | Style | Font
 
 export interface ThemeExtension {}
 
@@ -62,6 +64,7 @@ export type ThemeFontFamily = keyof Theme["fontFamily"]
 export type ThemeFontSize = keyof Theme["fontSizes"]
 export type ThemeBorderRadius = keyof Theme["borderRadius"]
 export type ThemeBorder = keyof Theme["borders"]
+export type ThemeLayout = keyof Theme["layout"]
 
 export type ThemeProperties = ThemeColor | ThemeSpace | ThemeFont | ThemeFontFamily | ThemeFontSize | ThemeBorderRadius | ThemeBorder
 

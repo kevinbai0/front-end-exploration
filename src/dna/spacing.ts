@@ -2,7 +2,7 @@ import { Spacing, ThemeObject, ThemeExtension, ThemeSpace, DNA } from "../theme/
 import { InjectProperties } from "./index";
 import { splitStyle, MatchFunction } from "./helpers";
 
-const matchSpaceToTheme = (props: DNA & ThemeObject, space: number | number[] | ThemeSpace | ThemeSpace[]) => {
+export const matchSpaceToTheme = (props: DNA & ThemeObject, space: number | number[] | ThemeSpace | ThemeSpace[]) => {
     if (typeof(space) == "number") return [space + "px"]
     if (typeof(space) == "string") {
         const themeSpace = props.theme.space[space as ThemeSpace] ?? []

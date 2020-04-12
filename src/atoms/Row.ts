@@ -1,11 +1,10 @@
 import styled from "styled-components"
-import { DNA, FlexGridDisplayOptions } from "../theme/index.d"
 import { injectDNA } from "../dna/index"
-import { injectFlexGridDisplayOptions } from "../dna/flex"
+import { DNA } from "../theme/index.d"
 
-export default styled.div<FlexGridDisplayOptions & DNA>`
-    display: flex;
-    flex-direction: row;
-    ${props => injectFlexGridDisplayOptions(props)}
+export default styled.div<DNA>`
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-auto-flow: column;
     ${props => injectDNA(props)}
 `

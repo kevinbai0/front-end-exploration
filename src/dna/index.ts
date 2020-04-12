@@ -1,7 +1,8 @@
 import { injectSpace } from "./spacing";
 import { injectStyle } from "./styling";
 import { injectFonts } from "./fonts";
-import { DNA, ThemeObject, DNAType, PrimitiveInjection } from "../theme/index.d";
+import { DNA, ThemeObject, PrimitiveInjection } from "../theme/index.d";
+import { injectLayout } from "./layout";
 
 export type InjectProperties<T> = (props: T & ThemeObject, defaultProps?: Partial<DNA>) => ({
     property: string[];
@@ -17,6 +18,14 @@ const injectStyles = (props: DNA & ThemeObject, defaultProps: Partial<DNA>, ...m
                 if (style?.value[i]) {
                     if (typeof (style.property) == "string") accum[style.property] = style.value[i]
                     else style.property.map(property => (accum[property] = style.value[i]))
+                    if (style.property.length == 0) {
+                        style.value.map(val => val.trim().split(";").map(propGroup => {
+                            if (!propGroup.length) return
+                            const split = propGroup.split(":").map(val => val.trim())
+                            if (split.length != 2) throw new Error("Invalid CSS for value of: " + val)
+                            accum[split[0]] = split[1]
+                        }))
+                    }
                 }
                 return accum
             }, {} as {[key: string]: string}))
@@ -37,7 +46,7 @@ const injectStyles = (props: DNA & ThemeObject, defaultProps: Partial<DNA>, ...m
 
 export const injectDNA = (props: DNA & ThemeObject, defaultProps?: Partial<DNA>) => {
     const dna = `
-        ${injectStyles(props, defaultProps || {}, injectSpace, injectStyle, injectFonts)}
+        ${injectStyles(props, defaultProps || {}, injectSpace, injectStyle, injectFonts, injectLayout)}
     `.replace(/^\s+|\s+$|\s+(?=\s)/g, "")
     return dna
 }

@@ -1,16 +1,17 @@
 import React from 'react';
 import './App.css';
-import { Header, Card, Grid, Column, Row, Body, Button } from "style-x";
+import { Header, Card, Column, Row, Body, Button, Box } from "style-x";
 
 function App() {
     return (
-        <Column p="breathe" bg="background">
-            <Grid as={Card}>
-                <Body fg="primary">asdf</Body>
-            </Grid>
+        <Box layout="col" p="breathe" bg="background">
+            <Card layout="row" gap="breathe" justifyContent="start">
+                <Body fg="primary" as="span">asdf</Body>
+                <Body fg="primary" as="span">haha</Body>
+            </Card>
             <Header mt="breathe" fg="action">Next</Header>
 
-            <Row justify="space-around" my={5} bg="grey.2" mx="breathe" py="push">
+            <Box layout="row" justifyContent="space-around" my={5} bg="grey.2" mx="breathe" py="push">
                 <Card>
                     <Body>Hello</Body>
                 </Card>
@@ -18,8 +19,8 @@ function App() {
                     <Body>World</Body>
                 </Card>
                 <Button>Button</Button>
-            </Row>            
-        </Column>
+            </Box>   
+        </Box>
     );
 }
 

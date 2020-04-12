@@ -1,4 +1,4 @@
-import { ThemeColor, Style, ThemeBorder, ThemeObject, DNA } from "../theme/index.d"
+import { ThemeColor, Style, ThemeBorder, ThemeObject, DNA, ThemeBorderRadius } from "../theme/index.d"
 import { InjectProperties } from "./index"
 import { splitStyle, MatchFunction } from "./helpers"
 
@@ -56,12 +56,20 @@ export const matchBorderToTheme = (props: DNA & ThemeObject, prop: ThemeBorder) 
     return color.map(c => `${value.width}px ${value.style} ${c}`)
 }
 
+export const matchBorderRadiusToTheme = ({theme}: DNA & ThemeObject, prop: ThemeBorderRadius) => {
+    const radius = (theme.borderRadius[prop] ?? []) as number | number[]
+    if (!(radius as number[]).length) return [radius + "px"]
+    if (typeof(radius) == "number") return [radius + "px"]
+    return radius.map((rad: number) => rad + "px")
+}
+
 
 export const injectStyle: InjectProperties<Style> = (props, defaultProps) => {
     return [
         splitStyle("bg", ["background-color"], matchColorToTheme, props, defaultProps),
         splitStyle("fg", ["color"], matchColorToTheme, props, defaultProps),
-        splitStyle("border", ["border"], matchColorToTheme, props, defaultProps)
+        splitStyle("border", ["border"], matchBorderToTheme, props, defaultProps),
+        splitStyle("radius", ["border-radius"], matchBorderRadiusToTheme, props, defaultProps)
     ]
 }
 
