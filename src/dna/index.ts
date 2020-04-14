@@ -3,6 +3,7 @@ import { injectStyle } from "./styling";
 import { injectFonts } from "./fonts";
 import { DNA, ThemeObject, PrimitiveInjection } from "../theme/index.d";
 import { injectLayout } from "./layout";
+import { PlatformType } from "../components/crossPlatform";
 
 export type InjectProperties<T> = (props: T & ThemeObject, defaultProps?: Partial<DNA>) => ({
     property: string[];
@@ -44,7 +45,7 @@ const injectStyles = (props: DNA & ThemeObject, defaultProps: Partial<DNA>, ...m
     }).join("")
 }
 
-export const injectDNA = (props: DNA & ThemeObject, defaultProps?: Partial<DNA>) => {
+export const injectDNA = (props: DNA & ThemeObject, defaultProps?: Partial<DNA>, platform?: PlatformType) => {
     const dna = `
         ${injectStyles(props, defaultProps || {}, injectSpace, injectStyle, injectFonts, injectLayout)}
     `.replace(/^\s+|\s+$|\s+(?=\s)/g, "")

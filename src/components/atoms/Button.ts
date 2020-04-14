@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import { injectDNA } from "../dna/index";
-import { DNA } from "../theme/index.d";
+import { injectDNA } from "../../dna/index";
+import { DNA, ThemeObject } from "../../theme/index.d";
+import { PlatformType } from "../crossPlatform";
 
-export default styled.button<DNA>`
+export default (props: DNA & ThemeObject, platform: PlatformType) => `
     cursor: pointer;
     align-self: flex-start;
     outline: none;
@@ -17,7 +17,7 @@ export default styled.button<DNA>`
         transform: scale(1.07);
     }
 
-    ${props => injectDNA(props, {
+    ${injectDNA(props, {
         bg: "action",
         fg: "background",
         font: "bigBody",

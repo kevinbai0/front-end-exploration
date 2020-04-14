@@ -1,0 +1,1 @@
+export type PlatformType = "react" | "react-native";

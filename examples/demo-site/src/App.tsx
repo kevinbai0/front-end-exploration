@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Header, Card, Body, Button, Box, styled, Input } from "style-x";
+import { Body, Button, Box, styled, Input } from "style-x";
 
 // todo
 const LeftPanel = styled(Box)`
