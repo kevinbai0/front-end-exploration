@@ -1,21 +1,23 @@
 import { injectDNA } from "../../dna/index";
-import { DNA, ThemeObject } from "../../theme/index.d";
-import { PlatformType } from "../crossPlatform";
+import { CrossPlatformFn } from "../crossPlatform";
 
-export default (props: DNA & ThemeObject, platform: PlatformType) => `
+const Button: CrossPlatformFn =  (props, platform) => `
     cursor: pointer;
     align-self: flex-start;
     outline: none;
     transition: opacity, transform 0.2s ease;
-    :hover {
-        opacity: 0.75;
-        transform: scale(1.05);
-    }
+    ${platform == 'react' ? `
+        :hover {
+            opacity: 0.75;
+            transform: scale(1.05);
+        }
 
-    :active {
-        opacity: 0.5;
-        transform: scale(1.07);
-    }
+        :active {
+            opacity: 0.5;
+            transform: scale(1.07);
+        }
+    ` : ""}
+    
 
     ${injectDNA(props, {
         bg: "action",
@@ -25,5 +27,7 @@ export default (props: DNA & ThemeObject, platform: PlatformType) => `
         py: "push",
         radius: "default",
         border: "none"
-    })}
+    }, platform)}
 `
+
+export default Button

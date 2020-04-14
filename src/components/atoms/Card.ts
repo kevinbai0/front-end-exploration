@@ -1,8 +1,7 @@
-import { DNA, ThemeObject } from "../../theme/index.d"
 import { injectDNA } from "../../dna/index"
-import { PlatformType } from "../crossPlatform"
+import { CrossPlatformFn } from "../crossPlatform"
 
-export default (props: DNA & ThemeObject, platform: PlatformType) => `
+const Card: CrossPlatformFn = (props, platform) => `
     ${injectDNA(props, {
         bg: "grey.1",
         radius: "small",
@@ -10,3 +9,5 @@ export default (props: DNA & ThemeObject, platform: PlatformType) => `
         shadow: "default"
     }, platform)}
 `
+
+export default Card

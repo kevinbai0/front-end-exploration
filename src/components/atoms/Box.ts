@@ -1,10 +1,11 @@
-import { DNA, ThemeObject } from "../../theme/index.d";
 import { injectDNA } from "../../dna/index";
-import { PlatformType } from "../crossPlatform";
+import { CrossPlatformFn } from "../crossPlatform";
 
-export default (props: DNA & ThemeObject, platform: PlatformType) => `
+const Box: CrossPlatformFn = (props, platform) => `
     ${injectDNA(props, {
         justifyContent: "center",
         alignContent: "center"
     })}
-`
+`;
+
+export default Box

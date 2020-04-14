@@ -10,7 +10,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "main.bundle.js",
-        library: "DesignSystem",
+        library: "style-x",
         libraryTarget: "umd",
         globalObject: "this"
     },

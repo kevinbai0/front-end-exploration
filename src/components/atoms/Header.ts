@@ -1,11 +1,12 @@
 import { injectDNA } from "../../dna/index";
-import { DNA, ThemeObject } from "../../theme/index.d";
-import { PlatformType } from "../crossPlatform";
+import { CrossPlatformFn } from "../crossPlatform";
 
-export default (props: DNA & ThemeObject, platform: PlatformType) => `
+const Header: CrossPlatformFn = (props, platform) => `
     ${injectDNA(props, {
         fg: "foreground",
         m: "none",
         font: "header"
     })}
 `
+
+export default Header

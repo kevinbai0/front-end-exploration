@@ -1,0 +1,5 @@
+{
+    "name": "style-x/native",
+    "private": true,
+    "main": "./dist/main.bundle.js"
+  }

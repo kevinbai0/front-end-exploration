@@ -1,8 +1,7 @@
 import { injectDNA } from "../../dna/index";
-import { ThemeObject, DNA } from "../../theme/index.d";
-import { PlatformType } from "../crossPlatform";
+import { CrossPlatformFn } from "../crossPlatform";
 
-export default (props: DNA & ThemeObject, platform: PlatformType) => `
+const Body: CrossPlatformFn =  (props, platform) => `
     font-weight: 400;
     margin: 0;
 
@@ -11,3 +10,5 @@ export default (props: DNA & ThemeObject, platform: PlatformType) => `
         font: "body"
     }, platform)}
 `
+
+export default Body
