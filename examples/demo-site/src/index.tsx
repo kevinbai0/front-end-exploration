@@ -12,6 +12,9 @@ const newTheme = {
     },
     fontFamily: {
         mainFont: "Roboto"
+    },
+    border: {
+        ghost: "1px solid greys.1"
     }
 }
 

@@ -31,12 +31,12 @@ const Resizable: React.FC<Props> = ({children, constraints,...dna}) => {
     
         window.addEventListener("mousemove", resize)
         resizeBox.current?.addEventListener("mousedown", mouseDown);
-        resizeBox.current?.addEventListener("mouseup", mouseUp);
+        window.addEventListener("mouseup", mouseUp);
 
         return () => {
             window.removeEventListener("mousemove", resize);
             resizeBox.current?.removeEventListener("mousedown", mouseDown);
-            resizeBox.current?.removeEventListener("mouseup", mouseUp);
+            window.removeEventListener("mouseup", mouseUp);
         }
     }, [])
     return (

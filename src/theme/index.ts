@@ -25,7 +25,8 @@ const fontSizes = {
     title: [32, 32, 32, 48],
     body: 14,
     bigBody: 16,
-    header: [24, 24, 24, 32]
+    header: [24, 24, 24, 32],
+    header2: [18, 18, 18, 20]
 }
 
 
@@ -34,6 +35,11 @@ const fonts = {
         family: "mainFont",
         size: "header",
         weight: 900
+    },
+    header2: {
+        family: "mainFont",
+        size: "header2",
+        weight: 700
     },
     body: {
         family: "mainFont",
@@ -72,7 +78,7 @@ const borders = {
     ghost: {
         width: 1,
         style: "solid",
-        color: "foreground"
+        color: "grey.4"
     },
     mobileOutline: [
         { width: 1, style: "solid", color: "foreground" },
