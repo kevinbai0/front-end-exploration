@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
-import { useState } from "react";
 import { Box, styled } from "style-x";
-import { DNA } from "../../../../src/theme/types";
+import { DNA } from "../../../../dist/types/src/theme/types";
 import { useEffect } from "react";
+import useInteractable from "../hooks/useInteractable";
 
 interface Props extends DNA {
     constraints: {
@@ -18,27 +18,17 @@ const ResizeBox = styled(Box)`
 const Resizable: React.FC<Props> = ({children, constraints,...dna}) => {
     const resizeBox = useRef<HTMLDivElement>(null);
     const boxRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        let down = false
-        const resize = (e: MouseEvent) => {
-            if (down && boxRef.current) {
+
+
+    useInteractable(resizeBox)
+        .onUpdate((e, ref) => {
+            if (boxRef.current) {
                 const newWidth = Math.max(constraints.minWidth, Math.min(constraints.maxWidth, boxRef.current.offsetLeft + boxRef.current.offsetWidth - e.x))
                 boxRef.current.style.width = newWidth + "px";
             }
-        }
-        const mouseDown = (e: MouseEvent) => (down = true)
-        const mouseUp = (e: MouseEvent) => (down = false)
-    
-        window.addEventListener("mousemove", resize)
-        resizeBox.current?.addEventListener("mousedown", mouseDown);
-        window.addEventListener("mouseup", mouseUp);
+            
+        })
 
-        return () => {
-            window.removeEventListener("mousemove", resize);
-            resizeBox.current?.removeEventListener("mousedown", mouseDown);
-            window.removeEventListener("mouseup", mouseUp);
-        }
-    }, [])
     return (
         <Box 
             width={300}
