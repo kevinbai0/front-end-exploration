@@ -14,5 +14,5 @@
         "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
     },
     "exclude": ["examples/**/*", "dist/**/*"],
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "index.ts"]
 }

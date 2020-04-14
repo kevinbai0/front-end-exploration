@@ -1,4 +1,4 @@
-import { Theme, AppTheme } from "./index.d"
+import { Theme, AppTheme } from "./types"
 
 const breakpoints = [0, 576, 768, 992, 1200]
 

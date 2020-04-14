@@ -1,9 +1,10 @@
 import { injectSpace } from "./spacing";
 import { injectStyle } from "./styling";
 import { injectFonts } from "./fonts";
-import { DNA, ThemeObject, PrimitiveInjection } from "../theme/index.d";
+import { DNA, ThemeObject, PrimitiveInjection } from "../theme/types";
 import { injectLayout } from "./layout";
 import { PlatformType } from "../components/crossPlatform";
+import { injectDimensions } from "./dimensions";
 
 export type InjectProperties<T> = (props: T & ThemeObject, defaultProps?: Partial<DNA>) => ({
     property: string[];
@@ -47,7 +48,7 @@ const injectStyles = (props: DNA & ThemeObject, defaultProps: Partial<DNA>, ...m
 
 export const injectDNA = (props: DNA & ThemeObject, defaultProps?: Partial<DNA>, platform?: PlatformType) => {
     const dna = `
-        ${injectStyles(props, defaultProps || {}, injectSpace, injectStyle, injectFonts, injectLayout)}
+        ${injectStyles(props, defaultProps || {}, injectSpace, injectStyle, injectFonts, injectLayout, injectDimensions)}
     `.replace(/^\s+|\s+$|\s+(?=\s)/g, "")
     return dna
 }

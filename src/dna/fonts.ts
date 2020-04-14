@@ -1,4 +1,4 @@
-import { ThemeFont, ThemeFontFamily, ThemeObject, ThemeFontSize, Font, DNA } from "../theme/index.d"
+import { ThemeFont, ThemeFontFamily, ThemeObject, ThemeFontSize, Font, DNA } from "../theme/types"
 import { InjectProperties } from "./index";
 import { splitStyle } from "./helpers";
 

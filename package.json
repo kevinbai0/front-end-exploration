@@ -3,9 +3,9 @@
   "version": "0.1.2",
   "description": "My design system",
   "main": "./dist/main.bundle.js",
-  "types": "./dist/theme/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
-    "build": "webpack --config webpack.config.js && webpack --config webpack.native.js && cp ./src/theme/index.d.ts ./dist/index.d.ts && cp ./src/theme/index.d.ts ./native/dist/index.d.ts",
+    "build": "webpack --config webpack.config.js && webpack --config webpack.native.js && yarn tsc",
     "tsc": "tsc",
     "prepublishOnly": "npm run build",
     "dev": "webpack --watch"

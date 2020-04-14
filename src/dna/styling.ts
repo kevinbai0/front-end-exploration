@@ -1,4 +1,4 @@
-import { ThemeColor, Style, ThemeBorder, ThemeObject, DNA, ThemeBorderRadius, ThemeShadow } from "../theme/index.d"
+import { ThemeColor, Style, ThemeBorder, ThemeObject, DNA, ThemeBorderRadius, ThemeShadow } from "../theme/types"
 import { InjectProperties } from "./index"
 import { splitStyle } from "./helpers"
 

@@ -18,7 +18,7 @@ const newTheme = {
 
 const theme = createTheme(newTheme)
 
-declare module "../../../src/theme/index.d" {
+declare module "../../../src/theme/types" {
     type NewTheme = typeof newTheme
     export interface ThemeExtension extends NewTheme {}
 }
