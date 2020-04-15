@@ -14,7 +14,8 @@ const newTheme = {
         mainFont: "Roboto"
     },
     border: {
-        ghost: "1px solid greys.1"
+        ghost: "1px solid greys.1",
+        action: "1px solid action"
     }
 }
 

@@ -20,13 +20,12 @@ const Resizable: React.FC<Props> = ({children, constraints,...dna}) => {
     const boxRef = useRef<HTMLDivElement>(null);
 
 
-    useInteractable(resizeBox)
-        .onUpdate((e, ref) => {
+    useInteractable(resizeBox, [], {})
+        .onUpdate(({e}) => {
             if (boxRef.current) {
                 const newWidth = Math.max(constraints.minWidth, Math.min(constraints.maxWidth, boxRef.current.offsetLeft + boxRef.current.offsetWidth - e.x))
                 boxRef.current.style.width = newWidth + "px";
             }
-            
         })
 
     return (

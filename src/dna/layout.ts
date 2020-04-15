@@ -15,15 +15,9 @@ export const matchLayoutToTheme = ({theme}: DNA & ThemeObject, prop: ThemeLayout
 
 export const matchLayoutAlignment = (_: DNA & ThemeObject, prop: LayoutContent | LayoutItems) => [prop]
 
-
 export const injectLayout: InjectProperties<Layout> = (props, defaultProps) => {
     return [
         splitStyle("display", [], matchLayoutToTheme, props, defaultProps),
-        splitStyle("position", ["position"], (_, prop: string) => [prop], props, defaultProps),
-        splitStyle("left", ["left"], matchDimension, props, defaultProps),
-        splitStyle("right", ["right"], matchDimension, props, defaultProps),
-        splitStyle("top", ["top"], matchDimension, props, defaultProps),
-        splitStyle("bottom", ["bottom"], matchDimension, props, defaultProps),
         splitStyle("rowLayout", ["grid-template-columns"], (_, prop: string) => [prop], props, defaultProps),
         splitStyle("colLayout", ["grid-template-rows"], (_, prop: string) => [prop], props, defaultProps),
         splitStyle("alignContent", ["align-content"], matchLayoutAlignment, props, defaultProps),

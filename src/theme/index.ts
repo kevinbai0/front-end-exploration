@@ -1,4 +1,4 @@
-import { Theme, AppTheme } from "./types"
+import { Theme, AppTheme, Dimension } from "./types"
 
 const breakpoints = [0, 576, 768, 992, 1200]
 
@@ -114,8 +114,6 @@ const defaultTheme = {
             display: grid;
             grid-template-rows: auto;
             grid-template-columns: auto;
-            align-content: center;
-            justify-content: center;
         `
     }
 }

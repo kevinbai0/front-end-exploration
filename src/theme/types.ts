@@ -32,11 +32,6 @@ export interface Font extends PrimitiveInjection {
 
 export interface Layout extends PrimitiveInjection {
     display?: ThemeLayout
-    position?: "absolute" | "relative" | "inherit",
-    left?: number | string | (number | string)[],
-    right?: number | string | (number | string)[],
-    top?: number | string | (number | string)[],
-    bottom?: number | string | (number | string)[],
     rowLayout?: string
     colLayout?: string
     alignItems?: LayoutItems
@@ -46,6 +41,14 @@ export interface Layout extends PrimitiveInjection {
     gap?: number | number[] | ThemeSpace | string | string[]
     align?: LayoutItems
     justify?: LayoutItems
+}
+
+export interface Position extends PrimitiveInjection {
+    position?: "absolute" | "relative" | ("absolute" | "relative")[],
+    left?: number | string | (number | string)[],
+    right?: number | string | (number | string)[],
+    top?: number | string | (number | string)[],
+    bottom?: number | string | (number | string)[],
 }
 
 export interface Dimension extends PrimitiveInjection {
@@ -60,7 +63,7 @@ export interface Dimension extends PrimitiveInjection {
 export type LayoutContent = "start" | "end" | "center" | "stretch" | "space-around" | "space-between" | "space-evenly"
 export type LayoutItems = "center" | "start" | "end" | "stretch"
 
-export type DNA = Spacing & Style & Font & Layout & Dimension
+export type DNA = Spacing & Style & Font & Layout & Dimension & Position
 export type DNATypes = Spacing | Style | Font
 
 export interface ThemeExtension {}
