@@ -70,15 +70,17 @@ export default function<T, S extends HTMLElement>(
         }
     }, [ref, diff])
 
+    const returnObj = {
+        onStart, onUpdate, onEnd, shouldStart, updateState
+    }
+
     function shouldStart(fn: LifeCycleMethod<T, S, boolean>) {
         lifeCycleActions.current.push({
             event: "should-start",
             method: (e: MouseEvent, ref: S) => fn({e, ref, state: appState.current})
         })
 
-        return {
-            onStart, onUpdate, onEnd, shouldStart
-        }
+        return returnObj
     }
 
     function onStart(fn: EventMethod<T, S>) {
@@ -90,9 +92,7 @@ export default function<T, S extends HTMLElement>(
             } 
         })
 
-        return {
-            onStart, onUpdate, onEnd, shouldStart
-        }
+        return returnObj
     }
 
     function onUpdate(fn: EventMethod<T, S>) {
@@ -104,9 +104,7 @@ export default function<T, S extends HTMLElement>(
             }
         })
 
-        return {
-            onStart, onUpdate, onEnd, shouldStart
-        }
+        return returnObj
     }
 
     function onEnd(fn: EventMethod<T, S>) {
@@ -118,13 +116,13 @@ export default function<T, S extends HTMLElement>(
             }
         })
 
-        return {
-            onStart, onUpdate, onEnd, shouldStart
-        }
+        return returnObj
     }
 
-    return {
-        onStart, onUpdate, onEnd, shouldStart
+    function updateState(state: Partial<T>) {
+        appState.current = { ...appState.current, ...state }
     }
+
+    return returnObj
 }
 

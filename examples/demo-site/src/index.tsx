@@ -22,7 +22,7 @@ const newTheme = {
 
 const theme = createTheme(newTheme)
 
-declare module "../../../src/theme/types" {
+declare module "../../../dist/types" {
     type NewTheme = typeof newTheme
     export interface ThemeExtension extends NewTheme {}
 }

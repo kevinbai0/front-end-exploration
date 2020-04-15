@@ -39,20 +39,17 @@ const Artboard: React.FC<Props> = ({children, ...dna}) => {
 
     let setFlag = ""
     function asdf(id: string) {
-        console.log(setFlag)
         if (!setFlag) {
             setActive(id)
-            console.log("SEETWET", id)
+            setFlag = id
         }
-        setFlag = id
     }
 
-    console.log("RERender")
     useInteractable(playgroundRef, [components, editMode, setFlag], { x: 0, y: 0, offsetX: 0, offsetY: 0 })
         .shouldStart(() => {
             if (editMode == "box") return true;
-            console.log(setFlag)
             if (!setFlag) setActive("")
+            setFlag = ""
             return false;
         })
         .onStart(({e, ref}) => {
