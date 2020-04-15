@@ -1,10 +1,10 @@
-import { ThemeObject, DNA, Dimension } from "../theme/types";
+import { ThemeObject, DNA, Dimension, ThemeExtension } from "../theme/types";
 import { splitStyle } from "./helpers";
 import { InjectProperties } from "./index";
 
 
 
-export const matchDimension = (_: DNA & ThemeObject, prop: string | number | (number | string)[]) => {
+export const matchDimension = (_: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: string | number | (number | string)[]) => {
     if (typeof(prop) == "number") return [prop + "px"];
     if (typeof(prop) == "string") return [prop];
 
@@ -23,7 +23,7 @@ const mapSize = (prop: string, key: "width" | "height") => {
     return prop
 }
 
-export const matchSizeProp = (_: DNA & ThemeObject, prop: string | number | (string | number)[], key: "width" | "height") => {
+export const matchSizeProp = (_: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: string | number | (string | number)[], key: "width" | "height") => {
     if (typeof(prop) == "number") return [prop + "px"];
     if (typeof(prop) == "string") return [mapSize(prop, key)];
 

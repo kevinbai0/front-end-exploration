@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import { Box, styled } from "style-x";
-import { DNA } from "../../../../dist/types/src/theme/types";
+import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
 import useInteractable from "../hooks/useInteractable";
-interface Props extends DNA {
+interface Props extends DNA<ThemeExtension> {
 }
 
 const ResizeBox = styled(Box)`

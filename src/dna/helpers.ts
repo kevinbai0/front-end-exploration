@@ -1,13 +1,13 @@
-import { ThemeProperties, DNA, ThemeObject } from "../theme/types"
+import { ThemeProperties, DNA, ThemeObject, ThemeExtension } from "../theme/types"
 
-export type MatchFunction<T, K> = <S extends K & ThemeObject>(props: S, prop: T) => string[]
+export type MatchFunction<T, K> = <S extends K & ThemeObject<ThemeExtension>>(props: S, prop: T) => string[]
 
-export const splitStyle = <T extends ThemeProperties>(
-    key: keyof DNA,
+export const splitStyle = <T extends ThemeProperties<ThemeExtension>>(
+    key: keyof DNA<ThemeExtension>,
     cssName: string[],
-    method: (props: DNA & ThemeObject, prop: any) => string[],
-    props: DNA & ThemeObject, 
-    defaultProps?: Partial<DNA>
+    method: (props: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: any) => string[],
+    props: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, 
+    defaultProps?: Partial<DNA<ThemeExtension>>
 ): {
     property: string[],
     value: string[]

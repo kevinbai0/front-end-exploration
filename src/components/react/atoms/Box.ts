@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Box from "../../atoms/Box";
-import { DNA } from "../../../theme/types";
+import { DNA, ThemeExtension } from "../../../theme/types";
 
-export default styled.div<DNA>`
+export default styled.div<DNA<ThemeExtension>>`
     ${props => Box(props, "react")}
 `;

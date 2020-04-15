@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Box, styled } from "style-x"
-import { DNA } from "../../../../dist/types/src/theme/types";
+import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
 import useInteractable from "../hooks/useInteractable";
 import { MutableRefObject } from "react";
 import ComponentTreeRenderer, { RenderComponents } from "./ComponentTreeRenderer";
@@ -8,9 +8,9 @@ import { useState } from "react";
 import { nanoid } from "nanoid"
 import { getPos } from "../helpers";
 import { useEffect } from "react";
-import InteractableBox from "./InteractableBox";
+import InteractiveBox from "./InteractiveBox";
 
-interface Props extends DNA {
+interface Props extends DNA<ThemeExtension> {
 
 }
 
@@ -82,7 +82,7 @@ const Artboard: React.FC<Props> = ({children, ...dna}) => {
                 id,
                 component: {
                     type: "component",
-                    fn: InteractableBox,
+                    fn: InteractiveBox,
                     props: {
                         id,
                         left,

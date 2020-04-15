@@ -1,10 +1,10 @@
 import React from "react";
-import { DNA } from "../../../../src/theme/types";
+import { DNA, ThemeExtension } from "../../../../src/theme/types";
 import { Header2, Box } from "style-x";
 import Resizable from "./Resizable";
 import Draggable from "./Draggable";
 
-interface Props extends DNA {
+interface Props extends DNA<ThemeExtension> {
 
 }
 const RightUtilities: React.FC<Props> = ({children, ...dna}) => {

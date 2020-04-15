@@ -1,18 +1,18 @@
 import { injectSpace } from "./spacing";
 import { injectStyle } from "./styling";
 import { injectFonts } from "./fonts";
-import { DNA, ThemeObject, PrimitiveInjection } from "../theme/types";
+import { DNA, ThemeObject, PrimitiveInjection, ThemeExtension } from "../theme/types";
 import { injectLayout } from "./layout";
 import { PlatformType } from "../components/crossPlatform";
 import { injectDimensions } from "./dimensions";
 import { injectPosition } from "./position"
 
-export type InjectProperties<T> = (props: T & ThemeObject, defaultProps?: Partial<DNA>) => ({
+export type InjectProperties<T> = (props: T & ThemeObject<ThemeExtension>, defaultProps?: Partial<DNA<ThemeExtension>>) => ({
     property: string[];
     value: string[];
 } | undefined)[]
 
-const injectStyles = (props: DNA & ThemeObject, defaultProps: Partial<DNA>, ...methods: InjectProperties<PrimitiveInjection>[]) => {
+const injectStyles = (props: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, defaultProps: Partial<DNA<ThemeExtension>>, ...methods: InjectProperties<PrimitiveInjection>[]) => {
     return methods.map(method => {
         const styles = method(props, defaultProps)
         // for each breakpoint, return the right styles
@@ -47,7 +47,7 @@ const injectStyles = (props: DNA & ThemeObject, defaultProps: Partial<DNA>, ...m
     }).join("")
 }
 
-export const injectDNA = (props: DNA & ThemeObject, defaultProps?: Partial<DNA>, platform?: PlatformType) => {
+export const injectDNA = (props: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, defaultProps?: Partial<DNA<ThemeExtension>>, platform?: PlatformType) => {
     const dna = `
         ${injectStyles(props, defaultProps || {}, injectSpace, injectStyle, injectFonts, injectLayout, injectDimensions, injectPosition)}
     `.replace(/^\s+|\s+$|\s+(?=\s)/g, "")

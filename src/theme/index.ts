@@ -1,4 +1,4 @@
-import { Theme, AppTheme, Dimension } from "./types"
+import { Theme, Dimension, ThemeExtension } from "./types"
 
 const breakpoints = [0, 576, 768, 992, 1200]
 
@@ -80,6 +80,11 @@ const borders = {
         style: "solid",
         color: "grey.4"
     },
+    action: {
+        width: 1,
+        style: "solid",
+        color: "action"
+    },
     mobileOutline: [
         { width: 1, style: "solid", color: "foreground" },
         { width: 1, style: "solid", color: "foreground" },
@@ -124,7 +129,7 @@ export const createTheme = <NewTheme>(props: NewTheme) => {
     return extendTheme(props);
 }
 
-const extendTheme = <T extends Partial<Theme>>(themeOptions: T): AppTheme<T> => {
+const extendTheme = <T extends Partial<Theme<ThemeExtension>>>(themeOptions: T): Theme<T> => {
     return {
         ...themeOptions,
         breakpoints: [

@@ -8,7 +8,8 @@ import { createTheme, ThemeProvider } from 'style-x'
 const newTheme = {
     colors: {
        primary: "#B399F8",
-       background: "#F9F9F9"
+       background: "#FFFFFF",
+       "grey.2": "#DDDDDD"
     },
     fontFamily: {
         mainFont: "Roboto"
@@ -19,10 +20,8 @@ const newTheme = {
     }
 }
 
-
 const theme = createTheme(newTheme)
-
-declare module "../../../dist/types" {
+declare module "../../../dist/types/src/theme/types.d" {
     type NewTheme = typeof newTheme
     export interface ThemeExtension extends NewTheme {}
 }

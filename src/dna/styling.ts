@@ -1,8 +1,8 @@
-import { ThemeColor, Style, ThemeBorder, ThemeObject, DNA, ThemeBorderRadius, ThemeShadow } from "../theme/types"
+import { ThemeColor, Style, ThemeBorder, ThemeObject, DNA, ThemeBorderRadius, ThemeShadow, ThemeExtension } from "../theme/types"
 import { InjectProperties } from "./index"
 import { splitStyle } from "./helpers"
 
-const style: Style = {
+const style: Style<ThemeExtension> = {
     fg: "foreground",
     bg: "background",
     border: "ghost"
@@ -19,9 +19,9 @@ interface Border {
  * @param theme
  * @param prop
  */
-export const matchColorToTheme = ({theme}: DNA & ThemeObject, prop: ThemeColor) => {
+export const matchColorToTheme = ({theme}: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: ThemeColor<ThemeExtension>) => {
     if (!theme.colors) return []
-    const colors = theme.colors[prop as ThemeColor] || []
+    const colors = theme.colors[prop as ThemeColor<ThemeExtension>] || []
     // if color wasn't found, empty array to denote no colors
     if (!colors.length) return []
     // single color maps to array
@@ -29,7 +29,7 @@ export const matchColorToTheme = ({theme}: DNA & ThemeObject, prop: ThemeColor) 
     return colors
 }
 
-export const matchBorderToTheme = (props: DNA & ThemeObject, prop: ThemeBorder) => {
+export const matchBorderToTheme = (props: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: ThemeBorder<ThemeExtension>) => {
     const border = props.theme.borders[prop]
     // border is either a string, an object containing width, style, color, or array of objects denoting breakpoints
     if (!border) return []
@@ -38,9 +38,9 @@ export const matchBorderToTheme = (props: DNA & ThemeObject, prop: ThemeBorder) 
     if ((border as Border[])[0]) {
         // return a border string for each media query in the array if it's an array of objects
         return (border as (Border | string)[]).map((borderValue, i) => {
-            if (typeof(borderValue == "string")) return props.theme.borders[borderValue as ThemeBorder] || undefined
+            if (typeof(borderValue == "string")) return props.theme.borders[borderValue as ThemeBorder<ThemeExtension>] || undefined
             const value = borderValue as Border
-            const color = matchColorToTheme(props, value.color as ThemeColor)
+            const color = matchColorToTheme(props, value.color as ThemeColor<ThemeExtension>)
             if (!color.length) return ""
             // choose the current media query of i or the last index in color (whichever is smaller)
             const index = Math.min(i, color.length - 1)
@@ -49,27 +49,27 @@ export const matchBorderToTheme = (props: DNA & ThemeObject, prop: ThemeBorder) 
     }
     // when border is only an object
     const value = border as Border
-    const color = matchColorToTheme(props, value.color as ThemeColor)
+    const color = matchColorToTheme(props, value.color as ThemeColor<ThemeExtension>)
     if (!color.length) return []
 
     // map colors so that border switches to right color for breakpoint
     return color.map(c => `${value.width}px ${value.style} ${c}`)
 }
 
-export const matchBorderRadiusToTheme = ({theme}: DNA & ThemeObject, prop: ThemeBorderRadius) => {
+export const matchBorderRadiusToTheme = ({theme}: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: ThemeBorderRadius<ThemeExtension>) => {
     const radius = (theme.borderRadius[prop] ?? []) as number | number[]
     if (!(radius as number[]).length) return [radius + "px"]
     if (typeof(radius) == "number") return [radius + "px"]
     return radius.map((rad: number) => rad + "px")
 }
 
-export const matchShadowToTheme = ({theme}: DNA & ThemeObject, prop: ThemeShadow) => {
+export const matchShadowToTheme = ({theme}: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: ThemeShadow<ThemeExtension>) => {
     const shadow = (theme.shadows[prop] ?? []) as string | string[]
     if (!(shadow as string[]).length) return []
     return [shadow as string]
 }
 
-export const injectStyle: InjectProperties<Style> = (props, defaultProps) => {
+export const injectStyle: InjectProperties<Style<ThemeExtension>> = (props, defaultProps) => {
     return [
         splitStyle("bg", ["background-color"], matchColorToTheme, props, defaultProps),
         splitStyle("fg", ["color"], matchColorToTheme, props, defaultProps),
@@ -80,7 +80,7 @@ export const injectStyle: InjectProperties<Style> = (props, defaultProps) => {
 }
 
 // not userful right now but maybe in the future
-/*export const extractStyles = (props: DNA, keysToInclude?: (keyof Style)[]) => {
+/*export const extractStyles = (props: DNA<ThemeExtension>, keysToInclude?: (keyof Style)[]) => {
     return Object.keys(props).filter(key => style[key as (keyof Style)]).reduce((accum, key) => {
         const inArr = keysToInclude?.find(k => k == key)
         if (inArr || !keysToInclude) {

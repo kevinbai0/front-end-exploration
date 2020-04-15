@@ -1,11 +1,10 @@
-import { ThemeObject, Layout, DNA, ThemeLayout, LayoutContent, LayoutItems } from "../theme/types";
+import { ThemeObject, Layout, DNA, ThemeLayout, LayoutContent, LayoutItems, ThemeExtension } from "../theme/types";
 import { splitStyle } from "./helpers";
 import { InjectProperties } from "./index";
 import { matchSpaceToTheme } from "./spacing";
-import { matchDimension } from "./dimensions";
 
 
-export const matchLayoutToTheme = ({theme}: DNA & ThemeObject, prop: ThemeLayout) => {
+export const matchLayoutToTheme = ({theme}: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: ThemeLayout<ThemeExtension>) => {
     if (!theme.layout) return []
     const layout = (theme.layout[prop] || []) as string | string[]
     // if color wasn't found, empty array to denote no colors
@@ -13,9 +12,9 @@ export const matchLayoutToTheme = ({theme}: DNA & ThemeObject, prop: ThemeLayout
     return layout
 }
 
-export const matchLayoutAlignment = (_: DNA & ThemeObject, prop: LayoutContent | LayoutItems) => [prop]
+export const matchLayoutAlignment = (_: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: LayoutContent | LayoutItems) => [prop]
 
-export const injectLayout: InjectProperties<Layout> = (props, defaultProps) => {
+export const injectLayout: InjectProperties<Layout<ThemeExtension>> = (props, defaultProps) => {
     return [
         splitStyle("display", [], matchLayoutToTheme, props, defaultProps),
         splitStyle("rowLayout", ["grid-template-columns"], (_, prop: string) => [prop], props, defaultProps),

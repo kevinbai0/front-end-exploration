@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
 import { Box, styled } from "style-x";
-import { DNA } from "../../../../dist/types/src/theme/types";
+import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
 import { useEffect } from "react";
 import useInteractable from "../hooks/useInteractable";
 
-interface Props extends DNA {
+interface Props extends DNA<ThemeExtension> {
     constraints: {
         minWidth: number
         maxWidth: number

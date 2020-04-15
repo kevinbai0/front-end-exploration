@@ -1,9 +1,9 @@
-import { ThemeObject, DNA, LayoutContent, LayoutItems, Position } from "../theme/types";
+import { ThemeObject, DNA, LayoutContent, LayoutItems, Position, ThemeExtension } from "../theme/types";
 import { splitStyle } from "./helpers";
 import { InjectProperties } from "./index";
 import { matchDimension } from "./dimensions";
 
-export const matchLayoutAlignment = (_: DNA & ThemeObject, prop: LayoutContent | LayoutItems) => [prop]
+export const matchLayoutAlignment = (_: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: LayoutContent | LayoutItems) => [prop]
 
 export const injectPosition: InjectProperties<Position> = (props, defaultProps) => {
     return [

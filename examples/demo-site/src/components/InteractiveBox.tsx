@@ -1,23 +1,19 @@
 import React, { useRef } from "react";
 import { Box, styled } from "style-x"
-import { DNA } from "../../../../dist/types/src/theme/types";
+import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
 import useInteractable from "../hooks/useInteractable";
 import { MutableRefObject } from "react";
 import { getPos } from "../helpers";
 
-interface Props extends DNA {
-    componentDNA: DNA
+interface Props extends DNA<ThemeExtension> {
+    componentDNA: DNA<ThemeExtension>
     active: string
     setActive?: (id: string) => void
     id: string
 }
 
-const InteractableBox: React.FC<Props> = ({children, componentDNA, active, setActive, id, ...dna}) => {
+const InteractiveBox: React.FC<Props> = ({children, componentDNA, active, setActive, id, ...dna}) => {
     const drawBoxRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
-
-    const mouseDown = (dot: "top-left" | "bottom-left" | "top-right" | "bottom-right") => {
-        console.log(dot)
-    }
 
     const interactive = useInteractable(drawBoxRef, [active], { x: 0, y: 0, initDims: {x: 0, y: 0, absX: 0, absY: 0, height: 0, width: 0}, state: "move" })
         .shouldStart(() => {
@@ -78,7 +74,7 @@ const InteractableBox: React.FC<Props> = ({children, componentDNA, active, setAc
         })
 
     return (
-        <InteractiveBox ref={drawBoxRef} {...dna} active={active == id}>
+        <Box ref={drawBoxRef} {...dna} border={active == id ? "action" : "none"}>
             <Box width="fill" height="fill" {...componentDNA}>
                 {children}
             </Box>
@@ -90,15 +86,11 @@ const InteractableBox: React.FC<Props> = ({children, componentDNA, active, setAc
                     <EditDot width={10} height={10} right={-7} bottom={-7} bg="background" onMouseDown={() => interactive.updateState({ state: "drag-br"})}/>
                 </>
             )}
-        </InteractiveBox>
+        </Box>
     )
 }
 
-export default InteractableBox
-
-const InteractiveBox = styled(Box)<{active: boolean}>`
-    ${props => props.active && `border: 1px solid ${props.theme.colors.action};`};
-`
+export default InteractiveBox
 
 const EditDot = styled(Box)`
     position: absolute;

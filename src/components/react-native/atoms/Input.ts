@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 import Input from "../../atoms/Input";
-import { DNA } from "../../../theme/types";
+import { DNA, ThemeExtension } from "../../../theme/types";
 
-export default styled.TextInput<DNA>`
+export default styled.TextInput<DNA<ThemeExtension>>`
     ${props => Input(props, "react")}
 `;

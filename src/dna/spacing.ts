@@ -1,11 +1,11 @@
 import { Spacing, ThemeObject, ThemeExtension, ThemeSpace, DNA } from "../theme/types";
 import { InjectProperties } from "./index";
-import { splitStyle, MatchFunction } from "./helpers";
+import { splitStyle } from "./helpers";
 
-export const matchSpaceToTheme = (props: DNA & ThemeObject, space: number | number[] | ThemeSpace | ThemeSpace[] | string | string[]) => {
+export const matchSpaceToTheme = (props: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, space: number | number[] | ThemeSpace<ThemeExtension> | ThemeSpace<ThemeExtension>[] | string | string[]) => {
     if (typeof(space) == "number") return [space + "px"]
     if (typeof(space) == "string") {
-        const themeSpace = (props.theme.space[space as ThemeSpace] ?? [space]) as (number | (number | string)[])
+        const themeSpace = (props.theme.space[space as ThemeSpace<ThemeExtension>] ?? [space]) as (number | (number | string)[])
         if (typeof(themeSpace) == "number") return [themeSpace + "px"]
         return themeSpace.map((value) => typeof(value) == "string" ? value : value + "px")
     }
@@ -14,11 +14,11 @@ export const matchSpaceToTheme = (props: DNA & ThemeObject, space: number | numb
         return (space as number[]).map(value => value + "px")
     }
 
-    if (typeof(space[0]) == "string" && props.theme.space[space[0] as ThemeSpace] == undefined) {
+    if (typeof(space[0]) == "string" && props.theme.space[space[0] as ThemeSpace<ThemeExtension>] == undefined) {
         return (space as string[]).map(value => value)
     }
     // add up the spacing
-    const expansion = (space as ThemeSpace[]).map(value => {
+    const expansion = (space as ThemeSpace<ThemeExtension>[]).map(value => {
         const themeSpace = props.theme.space[value] ?? props.theme.breakpoints.map(() => 0)
         if (typeof(themeSpace) == "number") return props.theme.breakpoints.map(() => themeSpace)
         let returnArr: number[] = []
@@ -40,7 +40,7 @@ export const matchSpaceToTheme = (props: DNA & ThemeObject, space: number | numb
     })
 }
 
-export const injectSpace: InjectProperties<Spacing>  = (props, defaultProps) => {
+export const injectSpace: InjectProperties<Spacing<ThemeExtension>>  = (props, defaultProps) => {
     return [
         splitStyle("m", ["margin"], matchSpaceToTheme, props, defaultProps),
         splitStyle("p", ["padding"], matchSpaceToTheme, props, defaultProps),

@@ -1,8 +1,8 @@
 import React from "react";
 import { Box } from "style-x";
-import { DNA } from "../../../../dist/types/src/theme/types";
+import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
 
-interface Props extends DNA {
+interface Props extends DNA<ThemeExtension> {
 
 }
 

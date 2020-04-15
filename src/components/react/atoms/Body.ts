@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Body from "../../atoms/Body";
-import { DNA } from "../../../theme/types";
+import { DNA, ThemeExtension } from "../../../theme/types";
 
-export default styled.p<DNA>`
+export default styled.p<DNA<ThemeExtension>>`
     ${props => Body(props, "react")}
 `;
