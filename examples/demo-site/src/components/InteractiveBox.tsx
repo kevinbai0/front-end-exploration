@@ -5,14 +5,14 @@ import useInteractable from "../hooks/useInteractable";
 import { MutableRefObject } from "react";
 import { getPos } from "../helpers";
 
-interface Props extends DNA<ThemeExtension> {
+export interface InteractiveBoxProps extends DNA<ThemeExtension> {
     componentDNA: DNA<ThemeExtension>
-    active: string
+    active?: string
     setActive?: (id: string) => void
     id: string
 }
 
-const InteractiveBox: React.FC<Props> = ({children, componentDNA, active, setActive, id, ...dna}) => {
+const InteractiveBox: React.FC<InteractiveBoxProps> = ({children, componentDNA, active, setActive, id, ...dna}) => {
     const drawBoxRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
 
     const interactive = useInteractable(drawBoxRef, [active], { x: 0, y: 0, initDims: {x: 0, y: 0, absX: 0, absY: 0, height: 0, width: 0}, state: "move" })
@@ -28,7 +28,7 @@ const InteractiveBox: React.FC<Props> = ({children, componentDNA, active, setAct
                 initDims: {
                     x: ref.offsetLeft,
                     y: ref.offsetTop,
-                    absX: x, 
+                    absX: x,
                     absY: y,
                     width: ref.offsetWidth,
                     height: ref.offsetHeight

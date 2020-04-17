@@ -2,7 +2,7 @@ import React from "react";
 import { Box } from "style-x"
 import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
 
-interface RenderComponent<T extends DNA<ThemeExtension> & {active: string}> {
+export interface RenderComponent<T extends DNA<ThemeExtension> & {active?: string, setActive?: (id: string) => void}> {
     id: string
     component: {
         type: "component",

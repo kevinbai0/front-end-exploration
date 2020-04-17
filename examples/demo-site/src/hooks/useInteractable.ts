@@ -1,6 +1,6 @@
 import { useEffect, MutableRefObject, useRef } from "react"
 
-type EventMethod<T, S extends HTMLElement> = (props: { e: MouseEvent, ref: S, state: T }) => T | undefined | void
+export type EventMethod<T, S extends HTMLElement> = (props: { e: MouseEvent, ref: S, state: T }) => T | undefined | void
 type EventListener<S> = {
     event: "mousedown" | "mouseup" | "mousemove"
     method: (e: MouseEvent, ref: S) => void
