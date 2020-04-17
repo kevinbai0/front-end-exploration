@@ -9,9 +9,10 @@ import { nanoid } from "nanoid"
 import { getPos } from "../helpers";
 import { useEffect } from "react";
 import InteractiveBox from "./InteractiveBox";
+import { Matrix } from "./Playground";
 
 interface Props extends DNA<ThemeExtension> {
-
+    matrixState: MutableRefObject<Matrix>
 }
 
 type EditMode = "box" | "select"
@@ -20,13 +21,22 @@ const CursorBox = styled(Box)<{editMode: EditMode}>`
     cursor: ${props => props.editMode == "box" ? "cell" : "default"};
 `
 
-const Artboard: React.FC<Props> = ({children, ...dna}) => {
+const Artboard: React.FC<Props> = ({children, matrixState, ...dna}) => {
     const playgroundRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
     const drawBoxRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
 
     const [ active, setActive ] = useState("")
     const [ components, setComponents ] = useState<RenderComponents>([])
     const [ editMode, setEditMode ] = useState<EditMode>("box")
+
+    function mapCursorToMatrixState(coord: { x: number, y: number }, state: Matrix) {
+        return {
+            x: (coord.x + state[4]) * state[0], y: (coord.y + state[5]) * state[0]
+        }
+    }
+    function mapYToMatrixState(value: number, state: Matrix) {
+        return (value + state[5]) * state[0]
+    }
 
     useEffect(() => {
         const method = (e: KeyboardEvent) => {
@@ -45,6 +55,15 @@ const Artboard: React.FC<Props> = ({children, ...dna}) => {
         }
     }
 
+    useEffect(() => {
+        const { x, y } = getPos(playgroundRef.current)
+        const width = playgroundRef.current.offsetWidth
+        const midX = width / 2
+        const call = (e: MouseEvent) => console.log((e.clientX - x - midX - matrixState.current[4]) / matrixState.current[0], matrixState.current[4], matrixState.current[0])
+        window.addEventListener("mousemove", call)
+        return () => window.removeEventListener("mousemove", call)
+    })
+
     useInteractable(playgroundRef, [components, editMode, setFlag], { x: 0, y: 0, offsetX: 0, offsetY: 0 })
         .shouldStart(() => {
             if (editMode == "box") return true;
@@ -53,7 +72,8 @@ const Artboard: React.FC<Props> = ({children, ...dna}) => {
             return false;
         })
         .onStart(({e, ref}) => {
-            const { x, y } = getPos(ref)
+            const { x, y } = mapCursorToMatrixState(getPos(ref), matrixState.current)
+            
             drawBoxRef.current!.style.opacity = "1"
             drawBoxRef.current!.style.left = e.clientX - x + "px"
             drawBoxRef.current!.style.top = e.clientY - y + "px"
@@ -62,15 +82,15 @@ const Artboard: React.FC<Props> = ({children, ...dna}) => {
             return { x: e.clientX, y: e.clientY, offsetX: x, offsetY: y }
         })
         .onUpdate(({e, state}) => {
-            drawBoxRef.current!.style.left = Math.min(e.clientX - state.offsetX, state.x - state.offsetX) + "px"
+            drawBoxRef.current!.style.left = Math.min(e.clientX - state.offsetX, state.x - state.offsetX) - matrixState.current[4] + "px"
             drawBoxRef.current!.style.top = Math.min(e.clientY - state.offsetY, state.y - state.offsetY) + "px"
-            drawBoxRef.current!.style.width = Math.abs(e.clientX - state.x) + "px"
-            drawBoxRef.current!.style.height = Math.abs(e.clientY - state.y) + "px"
+            drawBoxRef.current!.style.width = Math.abs(e.clientX - state.x) / matrixState.current[0] + "px"
+            drawBoxRef.current!.style.height = Math.abs(e.clientY - state.y) / matrixState.current[0] + "px"
         })
         .onEnd(({e, state, ref}) => {
-            const { x, y } = getPos(ref)
-            const width = Math.abs(e.clientX - state.x)
-            const height = Math.abs(e.clientY - state.y)
+            const { x, y } = mapCursorToMatrixState(getPos(ref), matrixState.current)
+            const width = Math.abs(e.clientX - state.x) / matrixState.current[0]
+            const height = Math.abs(e.clientY - state.y) / matrixState.current[0]
             const left = Math.min(e.clientX, state.x) - x
             const top = Math.min(e.clientY, state.y) - y
             drawBoxRef.current!.style.width = "0px"
