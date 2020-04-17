@@ -5,3 +5,10 @@ export const getPos = (elem: HTMLElement, x: number = 0, y: number = 0): {x: num
         y: elem.offsetTop + y
     }
 }
+
+export const getDim = (elem: HTMLElement) => {
+    const {x, y} = getPos(elem)
+    return {
+        x, y, width: elem.offsetWidth, height: elem.offsetHeight
+    }
+}

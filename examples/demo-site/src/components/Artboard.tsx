@@ -9,10 +9,10 @@ import { nanoid } from "nanoid"
 import { getPos } from "../helpers";
 import { useEffect } from "react";
 import InteractiveBox from "./InteractiveBox";
-import { Matrix } from "./Playground";
+import { Matrix, MouseMapper, Point } from "./Playground";
 
 interface Props extends DNA<ThemeExtension> {
-    matrixState: MutableRefObject<Matrix>
+    mouseMapper: MutableRefObject<MouseMapper>
 }
 
 type EditMode = "box" | "select"
@@ -21,22 +21,13 @@ const CursorBox = styled(Box)<{editMode: EditMode}>`
     cursor: ${props => props.editMode == "box" ? "cell" : "default"};
 `
 
-const Artboard: React.FC<Props> = ({children, matrixState, ...dna}) => {
+const Artboard: React.FC<Props> = ({children, mouseMapper, ...dna}) => {
     const playgroundRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
     const drawBoxRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
 
     const [ active, setActive ] = useState("")
     const [ components, setComponents ] = useState<RenderComponents>([])
     const [ editMode, setEditMode ] = useState<EditMode>("box")
-
-    function mapCursorToMatrixState(coord: { x: number, y: number }, state: Matrix) {
-        return {
-            x: (coord.x + state[4]) * state[0], y: (coord.y + state[5]) * state[0]
-        }
-    }
-    function mapYToMatrixState(value: number, state: Matrix) {
-        return (value + state[5]) * state[0]
-    }
 
     useEffect(() => {
         const method = (e: KeyboardEvent) => {
@@ -55,16 +46,15 @@ const Artboard: React.FC<Props> = ({children, matrixState, ...dna}) => {
         }
     }
 
-    useEffect(() => {
-        const { x, y } = getPos(playgroundRef.current)
-        const width = playgroundRef.current.offsetWidth
-        const midX = width / 2
-        const call = (e: MouseEvent) => console.log((e.clientX - x - midX - matrixState.current[4]) / matrixState.current[0], matrixState.current[4], matrixState.current[0])
-        window.addEventListener("mousemove", call)
-        return () => window.removeEventListener("mousemove", call)
-    })
+    function mapCursorToArtboard(point: Point, refPos: { x: number, y: number, width: number, height: number}) {
+        const { x, y } = mouseMapper.current.calculate(point)
+        return {
+            x: x - refPos.x,
+            y: y - refPos.y
+        }
+    }
 
-    useInteractable(playgroundRef, [components, editMode, setFlag], { x: 0, y: 0, offsetX: 0, offsetY: 0 })
+    useInteractable(playgroundRef, [components, editMode, setFlag], { initX: 0, initY: 0, offset: { x: 0, y: 0, width: 0, height: 0 }})
         .shouldStart(() => {
             if (editMode == "box") return true;
             if (!setFlag) setActive("")
@@ -72,27 +62,32 @@ const Artboard: React.FC<Props> = ({children, matrixState, ...dna}) => {
             return false;
         })
         .onStart(({e, ref}) => {
-            const { x, y } = mapCursorToMatrixState(getPos(ref), matrixState.current)
-            
+            const x = ref.offsetLeft
+            const y = ref.offsetTop
+            const width = ref.offsetWidth
+            const height = ref.offsetHeight
+            const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, { x, y, width, height})
+
             drawBoxRef.current!.style.opacity = "1"
-            drawBoxRef.current!.style.left = e.clientX - x + "px"
-            drawBoxRef.current!.style.top = e.clientY - y + "px"
+            drawBoxRef.current!.style.left = mousePos.x + "px"
+            drawBoxRef.current!.style.top = mousePos.y + "px"
             drawBoxRef.current!.style.width = "0px"
             drawBoxRef.current!.style.height = "0px"
-            return { x: e.clientX, y: e.clientY, offsetX: x, offsetY: y }
+            return { initX: mousePos.x, initY: mousePos.y, offset: { x, y, width, height }}
         })
         .onUpdate(({e, state}) => {
-            drawBoxRef.current!.style.left = Math.min(e.clientX - state.offsetX, state.x - state.offsetX) - matrixState.current[4] + "px"
-            drawBoxRef.current!.style.top = Math.min(e.clientY - state.offsetY, state.y - state.offsetY) + "px"
-            drawBoxRef.current!.style.width = Math.abs(e.clientX - state.x) / matrixState.current[0] + "px"
-            drawBoxRef.current!.style.height = Math.abs(e.clientY - state.y) / matrixState.current[0] + "px"
+            const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, state.offset)
+            drawBoxRef.current!.style.left = Math.min(mousePos.x, state.initX) + "px"
+            drawBoxRef.current!.style.top = Math.min(mousePos.y, state.initY) + "px"
+            drawBoxRef.current!.style.width = Math.abs(mousePos.x - state.initX) + "px"
+            drawBoxRef.current!.style.height = Math.abs(mousePos.y - state.initY) + "px"
         })
-        .onEnd(({e, state, ref}) => {
-            const { x, y } = mapCursorToMatrixState(getPos(ref), matrixState.current)
-            const width = Math.abs(e.clientX - state.x) / matrixState.current[0]
-            const height = Math.abs(e.clientY - state.y) / matrixState.current[0]
-            const left = Math.min(e.clientX, state.x) - x
-            const top = Math.min(e.clientY, state.y) - y
+        .onEnd(({e, state}) => {
+            const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, state.offset)
+            const width = Math.abs(mousePos.x - state.initX)
+            const height = Math.abs(mousePos.y - state.initY)
+            const left = Math.min(mousePos.x, state.initX)
+            const top = Math.min(mousePos.y, state.initY)
             drawBoxRef.current!.style.width = "0px"
             drawBoxRef.current!.style.height = "0px"
             drawBoxRef.current!.style.opacity = "0"
@@ -123,7 +118,7 @@ const Artboard: React.FC<Props> = ({children, matrixState, ...dna}) => {
     return (
         <CursorBox {...dna} ref={playgroundRef} editMode={editMode}>
             <ComponentTreeRenderer components={components} active={active} setActive={asdf}/>
-            <Box ref={drawBoxRef} position="absolute" border="ghost"/>
+            <Box ref={drawBoxRef} position="absolute" border="ghost" left={"calc(50% - 10px)"} top={"calc(50% - 10px)"} width={20} height={20}/>
         </CursorBox>
     )
 }
