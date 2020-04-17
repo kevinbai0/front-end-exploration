@@ -19,7 +19,7 @@ function App() {
     return (
         <Box ref={ref} display="row" rowLayout="auto 1fr auto" bg="background" justifyItems="start" justifyContent="stretch" height="100vh" width="100vw">
             <Toolkit /> 
-            <Playground width="100%" justify="center"/>
+            <Playground width="100%" height="100%" justify="center"/>
             <RightUtilities justify="end" />
         </Box>
     );
