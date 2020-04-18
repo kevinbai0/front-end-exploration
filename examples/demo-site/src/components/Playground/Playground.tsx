@@ -1,12 +1,12 @@
 import React from "react";
 import { Box, styled } from "style-x";
-import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
+import { DNA, ThemeExtension } from "../../../../../dist/types/src/theme/types";
 import { useEffect } from "react";
 import { useRef } from "react";
 import Artboard from "./Artboard";
-import { getDim } from "../helpers";
-import { Matrix, MouseMapper } from "../utils/types";
-import usePersepectiveTransform from "../hooks/usePersepectiveTransform";
+import { getDim } from "../../helpers";
+import { Matrix, MouseMapper } from "../../utils/types";
+import usePersepectiveTransform from "../../hooks/usePersepectiveTransform";
 
 interface Props extends DNA<ThemeExtension> {
 

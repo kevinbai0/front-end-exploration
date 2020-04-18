@@ -1,19 +1,5 @@
 import { useEffect, MutableRefObject, useRef } from "react"
-
-export type EventMethod<T, S extends HTMLElement> = (props: { e: MouseEvent, ref: S, state: T }) => T | undefined | void
-type EventListener<S> = {
-    event: "mousedown" | "mouseup" | "mousemove"
-    method: (e: MouseEvent, ref: S) => void
-}
-
-type LifeCycleMethod<T, S extends HTMLElement, R> = (props: { e: MouseEvent, ref: S, state: T}) => R
-type LifeCycle<S> = {
-    event: "should-start",
-    method: (e: MouseEvent, ref: S) => boolean
-}
-
-
-let windowListeners: any[] = []
+import { EventListener, LifeCycle, LifeCycleMethod, EventMethod } from "../utils/types"
 
 export default function<T, S extends HTMLElement>(
     ref: React.MutableRefObject<S | null>,

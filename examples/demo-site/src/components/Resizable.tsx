@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { Box, styled } from "style-x";
 import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
 import { useEffect } from "react";
-import useInteractable from "../hooks/useInteractable";
+import useInteractive from "../hooks/useInteractive";
 
 interface Props extends DNA<ThemeExtension> {
     constraints: {
@@ -20,7 +20,7 @@ const Resizable: React.FC<Props> = ({children, constraints,...dna}) => {
     const boxRef = useRef<HTMLDivElement>(null);
 
 
-    useInteractable(resizeBox, [], {})
+    useInteractive(resizeBox, [], {})
         .onUpdate(({e}) => {
             if (boxRef.current) {
                 const newWidth = Math.max(constraints.minWidth, Math.min(constraints.maxWidth, boxRef.current.offsetLeft + boxRef.current.offsetWidth - e.x))

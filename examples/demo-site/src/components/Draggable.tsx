@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Box, styled } from "style-x";
 import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
-import useInteractable from "../hooks/useInteractable";
+import useInteractive from "../hooks/useInteractive";
 interface Props extends DNA<ThemeExtension> {
 }
 
@@ -22,7 +22,7 @@ const ResizeBox = styled(Box)`
 const Draggable: React.FC<Props> = ({children,...dna}) => {
     const dragRef = useRef<HTMLDivElement>(null);
 
-    useInteractable(dragRef, [], { x: 0, y: 0})
+    useInteractive(dragRef, [], { x: 0, y: 0})
         .onStart(({e, ref}) => {
             ref.style.transition = "background-color, box-shadow 0.3s ease"
             return { x: e.clientX, y: e.clientY }

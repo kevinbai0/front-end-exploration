@@ -1,29 +1,68 @@
 import React, { useRef } from "react";
 import { Box, styled } from "style-x"
-import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
-import useInteractable from "../hooks/useInteractable";
+import { DNA, ThemeExtension } from "../../../../../dist/types/src/theme/types";
+import useInteractive from "../../hooks/useInteractive";
 import { MutableRefObject } from "react";
-import { getPos } from "../helpers";
+import { getPos } from "../../helpers";
+import { RenderableComponentProps, StyleSetterRef } from "./ComponentTreeRenderer"
+import { useEffect } from "react";
 
-export interface InteractiveBoxProps extends DNA<ThemeExtension> {
+export interface InteractiveBoxProps extends RenderableComponentProps {
     componentDNA: DNA<ThemeExtension>
-    active?: string
-    setActive?: (id: string) => void
-    id: string
 }
 
-const InteractiveBox: React.FC<InteractiveBoxProps> = ({children, componentDNA, active, setActive, id, ...dna}) => {
-    const drawBoxRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
+const InteractiveBox: React.FC<InteractiveBoxProps> = ({children, componentDNA, active, setActive, setRef, id, ...dna}) => {
+    const drawBoxRef = useRef<HTMLDivElement>(null)
 
-    const interactive = useInteractable(drawBoxRef, [active], { x: 0, y: 0, initDims: {x: 0, y: 0, absX: 0, absY: 0, height: 0, width: 0}, state: "move" })
-        .shouldStart(() => {
+    function getDim(key: "left" | "width" | "top" | "height") {
+        if (!drawBoxRef.current) return 0
+        if (drawBoxRef.current.style[key].length <= 2) return 0
+        const value = parseFloat(drawBoxRef.current.style[key].slice(0, -2))
+        if (value == NaN) return 0
+        return value
+    }
+
+    const styleSetRef = useRef<StyleSetterRef>({
+        left: () => getDim("left"),
+        top: () => getDim("top"),
+        width: () => getDim("width"),
+        height: () => getDim("height"),
+        setDimensions: function({x, y, width, height}) {
+            if (!drawBoxRef.current) return
+            drawBoxRef.current.style.left = x + "px"
+            drawBoxRef.current.style.top = y + "px"
+            drawBoxRef.current.style.width = width + "px"
+            drawBoxRef.current.style.height = height + "px"
+        },
+        getDimensions: function() {
+            return {
+                x: this.left(),
+                y: this.top(),
+                width: this.width(),
+                height: this.height()
+            }
+        }
+    })
+
+    useEffect(() => {
+        styleSetRef.current.setDimensions({
+            x: typeof(dna.left) == "number" ? dna.left : 0,
+            y: typeof(dna.top) == "number" ? dna.top : 0,
+            width: typeof(dna.width) == "number" ? dna.width : 0,
+            height: typeof(dna.height) == "number" ? dna.height : 0
+        })
+        setRef(styleSetRef)
+    }, [])
+
+    const interactive = useInteractive(drawBoxRef, [active], { x: 0, y: 0, initDims: {x: 0, y: 0, absX: 0, absY: 0, height: 0, width: 0}, state: "move" })
+        /*.shouldStart(() => {
             setActive && setActive(id)
             return true
         })
-        .onStart(({e, ref, state}) => {
+        .onStart(({e, ref}) => {
             const { x, y } = getPos(ref)
             return { 
-                x: e.clientX, 
+                x: e.clientX,
                 y: e.clientY, 
                 initDims: {
                     x: ref.offsetLeft,
@@ -71,14 +110,14 @@ const InteractiveBox: React.FC<InteractiveBoxProps> = ({children, componentDNA, 
                 ref.style.left = (e.clientX - state.x + state.initDims.x) + "px"
                 ref.style.top = (e.clientY - state.y + state.initDims.y) + "px"
             }
-        })
+        })*/
 
     return (
-        <Box ref={drawBoxRef} {...dna} border={active == id ? "action" : "none"}>
+        <Box ref={drawBoxRef} {...dna} border={active.includes(id) ? "action" : "none"}>
             <Box width="fill" height="fill" {...componentDNA}>
                 {children}
             </Box>
-            {active == id && (
+            {active.includes(id) && (
                 <>
                     <EditDot width={10} height={10} left={-7} top={-7} bg="background" onMouseDown={() => interactive.updateState({ state: "drag-tl"})}/>
                     <EditDot width={10} height={10} right={-7} top={-7} bg="background" onMouseDown={() => interactive.updateState({ state: "drag-tr"})}/>
