@@ -6,6 +6,7 @@ import InteractiveBox, { InteractiveBoxProps } from "../components/Playground/In
 import { LayoutDim, MouseMapper, Point, EditState } from "../utils/types";
 import { DefaultTheme } from "styled-components";
 import { ThemeContext } from "style-x"
+import useEditState from "./useEditState";
 
 export default function(mouseMapper: MutableRefObject<MouseMapper>) {
     const artboardRef = useRef<HTMLDivElement>(null)
@@ -15,14 +16,14 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
     const theme = useContext(ThemeContext)
 
     const [ components, setComponents ] = useState<RenderComponents>([])
-    const [ editState, setEditState ] = useState<EditState>({mode: { type: "select", value: "no-selection"}, selected: []})
+    const { editState, getEditState, updateEditState } = useEditState()
 
     useEffect(() => {
         const method = (e: KeyboardEvent) => {
-            if (e.key == "b") setEditState({...editState, mode: { type: "box" }, selected: editState.selected})
+            if (e.key == "b") updateEditState({...getEditState(), mode: { type: "box" }, selected: getEditState().selected})
             else if (e.key == "v") {
-                setEditState({
-                    ...editState,
+                updateEditState({
+                    ...getEditState(),
                     mode: {
                         type: "select", value: editState.selected.length ? "selected" : "no-selection"
                     },
@@ -34,7 +35,7 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
                     // delete
                     setComponents(deleteIdsFromTree(editState.selected, components))
                     editState.selected.forEach(id => delete componentsStore.current[id])
-                    setEditState({
+                    updateEditState({
                         mode: { type: "select", value: "no-selection" },
                         selected: []
                     })
@@ -55,38 +56,77 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
 
     useInteractive(artboardRef, [components, editState], { 
         initialPoint: { x: 0, y: 0 },
-        offset: { x: 0, y: 0, width: 0, height: 0 }
+        offset: { x: 0, y: 0, width: 0, height: 0 },
+        initialEditState: getEditState()
     })
         .onStart(({e, ref}) => {
+            const readonlyState = getEditState()
             const offset: LayoutDim = {
                 x: ref.offsetLeft, y: ref.offsetTop, width: ref.offsetWidth, height: ref.offsetHeight
             }
             const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, offset)
+
+            if (readonlyState.mode.type != "select") {
+                drawBoxInteractions.onStart(mousePos, readonlyState)
+                return { initialPoint: mousePos, offset, initialEditState: readonlyState }
+            }
+            const newState = getNewEditState({x: mousePos.x, y: mousePos.y, width: 0, height: 0 }, readonlyState, componentsStore.current)
+            if (readonlyState.mode.value != "no-selection") {
+                if (!newState || newState && newState.mode.type == "select" && newState.mode.value == "selected") {
+                    updateEditState({
+                        ...editState,
+                        mode: {
+                            type: "select",
+                            value: "translating"
+                        }
+                    })
+                    return { initialPoint: mousePos, offset, initialEditState: getEditState() }
+                }
+            }
+            if (newState) updateEditState(newState)
             drawBoxInteractions.onStart(mousePos, editState)
 
-            if (editState.mode.type != "select") return { initialPoint: mousePos, offset }
-            const newState = getNewEditState({x: mousePos.x, y: mousePos.y, width: 0, height: 0 }, editState, componentsStore.current)
-            if (newState) setEditState(newState)
-
-            return { initialPoint: mousePos, offset }
+            return { initialPoint: mousePos, offset, initialEditState: getEditState() }
         })
         .onUpdate(({e, state}) => {
-            const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, state.offset)
-            const rectDim = drawBoxInteractions.onUpdate(mousePos, state.initialPoint)
+            const readonlyState = getEditState()
 
-            if (editState.mode.type != "select") return
+            const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, state.offset)
+            const rectDim = drawBoxInteractions.onUpdate(mousePos, state.initialPoint, { shouldDraw: readonlyState.mode.type != "select" || readonlyState.mode.value != "translating"})
+
+            if (readonlyState.mode.type != "select") return
+
+            if (readonlyState.mode.value == "translating") {
+                getEditState().selected.map(id => componentsStore.current[id]).forEach(component => {
+                    component.ref.current.setDimensions({
+                        ...component.ref.current.getDimensions(),
+                        x: mousePos.x - state.initialPoint.x,
+                        y: mousePos.y - state.initialPoint.y
+                    })
+                })
+                return;
+            }
 
             const newState = getNewEditState(rectDim, editState, componentsStore.current)
-            if (newState) setEditState(newState)
+            if (newState) {
+                updateEditState(newState)
+                return
+            }
+            if (state.initialEditState.mode.type == "select" && state.initialEditState.mode.value == "selected") {
+                updateEditState({
+                    ...readonlyState,
+                    mode: { type: "select", value: "translating" },
+                })
+            }
         })
         .onEnd(({e, state}) => {
             const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, state.offset)
-            const dim = drawBoxInteractions.onEnd(mousePos, state.initialPoint, editState)
+            const dim = drawBoxInteractions.onEnd(mousePos, state.initialPoint, getEditState())
             if (dim) {
                 const id = nanoid()
                 setComponents([...components, createInteractiveBox(id, dim)])
-                setEditState({
-                    ...editState,
+                updateEditState({
+                    ...getEditState(),
                     selected: [id]
                 })
             }
@@ -97,6 +137,7 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
     }
 }
 
+// handling deleting components. TODO: change to tail recursive function
 function deleteIdsFromTree(ids: string[], tree: RenderComponents): RenderComponents {
     // delete from tree
     return tree.reduce((accum, component) => {
@@ -117,6 +158,7 @@ function deleteIdsFromTree(ids: string[], tree: RenderComponents): RenderCompone
     }, [] as RenderComponents)
 }
 
+// see during a selection, which components are being selected
 function getNewEditState(rectDim: LayoutDim, editState: EditState, store: ComponentStore): EditState | undefined {
     // calculate overlap
     const keys = Object.entries(store)
@@ -171,17 +213,20 @@ function createDrawBoxInteractions(ref: MutableRefObject<HTMLDivElement>, theme:
             ref.current.style.border = "none"
         }
     }
-    function onUpdate({x,y}: Point, initialPoint: Point) {
+    function onUpdate({x,y}: Point, initialPoint: Point, options: { shouldDraw: boolean }) {
         const dim: LayoutDim = {
             x: Math.min(x, initialPoint.x),
             y: Math.min(y, initialPoint.y),
             width: Math.abs(x - initialPoint.x),
             height: Math.abs(y - initialPoint.y)
         }
-        ref.current!.style.left = dim.x + "px"
-        ref.current!.style.top = dim.y + "px"
-        ref.current!.style.width = dim.width + "px"
-        ref.current!.style.height = dim.height + "px"
+        if (options.shouldDraw) {
+            ref.current!.style.left = dim.x + "px"
+            ref.current!.style.top = dim.y + "px"
+            ref.current!.style.width = dim.width + "px"
+            ref.current!.style.height = dim.height + "px"
+        }
+        
         return dim
     }
     function onEnd(pos: Point, initialPoint: Point, editState: EditState): LayoutDim | undefined {
