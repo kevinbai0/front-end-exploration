@@ -1,44 +1,38 @@
 import { MutableRefObject, useRef, useState, useEffect, useContext } from "react";
 import useInteractive from "./useInteractive";
-import { RenderComponent, RenderComponents, RenderableComponentProps, StyleSetterRef } from "../components/Playground/ComponentTreeRenderer";
+import { RenderComponent, RenderComponents, RenderableComponentProps, StyleSetterRef, ComponentStore } from "../components/Playground/ComponentTreeRenderer";
 import { nanoid } from "nanoid";
 import InteractiveBox, { InteractiveBoxProps } from "../components/Playground/InteractiveBox";
-import { LayoutDim, MouseMapper, Point, EditMode } from "../utils/types";
+import { LayoutDim, MouseMapper, Point, EditState } from "../utils/types";
 import { DefaultTheme } from "styled-components";
 import { ThemeContext } from "style-x"
 
 export default function(mouseMapper: MutableRefObject<MouseMapper>) {
     const artboardRef = useRef<HTMLDivElement>(null)
     const drawBoxRef = useRef<HTMLDivElement>(null)
-    const componentsStore = useRef<{
-        [key: string]: {
-            component: RenderComponent<RenderableComponentProps>,
-            ref: MutableRefObject<StyleSetterRef>
-        }
-    }>({})
+    const componentsStore = useRef<ComponentStore>({})
 
     const theme = useContext(ThemeContext)
 
-    const [ active, setActive ] = useState<string[]>([])
     const [ components, setComponents ] = useState<RenderComponents>([])
-    const [ editMode, setEditMode ] = useState<EditMode>("box")
+    const [ editState, setEditState ] = useState<EditState>({mode: { type: "select", value: "no-selection"}, selected: []})
 
     useEffect(() => {
         const method = (e: KeyboardEvent) => {
-            if (e.key == "b") setEditMode("box")
-            else if (e.key == "v") setEditMode("select")
+            if (e.key == "b") setEditState({...editState, mode: { type: "box" }, selected: editState.selected})
+            else if (e.key == "v") {
+                setEditState({
+                    ...editState,
+                    mode: {
+                        type: "select", value: editState.selected.length ? "selected" : "no-selection"
+                    },
+                    selected: editState.selected
+                })
+            }
         }
         window.addEventListener("keyup", method)
         return () => window.removeEventListener("keyup", method)
     })
-
-    let setFlag = ""
-    function updateFlag(id: string) {
-        if (!setFlag) {
-            setActive([...active.filter(val => val != id), id])
-            setFlag = id
-        }
-    }
 
     // map mouse coordinates to artboard
     function mapCursorToArtboard(point: Point, refPos: LayoutDim) {
@@ -48,66 +42,82 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
 
     const drawBoxInteractions = createDrawBoxInteractions(drawBoxRef, theme)
 
-    useInteractive(artboardRef, [components, editMode, setFlag], { 
+    useInteractive(artboardRef, [components, editState], { 
         initialPoint: { x: 0, y: 0 },
         offset: { x: 0, y: 0, width: 0, height: 0 }
     })
-        .shouldStart(() => {
-            if (editMode == "box") return true;
-            if (!setFlag) setActive([])
-            setFlag = ""
-            return true;
-        })
         .onStart(({e, ref}) => {
             const offset: LayoutDim = {
                 x: ref.offsetLeft, y: ref.offsetTop, width: ref.offsetWidth, height: ref.offsetHeight
             }
             const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, offset)
-            drawBoxInteractions.onStart(mousePos, editMode)
+            drawBoxInteractions.onStart(mousePos, editState)
+
+            if (editState.mode.type != "select") return { initialPoint: mousePos, offset }
+            const newState = getNewEditState({x: mousePos.x, y: mousePos.y, width: 0, height: 0 }, editState, componentsStore.current)
+            if (newState) setEditState(newState)
+
             return { initialPoint: mousePos, offset }
         })
         .onUpdate(({e, state}) => {
             const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, state.offset)
             const rectDim = drawBoxInteractions.onUpdate(mousePos, state.initialPoint)
 
-            // calculate overlap
-            const keys = Object.entries(componentsStore.current)
-                .filter((pair) => hasOverlap(rectDim, pair[1].ref.current.getDimensions()))
-                .map(pair => pair[0])
+            if (editState.mode.type != "select") return
 
-            // diff active and keys
-            const equal = keys.length == active.length && active.filter((value, i) => keys[i] != value).length == 0
-
-            if (!equal) {
-                setActive(keys)
-            }
+            const newState = getNewEditState(rectDim, editState, componentsStore.current)
+            if (newState) setEditState(newState)
         })
         .onEnd(({e, state}) => {
             const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, state.offset)
-            drawBoxInteractions.onEnd(mousePos, state.initialPoint, editMode, (offset) => {
+            const dim = drawBoxInteractions.onEnd(mousePos, state.initialPoint, editState)
+            if (dim) {
                 const id = nanoid()
-                setComponents([...components, createInteractiveBox(id, offset)])
-                setActive([...active, id])
-            })
+                setComponents([...components, createInteractiveBox(id, dim)])
+                setEditState({
+                    ...editState,
+                    selected: [id]
+                })
+            }
         })
 
     return {
-        artboardRef, drawBoxRef, editMode, active, setActive: updateFlag, components, componentsStore
+        artboardRef, drawBoxRef, editState, components, componentsStore
+    }
+}
+
+function getNewEditState(rectDim: LayoutDim, editState: EditState, store: ComponentStore): EditState | undefined {
+    // calculate overlap
+    const keys = Object.entries(store)
+        .filter((pair) => hasOverlap(rectDim, pair[1].ref.current.getDimensions()))
+        .map(pair => pair[0])
+
+    // diff active and keys
+    const equal = keys.length == editState.selected.length && editState.selected.filter((value, i) => keys[i] != value).length == 0
+
+    if (!equal) {
+        return {
+            ...editState,
+            mode: {
+                type: "select",
+                value: keys.length ? "selected" : "no-selection"
+            },
+            selected: keys
+        }
     }
 }
 
 function hasOverlap(rect1: LayoutDim, rect2: LayoutDim) {
     // check if any points in rect1 are in rect 2
-    if (pointInRect({ x: rect1.x, y: rect1.y }, rect2)) return true
-    if (pointInRect({ x: rect1.x, y: rect1.y + rect1.height }, rect2)) return true
-    if (pointInRect({ x: rect1.x + rect1.width, y: rect1.y }, rect2)) return true
-    if (pointInRect({ x: rect1.x + rect1.width, y: rect1.y + rect1.height }, rect2)) return true
+    return pointInRect({ x: rect1.x, y: rect1.y }, rect2)
+        || pointInRect({ x: rect1.x, y: rect1.y + rect1.height }, rect2)
+        || pointInRect({ x: rect1.x + rect1.width, y: rect1.y }, rect2)
+        || pointInRect({ x: rect1.x + rect1.width, y: rect1.y + rect1.height }, rect2)
     // see if points in rect2 are in rect1
-    if (pointInRect({ x: rect2.x, y: rect2.y }, rect1)) return true
-    if (pointInRect({ x: rect2.x, y: rect2.y + rect2.height }, rect1)) return true
-    if (pointInRect({ x: rect2.x + rect2.width, y: rect2.y }, rect1)) return true
-    if (pointInRect({ x: rect2.x + rect2.width, y: rect2.y + rect2.height }, rect1)) return true
-    return false
+        || pointInRect({ x: rect2.x, y: rect2.y }, rect1)
+        || pointInRect({ x: rect2.x, y: rect2.y + rect2.height }, rect1)
+        || pointInRect({ x: rect2.x + rect2.width, y: rect2.y }, rect1)
+        || pointInRect({ x: rect2.x + rect2.width, y: rect2.y + rect2.height }, rect1)
 }
 
 function pointInRect(point: Point, rect: LayoutDim) {
@@ -115,18 +125,17 @@ function pointInRect(point: Point, rect: LayoutDim) {
 }
 
 function createDrawBoxInteractions(ref: MutableRefObject<HTMLDivElement>, theme: DefaultTheme) {
-    function onStart({x, y}: Point, mode: EditMode) {
+    function onStart({x, y}: Point, editState: EditState) {
         ref.current!.style.opacity = "1"
         ref.current!.style.left = x + "px"
         ref.current!.style.top = y + "px"
         ref.current!.style.width = "0px"
         ref.current!.style.height = "0px"
-        if (mode == "box") {
+        if (editState.mode.type == "box") {
             ref.current.style.backgroundColor = "white";
             ref.current.style.border = "1px solid #888888"
         }
-        else if (mode == "select") {
-            console.log("Select mode")
+        else if (editState.mode.type == "select") {
             ref.current.style.backgroundColor = "rgba(37,175,239,0.5)"
             ref.current.style.border = "none"
         }
@@ -144,7 +153,7 @@ function createDrawBoxInteractions(ref: MutableRefObject<HTMLDivElement>, theme:
         ref.current!.style.height = dim.height + "px"
         return dim
     }
-    function onEnd(pos: Point, initialPoint: Point, editMode: EditMode, callback: (dimensions: LayoutDim) => void) {
+    function onEnd(pos: Point, initialPoint: Point, editState: EditState): LayoutDim | undefined {
         const width = Math.abs(pos.x - initialPoint.x)
         const height = Math.abs(pos.y - initialPoint.y)
         const left = Math.min(pos.x, initialPoint.x)
@@ -153,8 +162,8 @@ function createDrawBoxInteractions(ref: MutableRefObject<HTMLDivElement>, theme:
         ref.current!.style.width = "0px"
         ref.current!.style.height = "0px"
         ref.current!.style.opacity = "0"
-        if (width * height == 0 || editMode == "select") return;
-        callback({ x: left, y: top, width, height })
+        if (width * height == 0 || editState.mode.type == "select") return;
+        return { x: left, y: top, width, height }
     }
     return {
         onStart,

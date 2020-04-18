@@ -16,7 +16,6 @@ export interface StyleSetterRef {
 export interface RenderableComponentProps extends DNA<ThemeExtension> {
     id: string
     active?: string[], 
-    setActive?: (id: string) => void
     setRef?: (ref: MutableRefObject<StyleSetterRef>) => void
 }
 
@@ -37,16 +36,17 @@ export type RenderComponents = RenderComponent<RenderableComponentProps>[]
 interface Props extends DNA<ThemeExtension> {
     components: RenderComponents
     active: string[]
-    setActive: (id: string) => void
-    store: MutableRefObject<{
-        [key: string]: {
-            component: RenderComponent<RenderableComponentProps>
-            ref: MutableRefObject<StyleSetterRef>
-        }
-    }>
+    store: MutableRefObject<ComponentStore>
 }
 
-const ComponentTreeRenderer: React.FC<Props> = ({children, components, active, store, setActive, ...dna}) => {
+export type ComponentStore = {
+    [key: string]: {
+        component: RenderComponent<RenderableComponentProps>,
+        ref: MutableRefObject<StyleSetterRef>
+    }
+}
+
+const ComponentTreeRenderer: React.FC<Props> = ({children, components, active, store, ...dna}) => {
     return (
         <Box {...dna}>
             {components.map((component) => {
@@ -55,7 +55,6 @@ const ComponentTreeRenderer: React.FC<Props> = ({children, components, active, s
                         <component.component.fn 
                             key={component.id} {...component.component.props} 
                             active={active}
-                            setActive={setActive}
                             setRef={(ref) => {
                                 store.current[component.id] = { component, ref}
                             }}
@@ -66,7 +65,6 @@ const ComponentTreeRenderer: React.FC<Props> = ({children, components, active, s
                     <ComponentTreeRenderer 
                         components={component.component.fn} 
                         active={active} 
-                        setActive={setActive} 
                         store={store}
                     />
                 )

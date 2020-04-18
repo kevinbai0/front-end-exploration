@@ -1,4 +1,12 @@
-export type EditMode = "box" | "select"
+export interface EditState {
+    mode: {
+        type: "box"
+    } | {
+        type: "select"
+        value: "no-selection" | "selecting" |"selected" | "resizing" | "translating"
+    }
+    selected: string[]
+}
 
 export type LayoutDim = { x: number, y: number, width: number, height: number }
 
