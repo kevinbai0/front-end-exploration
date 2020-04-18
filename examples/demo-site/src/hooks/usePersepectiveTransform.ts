@@ -1,6 +1,6 @@
 import { useEffect, MutableRefObject, useRef } from "react"
 import { getDim } from "../helpers"
-import { MouseMapper, Matrix } from "../utils/types"
+import { MouseMapper, Matrix, LayoutDim } from "../utils/types"
 
 function multPair(m1: Matrix, m2: Matrix): Matrix {
     return [m1[0] * m2[0], 0, 0, m1[3] * m2[3], m1[4] * m2[0] + m2[4], m1[5] * m2[3] + m2[5]]
@@ -19,17 +19,43 @@ export default function(ref: MutableRefObject<HTMLDivElement>, canvasRef: Mutabl
             return { x: (x - this.anchor.x) / this.anchor.scale, y: (y - this.anchor.y) / this.anchor.scale}
         }})
 
+    const canvasDim = useRef<LayoutDim>({x: 0, y: 0, width: 0, height: 0})
+
+
+    useEffect(() => {
+        // debounce resize since the only thing we need to recalculate, which won't affect user experience if not done in real time
+        // is canvas dim to be used when mapping mouse position to the screen
+        let resizeDebounceIndex = 0
+        function resizeListener(e: UIEvent) {
+            resizeDebounceIndex += 1
+            let thisDebounceIndex = resizeDebounceIndex
+            setTimeout(() => {
+                if (resizeDebounceIndex == thisDebounceIndex) {
+                    canvasDim.current = getDim(canvasRef.current)
+                    mouseMapper.current.anchor = {
+                        x: canvasDim.current.x + transformMatrix.current[4] + (canvasDim.current.width / 2) * (1 - transformMatrix.current[0]),
+                        y: canvasDim.current.y + transformMatrix.current[5] + (canvasDim.current.height / 2) * (1 - transformMatrix.current[0]),
+                        scale: transformMatrix.current[0]
+                    }
+                    resizeDebounceIndex = 0
+                }
+            }, 500)
+        }
+        window.addEventListener("resize", resizeListener)
+
+        return () => window.removeEventListener("resize", resizeListener)
+    })
 
     useEffect(() => {
         const midX = ref.current.offsetWidth / 2
         const midY = ref.current.offsetHeight / 2
         const left = ref.current.offsetLeft
         const top = ref.current.offsetTop
-        const canvasDim = getDim(canvasRef.current)
+        canvasDim.current = getDim(canvasRef.current)
 
         mouseMapper.current.anchor = {
-            x: canvasDim.x,
-            y: canvasDim.y,
+            x: canvasDim.current.x,
+            y: canvasDim.current.y,
             scale: 1
         }
 
@@ -54,8 +80,8 @@ export default function(ref: MutableRefObject<HTMLDivElement>, canvasRef: Mutabl
             canvasRef.current!.style.transform=`matrix(${finalMatrix.join(",")})`
 
             mouseMapper.current.anchor = {
-                x: canvasDim.x + finalMatrix[4] + (canvasDim.width / 2) * (1 - finalMatrix[0]),
-                y: canvasDim.y + finalMatrix[5] + (canvasDim.height / 2) * (1 - finalMatrix[0]),
+                x: canvasDim.current.x + finalMatrix[4] + (canvasDim.current.width / 2) * (1 - finalMatrix[0]),
+                y: canvasDim.current.y + finalMatrix[5] + (canvasDim.current.height / 2) * (1 - finalMatrix[0]),
                 scale: finalMatrix[0]
             }
 
@@ -65,6 +91,8 @@ export default function(ref: MutableRefObject<HTMLDivElement>, canvasRef: Mutabl
 
         return () => ref.current?.removeEventListener("mousewheel", scroll)
     })
+
+
 
     return { mouseMapper }
 }
