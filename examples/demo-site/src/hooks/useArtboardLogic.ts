@@ -32,7 +32,7 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
                 })
             }
             if (e.key == "Backspace") {
-                if (editState.mode.type == "select" && editState.mode.value == "selected") {
+                if (editState.mode.type == "select" && editState.selected.length) {
                     // delete
                     setComponents(deleteIdsFromTree(editState.selected, components))
                     editState.selected.forEach(id => delete componentsStore.current[id])
@@ -59,7 +59,8 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
     useInteractive(artboardRef, [components, editState], { 
         initialPoint: { x: 0, y: 0 },
         offset: { x: 0, y: 0, width: 0, height: 0 },
-        initialEditState: getEditState()
+        initialEditState: getEditState(),
+        selectedElementsInitialState: {} as { [key: string]: LayoutDim }
     })
         .onStart(({e, ref}) => {
             const readonlyState = getEditState()
@@ -71,14 +72,13 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
             switch (readonlyState.mode.type) {
                 case "box":
                     drawBoxInteractions.onStart(mousePos, readonlyState)
-                    return { initialPoint: mousePos, offset, initialEditState: readonlyState }
+                    return { initialPoint: mousePos, offset, initialEditState: readonlyState, selectedElementsInitialState: {} }
                 case "select":
-                    const newState = getNewEditState({x: mousePos.x, y: mousePos.y, width: 0, height: 0 }, readonlyState, componentsStore.current)
-
-                    if (newState) updateEditState(newState)
+                    const newState = getNewEditState({ x: mousePos.x, y: mousePos.y, width: 0, height: 0 }, readonlyState, componentsStore.current)
+                    if (newState && newState.mode.type == "select" && newState.mode.value != readonlyState.mode.value) updateEditState(newState)
                     drawBoxInteractions.onStart(mousePos, editState)
 
-                    return { initialPoint: mousePos, offset, initialEditState: getEditState() }
+                    return { initialPoint: mousePos, offset, initialEditState: getEditState(), selectedElementsInitialState: {} }
             }
             
         })
@@ -96,44 +96,55 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
 
             function handleSelect() {
                 if (readonlyState.mode.type != "select") return // handle typescript typechecking
-
                 switch (readonlyState.mode.value) {
                     case "translating":
                         // TODO: need to get initial data from the state
-                        getEditState().selected.map(id => componentsStore.current[id]).forEach(component => {
+                        getEditState().selected.map(id => componentsStore.current[id]).forEach((component, i) => {
                             component.ref.current.setDimensions({
                                 ...component.ref.current.getDimensions(),
-                                x: mousePos.x - state.initialPoint.x,
-                                y: mousePos.y - state.initialPoint.y
+                                x: mousePos.x - state.initialPoint.x + state.selectedElementsInitialState[component.component.id].x,
+                                y: mousePos.y - state.initialPoint.y + state.selectedElementsInitialState[component.component.id].y
                             })
                         })
                         return
                     default: 
-                        const newState = getNewEditState(rectDim, editState, componentsStore.current)
-                        if (newState) {
-                            updateEditState(newState)
-                            return
-                        }
                         if (state.initialEditState.mode.type == "select" && state.initialEditState.mode.value == "selected") {
                             // TODO: update the state by getting initial positions for items to be translated
                             updateEditState({
                                 ...readonlyState,
                                 mode: { type: "select", value: "translating" },
                             })
+                            return {
+                                ...state,
+                                selectedElementsInitialState: getEditState().selected.reduce((accum, id) => {
+                                    accum[id] = componentsStore.current[id].ref.current.getDimensions()
+                                    return accum
+                                }, {})
+                            }
+                        }
+
+                        const newState = getNewEditState(rectDim, editState, componentsStore.current)
+                        if (newState) {
+                            updateEditState(newState)
+                            return
                         }
                 }
             }
         })
         .onEnd(({e, state}) => {
+            const readonlyState = getEditState()
             const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, state.offset)
-            const dim = drawBoxInteractions.onEnd(mousePos, state.initialPoint, getEditState())
+            const dim = drawBoxInteractions.onEnd(mousePos, state.initialPoint, readonlyState)
             if (dim) {
                 const id = nanoid()
                 setComponents([...components, createInteractiveBox(id, dim)])
                 updateEditState({
-                    ...getEditState(),
+                    ...readonlyState,
                     selected: [id]
                 })
+            }
+            if (readonlyState.mode.type == "select" && readonlyState.mode.value == "translating") {
+                updateEditState({...editState, mode: { type: "select", value: "selected" }})
             }
         })
 
@@ -142,7 +153,7 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
     }
 }
 
-// handling deleting components. TODO: change to tail recursive function
+// handles deleting components. TODO: change to tail recursive function
 function deleteIdsFromTree(ids: string[], tree: RenderComponents): RenderComponents {
     // delete from tree
     return tree.reduce((accum, component) => {
