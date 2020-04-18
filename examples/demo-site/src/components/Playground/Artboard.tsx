@@ -16,7 +16,6 @@ const CursorBox = styled(Box)<{editState: EditState}>`
 
 const Artboard: React.FC<Props> = ({children, mouseMapper, ...dna}) => {
     const { artboardRef, drawBoxRef, editState, components, componentsStore } = useArtboardLogic(mouseMapper)
-    console.log(editState)
     return (
         <CursorBox {...dna} ref={artboardRef} editState={editState}>
             <ComponentTreeRenderer components={components} active={editState.selected} store={componentsStore}/>

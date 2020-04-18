@@ -29,6 +29,17 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
                     selected: editState.selected
                 })
             }
+            if (e.key == "Backspace") {
+                if (editState.mode.type == "select" && editState.mode.value == "selected") {
+                    // delete
+                    setComponents(deleteIdsFromTree(editState.selected, components))
+                    editState.selected.forEach(id => delete componentsStore.current[id])
+                    setEditState({
+                        mode: { type: "select", value: "no-selection" },
+                        selected: []
+                    })
+                }
+            }
         }
         window.addEventListener("keyup", method)
         return () => window.removeEventListener("keyup", method)
@@ -84,6 +95,26 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
     return {
         artboardRef, drawBoxRef, editState, components, componentsStore
     }
+}
+
+function deleteIdsFromTree(ids: string[], tree: RenderComponents): RenderComponents {
+    // delete from tree
+    return tree.reduce((accum, component) => {
+        if (component.component.type == "component") {
+            if (!ids.includes(component.id)) accum.push(component)
+        }
+        else {
+            const deleted = deleteIdsFromTree(ids, component.component.fn)
+            if (deleted.length) accum.push({
+                id: nanoid(),
+                component: {
+                    type: "tree",
+                    fn: deleted
+                }
+            })
+        }
+        return accum
+    }, [] as RenderComponents)
 }
 
 function getNewEditState(rectDim: LayoutDim, editState: EditState, store: ComponentStore): EditState | undefined {
