@@ -18,6 +18,7 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
     const [ components, setComponents ] = useState<RenderComponents>([])
     const { editState, getEditState, updateEditState } = useEditState()
 
+    // keyboard listener, to refactor later
     useEffect(() => {
         const method = (e: KeyboardEvent) => {
             if (e.key == "b") updateEditState({...getEditState(), mode: { type: "box" }, selected: getEditState().selected})
@@ -52,6 +53,7 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
         return { x: x - refPos.x, y: y - refPos.y }
     }
 
+    // get drawbox interactions for selection and drawing a new box
     const drawBoxInteractions = createDrawBoxInteractions(drawBoxRef, theme)
 
     useInteractive(artboardRef, [components, editState], { 
@@ -66,27 +68,19 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
             }
             const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, offset)
 
-            if (readonlyState.mode.type != "select") {
-                drawBoxInteractions.onStart(mousePos, readonlyState)
-                return { initialPoint: mousePos, offset, initialEditState: readonlyState }
-            }
-            const newState = getNewEditState({x: mousePos.x, y: mousePos.y, width: 0, height: 0 }, readonlyState, componentsStore.current)
-            if (readonlyState.mode.value != "no-selection") {
-                if (!newState || newState && newState.mode.type == "select" && newState.mode.value == "selected") {
-                    updateEditState({
-                        ...editState,
-                        mode: {
-                            type: "select",
-                            value: "translating"
-                        }
-                    })
-                    return { initialPoint: mousePos, offset, initialEditState: getEditState() }
-                }
-            }
-            if (newState) updateEditState(newState)
-            drawBoxInteractions.onStart(mousePos, editState)
+            switch (readonlyState.mode.type) {
+                case "box":
+                    drawBoxInteractions.onStart(mousePos, readonlyState)
+                    return { initialPoint: mousePos, offset, initialEditState: readonlyState }
+                case "select":
+                    const newState = getNewEditState({x: mousePos.x, y: mousePos.y, width: 0, height: 0 }, readonlyState, componentsStore.current)
 
-            return { initialPoint: mousePos, offset, initialEditState: getEditState() }
+                    if (newState) updateEditState(newState)
+                    drawBoxInteractions.onStart(mousePos, editState)
+
+                    return { initialPoint: mousePos, offset, initialEditState: getEditState() }
+            }
+            
         })
         .onUpdate(({e, state}) => {
             const readonlyState = getEditState()
@@ -94,29 +88,40 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
             const mousePos = mapCursorToArtboard({x: e.clientX, y: e.clientY}, state.offset)
             const rectDim = drawBoxInteractions.onUpdate(mousePos, state.initialPoint, { shouldDraw: readonlyState.mode.type != "select" || readonlyState.mode.value != "translating"})
 
-            if (readonlyState.mode.type != "select") return
-
-            if (readonlyState.mode.value == "translating") {
-                getEditState().selected.map(id => componentsStore.current[id]).forEach(component => {
-                    component.ref.current.setDimensions({
-                        ...component.ref.current.getDimensions(),
-                        x: mousePos.x - state.initialPoint.x,
-                        y: mousePos.y - state.initialPoint.y
-                    })
-                })
-                return;
+            switch (readonlyState.mode.type) {
+                case "box": return
+                case "select": 
+                    return handleSelect()
             }
 
-            const newState = getNewEditState(rectDim, editState, componentsStore.current)
-            if (newState) {
-                updateEditState(newState)
-                return
-            }
-            if (state.initialEditState.mode.type == "select" && state.initialEditState.mode.value == "selected") {
-                updateEditState({
-                    ...readonlyState,
-                    mode: { type: "select", value: "translating" },
-                })
+            function handleSelect() {
+                if (readonlyState.mode.type != "select") return // handle typescript typechecking
+
+                switch (readonlyState.mode.value) {
+                    case "translating":
+                        // TODO: need to get initial data from the state
+                        getEditState().selected.map(id => componentsStore.current[id]).forEach(component => {
+                            component.ref.current.setDimensions({
+                                ...component.ref.current.getDimensions(),
+                                x: mousePos.x - state.initialPoint.x,
+                                y: mousePos.y - state.initialPoint.y
+                            })
+                        })
+                        return
+                    default: 
+                        const newState = getNewEditState(rectDim, editState, componentsStore.current)
+                        if (newState) {
+                            updateEditState(newState)
+                            return
+                        }
+                        if (state.initialEditState.mode.type == "select" && state.initialEditState.mode.value == "selected") {
+                            // TODO: update the state by getting initial positions for items to be translated
+                            updateEditState({
+                                ...readonlyState,
+                                mode: { type: "select", value: "translating" },
+                            })
+                        }
+                }
             }
         })
         .onEnd(({e, state}) => {

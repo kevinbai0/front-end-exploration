@@ -13,8 +13,11 @@ export default function<T, S extends HTMLElement>(
     eventListeners.current = []
     lifeCycleActions.current = []
 
+    // TODO: batch all window methods so no excess event listeners are created (dunno if this is a good idea tho)
     useEffect(() => {
         const curr = ref.current
+
+        // reduce the eventlisteners and lifecycle methods by key
         const reduced = eventListeners.current.reduce((accum, listener) => {
             accum[listener.event].push(listener)
             return accum
@@ -25,6 +28,7 @@ export default function<T, S extends HTMLElement>(
             return accum
         }, { "should-start": [] } as { [key in LifeCycle<S>["event"]]: LifeCycle<S>[]})
     
+        // for each mousedown, mousemove, and mouseup, apply all the lifecycle/eventlistener methods
         const mousedown = (e: MouseEvent) => {
             if (!curr) return
             if (lifeCycles["should-start"].filter(ev => !ev.method(e, curr)).length > 0) return
@@ -38,7 +42,7 @@ export default function<T, S extends HTMLElement>(
             reduced.mousemove.forEach(ev => ev.method(e, curr))
         }
 
-        function mouseup(e: MouseEvent) {
+        const mouseup = (e: MouseEvent) => {
             if (!curr?.getAttribute("down")) return
             curr?.setAttribute("down", "")
             if (!curr) return
@@ -56,9 +60,12 @@ export default function<T, S extends HTMLElement>(
         }
     }, [ref, diff])
 
+    // return these methods to be chained together by useInteractive
     const returnObj = {
         onStart, onUpdate, onEnd, shouldStart, updateState
     }
+
+    // defined lifecycle and event methods
 
     function shouldStart(fn: LifeCycleMethod<T, S, boolean>) {
         lifeCycleActions.current.push({
