@@ -1,8 +1,6 @@
 import React from "react";
-import { DNA, ThemeExtension } from "../../../design-system/src/theme/types";
-import { Header2, Box } from "style-x";
-import Resizable from "./Resizable";
-import Draggable from "./Draggable";
+import { DNA, ThemeExtension } from "../../design-system/src/theme/types";
+import { Box } from "../../design-system";
 
 interface Props extends DNA<ThemeExtension> {
 

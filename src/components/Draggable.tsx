@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import { Box, styled } from "style-x";
-import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
+import { Box, styled } from "../../design-system";
+import { DNA, ThemeExtension } from "../../design-system/src/theme/types";
 import useInteractive from "../hooks/useInteractive";
 interface Props extends DNA<ThemeExtension> {
 }

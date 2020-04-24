@@ -4,8 +4,7 @@ import { RenderComponent, RenderComponents, RenderableComponentProps, StyleSette
 import { nanoid } from "nanoid";
 import InteractiveBox, { InteractiveBoxProps } from "../components/Playground/InteractiveBox";
 import { LayoutDim, MouseMapper, Point, EditState } from "../utils/types";
-import { DefaultTheme } from "styled-components";
-import { ThemeContext } from "style-x"
+import { DefaultTheme, ThemeContext } from "styled-components";
 import useEditState from "./useEditState";
 
 export default function(mouseMapper: MutableRefObject<MouseMapper>) {

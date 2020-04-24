@@ -1,6 +1,6 @@
 import React from "react";
-import { Box } from "style-x";
-import { DNA, ThemeExtension } from "../../../../dist/types/src/theme/types";
+import { Box } from "../../design-system";
+import { DNA, ThemeExtension } from "../../design-system/src/theme/types";
 
 interface Props extends DNA<ThemeExtension> {
 

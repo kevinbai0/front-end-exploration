@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
-import { Box } from "style-x";
+import { Box } from "../design-system";
 import RightUtilities from './components/RightUtiltities';
-import Artboard from './components/Playground/Artboard';
 import Toolkit from './components/Toolkit';
 import { useEffect } from 'react';
 import Playground from './components/Playground/Playground';
