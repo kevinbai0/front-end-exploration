@@ -1,47 +1,23 @@
 {
-  "name": "style-x",
-  "version": "0.1.2",
-  "description": "My design system",
-  "main": "./dist/main.bundle.js",
-  "types": "./dist/types/index.d.ts",
+  "name": "design-system",
+  "version": "1.0.0",
+  "description": "This project consists of two components: design-system & design-ui.",
+  "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js && webpack --config webpack.native.js && yarn tsc",
-    "tsc": "tsc",
-    "prepublishOnly": "npm run build",
-    "dev": "webpack --watch"
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinbai0/design-system.git"
   },
   "keywords": [],
-  "author": "Kevin Bai <kevin.c.bai0@gmail.com>",
+  "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kevinbai0/design-system/issues"
+  },
+  "homepage": "https://github.com/kevinbai0/design-system#readme",
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/preset-typescript": "^7.3.3",
-    "@types/styled-components": "^4.4.2",
-    "@types/styled-system": "^5.1.4",
-    "babel-loader": "^8.0.6",
-    "react": "^16.13.1",
-    "react-native": "^0.62.2",
-    "styled-components": "^5.1.0",
-    "typescript": "^3.7.5",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
-  },
-  "peerDependencies": {
-    "react": ">= 16.0",
-    "styled-components": ">= 5.0.0",
-    "react-native": ">= 0.60.0"
-  },
-  "resolutions": {
-    "@babel/preset-env": "^7.8.7"
-  },
-  "dependencies": {
-    "@babel/plugin-proposal-numeric-separator": ">= 7.0.0"
-  },
-  "files": [
-    "dist"
-  ]
+    "lerna": "^3.20.2"
+  }
 }
