@@ -1,6 +1,6 @@
 import { MutableRefObject, useRef, useState, useEffect, useContext } from "react";
 import useInteractive from "./useInteractive";
-import { RenderComponent, RenderComponents, RenderableComponentProps, StyleSetterRef, ComponentStore } from "../components/Playground/ComponentTreeRenderer";
+import { RenderComponent, RenderComponents, ComponentStore } from "../components/Playground/ComponentTreeRenderer";
 import { nanoid } from "nanoid";
 import InteractiveBox, { InteractiveBoxProps } from "../components/Playground/InteractiveBox";
 import { LayoutDim, MouseMapper, Point, EditState } from "../utils/types";

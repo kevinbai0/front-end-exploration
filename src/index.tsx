@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { createTheme } from '../design-system'
-import { ThemeProvider } from "styled-components"
+import { createTheme, ThemeProvider } from './design-system'
 
 const newTheme = {
     colors: {
@@ -22,7 +21,7 @@ const newTheme = {
 }
 
 const theme = createTheme(newTheme)
-declare module "../design-system/src/theme/types" {
+declare module "./design-system/src/theme/types" {
     type NewTheme = typeof newTheme
     export interface ThemeExtension extends NewTheme {}
 }

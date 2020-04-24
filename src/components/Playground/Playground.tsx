@@ -1,6 +1,6 @@
 import React from "react";
-import { Box, styled } from "../../../design-system";
-import { DNA, ThemeExtension } from "../../../design-system/src/theme/types";
+import { Box, styled } from "../../design-system";
+import { DNA, ThemeExtension } from "../../design-system/src/theme/types";
 import { useRef } from "react";
 import Artboard from "./Artboard";
 import usePersepectiveTransform from "../../hooks/usePersepectiveTransform";

@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import { Box, styled } from "../../../design-system"
-import { DNA, ThemeExtension } from "../../../design-system/src/theme/types";
+import { Box, styled } from "../../design-system"
+import { DNA, ThemeExtension } from "../../design-system/src/theme/types";
 import useInteractive from "../../hooks/useInteractive";
 import { MutableRefObject } from "react";
 import { getPos } from "../../helpers";
@@ -52,7 +52,7 @@ const InteractiveBox: React.FC<InteractiveBoxProps> = ({children, componentDNA, 
             height: typeof(dna.height) == "number" ? dna.height : 0
         })
         setRef(styleSetRef)
-    }, [])
+    }, [dna.height, dna.left, dna.top, dna.width, setRef])
 
     return (
         <Box ref={drawBoxRef} {...dna} border={active.includes(id) ? "action" : "none"}>

@@ -1,6 +1,6 @@
 import React from "react";
-import { DNA, ThemeExtension } from "../../design-system/src/theme/types";
-import { Header2, Box } from "../../design-system/index";
+import { DNA, ThemeExtension } from "../design-system/src/theme/types";
+import { Header2, Box } from "../design-system";
 import Resizable from "./Resizable";
 import Draggable from "./Draggable";
 
