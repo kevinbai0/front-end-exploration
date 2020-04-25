@@ -1,21 +1,15 @@
 const path = require("path")
 
 module.exports = {
-    target: "web",
-    entry: "./index.rn.ts",
+    target: "node",
+    entry: "./src/interpreter/parser.ts",
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"]
     },
     mode: "production",
     output: {
-        path: path.resolve(__dirname, "native/dist"),
-        filename: "./main.bundle.js",
-        library: "style-x",
-        libraryTarget: "umd",
-        globalObject: "this"
-    },
-    externals: {
-        'react-native': 'react-native'
+        path: path.resolve(__dirname, "dist"),
+        filename: "parser.bundle.js",
     },
     module: {
         rules: [
@@ -25,7 +19,7 @@ module.exports = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ["@babel/preset-env", "module:metro-react-native-babel-preset"]
+                        presets: ["@babel/preset-env"]
                     }
                 }
             }

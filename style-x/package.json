@@ -1,0 +1,45 @@
+{
+    "name": "node-ts-starter",
+    "version": "1.0.0",
+    "description": "My starter code for projects running with Node, Typescript, Babel, Webpack, ESLint, and Prettier",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "webpack",
+        "dev": "webpack --watch",
+        "dev:server": "webpack-dev-server --config webpack.server.js",
+        "start": "node ./dist/bundle.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kevinbai0/node-ts-starter.git"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.7.2",
+        "@babel/plugin-proposal-class-properties": "^7.7.0",
+        "@babel/preset-env": "^7.7.1",
+        "@babel/preset-typescript": "^7.7.2",
+        "@types/jest": "^25.1.4",
+        "@types/node": "^13.9.2",
+        "@typescript-eslint/eslint-plugin": "^2.13.0",
+        "@typescript-eslint/parser": "^2.13.0",
+        "babel-loader": "^8.0.6",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.8.0",
+        "eslint-loader": "^3.0.3",
+        "eslint-plugin-prettier": "^3.1.2",
+        "jest": "^25.1.0",
+        "prettier": "1.19.1",
+        "typescript": "^3.8.3",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10",
+        "webpack-dev-server": "^3.10.3",
+        "webpack-merge": "^4.2.2"
+    },
+    "author": "Kevin Bai <kevin.c.bai0@gmail.com>",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/kevinbai0/node-ts-starter/issues"
+    },
+    "homepage": "https://github.com/kevinbai0/node-ts-starter#readme"
+}

@@ -102,11 +102,10 @@ Box{boxLayout}.fg(background).bg(white)
 }
 ```
 
-## Concept of representation
 
 Conceptually, it's a functional language that compiles computes the layout of any user interface.
 
-It's a tree representation of each component + a tree representation of each component's layout. Except, it takes advantage of pattern matching for a super expressive syntax.
+It's a tree representation of each component + a tree representation of each component's layout. Except, it takes advantage of powerful pattern matching for an expressive syntax.
 
-It's like html or css where it only contains information about the structure, but it does so in a very powerful way.
+It's like html or css where it only contains information about the structure, but it represents the data in a very powerful way.
 

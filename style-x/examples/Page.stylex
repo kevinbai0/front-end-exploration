@@ -1,0 +1,20 @@
+@expects
+    name: string = "Rose"
+    date: Date = new Date()
+    articles: Article[] = []
+    weather?: Weather
+    featuredArticle: Article
+    authorOfMonth?: Author
+    categories: Category[]
+
+@handlers
+    articleSelected?: (article: Article) => void
+
+@component
+Box{
+    layout(width):
+        (row, _)
+    size(): strict-fill
+}
+    MenuColumn{}.date.categories
+    Dashboard{}

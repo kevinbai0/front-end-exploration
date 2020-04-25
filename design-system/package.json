@@ -8,7 +8,8 @@
     "build": "webpack --config webpack.config.js && webpack --config webpack.native.js && yarn tsc",
     "tsc": "tsc",
     "prepublishOnly": "npm run build",
-    "dev": "webpack --watch"
+    "dev": "webpack --watch",
+    "parse": "webpack --config webpack.parser.js && node ./dist/parser.bundle.js"
   },
   "keywords": [],
   "author": "Kevin Bai <kevin.c.bai0@gmail.com>",
