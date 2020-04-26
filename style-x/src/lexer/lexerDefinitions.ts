@@ -32,7 +32,7 @@ export type TokenTypes =
     | "marker"
     | "unknown"
 
-export type ParseTypes =
+export type TokenizeTypes =
     | "parseBreakSymbol"
     | "parseDotSymbol"
     | "parseParenSymbol"
@@ -56,58 +56,58 @@ export type PartialToken = {
 
 /** Define parsers */
 
-export type ParseValue = (char: string, lineNumber: number, position: number) => PartialToken | null
-export type ParseNextValue = (char: string, token: TokenType, lineNumber: number, position: number) => PartialToken | null
+export type TokenizeValue = (char: string, lineNumber: number, position: number) => PartialToken | null
+export type TokenizeNextValue = (char: string, token: TokenType, lineNumber: number, position: number) => PartialToken | null
 
-export interface Parser {
+export interface SubLexer {
     type: "primitive" | "stateful"
-    id: ParseTypes
+    id: TokenizeTypes
     exp: RegExp
-    parseFirst: ParseValue
-    parseNext?: ParseNextValue
+    tokenizeFirst: TokenizeValue
+    tokenizeNext?: TokenizeNextValue
 }
 
-export interface PrimitiveParser extends Parser {
+export interface PrimitiveSubLexer extends SubLexer {
     type: "primitive"
 }
 
-export interface StatefulParser<T> extends Parser {
+export interface StatefulSubLexer<T> extends SubLexer {
     type: "stateful"
     state: T
 }
 
-export function createParser(
-    id: ParseTypes,
+export function createSubLexer(
+    id: TokenizeTypes,
     exp: RegExp,
     methods: {
-        parseFirst: ParseValue
-        parseNext?: ParseNextValue
+        tokenizeFirst: TokenizeValue
+        tokenizeNext?: TokenizeNextValue
     }
-): PrimitiveParser {
+): PrimitiveSubLexer {
     return {
         type: "primitive",
         id,
         exp: exp,
-        parseFirst: methods.parseFirst,
-        parseNext: methods.parseNext
+        tokenizeFirst: methods.tokenizeFirst,
+        tokenizeNext: methods.tokenizeNext
     }
 }
 
-export function createStatefulParser<T>(
-    id: ParseTypes,
+export function createStatefulLexer<T>(
+    id: TokenizeTypes,
     exp: RegExp,
     methods: {
-        parseFirst: ParseValue
-        parseNext?: ParseNextValue
+        tokenizeFirst: TokenizeValue
+        tokenizeNext?: TokenizeNextValue
     },
     defaultState: T
-): StatefulParser<T> {
+): StatefulSubLexer<T> {
     return {
         type: "stateful",
         id,
         exp: exp,
-        parseFirst: methods.parseFirst,
-        parseNext: methods.parseNext,
+        tokenizeFirst: methods.tokenizeFirst,
+        tokenizeNext: methods.tokenizeNext,
         state: defaultState
     }
 }

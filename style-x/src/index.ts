@@ -1,17 +1,17 @@
 import fs from "fs"
-import Tokenizer from "./parser/tokenizer"
+import Tokenizer from "./lexer/lexer"
+import { getExpectsEnvironment } from "./parser/expects"
 
 async function parseStyleXFile(fileName: string) {
     const tokenizer = new Tokenizer()
 
-    await lineReader(fileName, tokenizer.readChar)
-    console.log("Finished")
-    console.log(tokenizer.tokens)
+    await fileReader(fileName, tokenizer.readChar)
+    getExpectsEnvironment(tokenizer.tokens)
 
     return {}
 }
 
-function lineReader(fileName: string, readChar: (char: string, code: number) => void) {
+function fileReader(fileName: string, readChar: (char: string, code: number) => void) {
     return new Promise((res, rej) => {
         const readable = fs.createReadStream(fileName, {
             encoding: "utf8"

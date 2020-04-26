@@ -1,5 +1,5 @@
-import { TokenType, PartialToken, Parser } from "./tokenizer_definitions"
-import { parsers } from "./parsers"
+import { TokenType, PartialToken, SubLexer } from "./lexerDefinitions"
+import { lexers } from "./sublexers"
 
 export const isNumeric = (char: number) => "0".charCodeAt(0) <= char && char <= "9".charCodeAt(0)
 export const isAlphabetic = (char: number) =>
@@ -7,7 +7,7 @@ export const isAlphabetic = (char: number) =>
 export const isAlphaNumeric = (char: number) => isNumeric(char) || isAlphabetic(char)
 
 type TokenState = {
-    parser: Parser | null
+    parser: SubLexer | null
     token?: TokenType
     lineNumber: number
     position: number
@@ -40,6 +40,7 @@ export default class Tokenizer {
             this.state.token = token.token
             return
         }
+        if (token.token.type == "comment") return
         this.tokens.push(token.token)
         this.state.token = undefined
         if (token.unget) {
@@ -62,14 +63,14 @@ export default class Tokenizer {
             return
         }
 
-        this._handlePartialToken(this.state.parser!.parseNext!(char, this.state.token, this.state.lineNumber, this.state.position), char, charCode)
+        this._handlePartialToken(this.state.parser!.tokenizeNext!(char, this.state.token, this.state.lineNumber, this.state.position), char, charCode)
     }
 
     private _beginTokenization = (char: string, charCode: number): PartialToken | null => {
-        const match = parsers.find(val => char.match(val.exp))
+        const match = lexers.find(val => char.match(val.exp))
         if (!match?.id) throw new Error(`Unexpected token "${char}" with type "${match?.id}" on line ${this.state.lineNumber}:${this.state.position}`)
 
         this.state.parser = match
-        return match?.parseFirst(char, this.state.lineNumber, this.state.position)
+        return match?.tokenizeFirst(char, this.state.lineNumber, this.state.position)
     }
 }

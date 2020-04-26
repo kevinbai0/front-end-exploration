@@ -1,4 +1,4 @@
-import { PartialToken, TokenTypes, TokenType } from "./tokenizer_definitions"
+import { PartialToken, TokenTypes, TokenType } from "./lexerDefinitions"
 
 export const tokenizeCharacter = (type: TokenTypes, value: string, lineNumber: number, position: number): PartialToken => ({
     token: {

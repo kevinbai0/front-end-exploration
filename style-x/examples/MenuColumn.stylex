@@ -1,29 +1,38 @@
-@expects
-    date: Date
+@expects {
+    dateStr: string = `Mar 02, 2020`
+    timeStr: string = `10:40 am`
     imgSrc?: string
-    categories: Category[]
+    categories: Category[] = [
+        {
+            articleName: `Hello world`
+            author: `Kevin Bai`
+        },
+        {
+            articleName: `Writing your interpreter`
+            author: `Kevin Bai`
+        }
+    ]
+}
 
-@handlers
+@handlers {
     categorySelected?: (category: Category) => void
-
-const (mainDate, time) = ((date) => {
-    // parse date and get dateStr and timeStr
-    return [dateStr, timeStr];
-})(date)
+}
 
 @component
 Box.layout(
     [] = padding(20),
     [0, 700] = none,
     [700, _] = col.align(center).justify(space_between)
-).size(fill)
-    Box.layout(col.align(start)).size((fill, auto))
+).size(fill) {
+    Box.layout(col.align(start)).size((fill, auto)) {
         Img.layout(
-            [] = mb(10)
+            [] = marginBottom(10)
         ).size(50).src(imageSrc).style(radius = 25)
         // .as will only be used in web apps and is purely for SEO
-        Text.as(`span`).text(mainDate).style(extends = [CaptionStyle]) // CaptionStyle is defined as a theme
-        Text.as(`span`).text(time).style(extends = [BodyStyle])
+        Text.as(`span`).text(dateStr).style(extends = [CaptionStyle]) // CaptionStyle is defined as a theme
+        Text.as(`span`).text(timeStr).style(extends = [BodyStyle])
+    }
     Box.layout(col.align(start)).size(
-        (fill, auto) < (_, 70%) // constrain height to maximum of 70% height of parent
+        _ < (fill, auto) < (_, 70%) // constrain height to maximum of 70% height of parent
     )
+}
