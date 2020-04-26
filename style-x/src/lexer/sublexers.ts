@@ -103,6 +103,14 @@ const markerLexer = createSubLexer("parseMarker", /@/s, {
     }
 })
 
+const conditionalLexer = createSubLexer("parseConditional", /-/s, {
+    tokenizeFirst: (char, ln, pos) => tokenizeIncompleteCharacter("conditional", char, ln, pos),
+    tokenizeNext: (char, token, ln, pos) => {
+        if (char == ">") return retokenizeToken("conditional", token, token.value + char, { complete: true })
+        throw new Error(`Unexpected symbol "${char}" after "-" symbol on line ${ln}:${pos}`)
+    }
+})
+
 export const lexers: SubLexer[] = [
     comparatorLexer,
     operatorLexer,
@@ -117,5 +125,6 @@ export const lexers: SubLexer[] = [
     identifierLexer,
     stringLexer,
     numberLexer,
-    markerLexer
+    markerLexer,
+    conditionalLexer
 ]

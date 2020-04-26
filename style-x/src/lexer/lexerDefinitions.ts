@@ -1,7 +1,7 @@
-export type Marker = "@expects" | "@handlers" | "@component"
+export type Marker = "@import" | "@expects" | "@handlers" | "@component"
 export type PrimitiveType = "string" | "number" | "any" | "object" | "undefined" | "null" | "void"
 
-export const markers: Marker[] = ["@expects", "@handlers", "@component"]
+export const markers: Marker[] = ["@import", "@expects", "@handlers", "@component"]
 export const primitiveTypes: PrimitiveType[] = ["string", "number", "any", "object", "undefined", "null", "void"]
 export type TokenType = {
     type: TokenTypes
@@ -20,6 +20,7 @@ export type TokenTypes =
     | "square_brace"
     | "colon"
     | "arrow"
+    | "conditional"
     | "break"
     | "comparator"
     | "operator"
@@ -47,6 +48,7 @@ export type TokenizeTypes =
     | "parseNumber"
     | "parseMarker"
     | "parseComment"
+    | "parseConditional"
 
 export type PartialToken = {
     token: TokenType

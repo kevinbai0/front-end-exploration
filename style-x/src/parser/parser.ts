@@ -1,18 +1,5 @@
 import { TokenType } from "../lexer/lexerDefinitions"
 
-type TypescriptType = {}
-
-type Value = string | number | object | undefined
-
-type Expression = {
-    id: "expression"
-    identifier: string
-    type: TypescriptType
-    defaultValue: Value
-}
-
-type AST = Expression[] | null
-
 type StreamReturn = {
     value: TokenType
     next: () => StreamReturn | null
