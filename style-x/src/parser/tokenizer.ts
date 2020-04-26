@@ -52,7 +52,6 @@ export default class Tokenizer {
             this.state.position += 1
             this._sourceCode += char
             if (char == "\n") {
-                console.log(this.state.lineNumber, this._sourceCode)
                 this.state.lineNumber += 1
                 this.state.position = -1
             }

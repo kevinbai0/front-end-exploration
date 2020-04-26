@@ -22,6 +22,7 @@ export type TokenTypes =
     | "arrow"
     | "break"
     | "comparator"
+    | "operator"
     | "equal"
     | "number"
     | "string"
@@ -31,15 +32,21 @@ export type TokenTypes =
     | "marker"
     | "unknown"
 
-export type SingleCharacterTokenType =
+export type ParseTypes =
     | "parseBreakSymbol"
     | "parseDotSymbol"
     | "parseParenSymbol"
+    | "parseOperator"
     | "parseQuestionSymbol"
     | "parseColonSymbol"
     | "parseWhitespace"
-
-export type MultiCharacterTokenType = "parseComparator" | "parseEqual" | "parseIdentifier" | "parseString" | "parseNumber" | "parseMarker" | "parseComment"
+    | "parseComparator"
+    | "parseEqual"
+    | "parseIdentifier"
+    | "parseString"
+    | "parseNumber"
+    | "parseMarker"
+    | "parseComment"
 
 export type PartialToken = {
     token: TokenType
@@ -54,7 +61,7 @@ export type ParseNextValue = (char: string, token: TokenType, lineNumber: number
 
 export interface Parser {
     type: "primitive" | "stateful"
-    id: MultiCharacterTokenType | SingleCharacterTokenType
+    id: ParseTypes
     exp: RegExp
     parseFirst: ParseValue
     parseNext?: ParseNextValue
@@ -70,7 +77,7 @@ export interface StatefulParser<T> extends Parser {
 }
 
 export function createParser(
-    id: MultiCharacterTokenType | SingleCharacterTokenType,
+    id: ParseTypes,
     exp: RegExp,
     methods: {
         parseFirst: ParseValue
@@ -87,7 +94,7 @@ export function createParser(
 }
 
 export function createStatefulParser<T>(
-    id: MultiCharacterTokenType | SingleCharacterTokenType,
+    id: ParseTypes,
     exp: RegExp,
     methods: {
         parseFirst: ParseValue

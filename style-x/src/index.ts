@@ -1,5 +1,5 @@
 import fs from "fs"
-import Tokenizer from "./tokenizer"
+import Tokenizer from "./parser/tokenizer"
 
 async function parseStyleXFile(fileName: string) {
     const tokenizer = new Tokenizer()
@@ -26,6 +26,6 @@ function lineReader(fileName: string, readChar: (char: string, code: number) => 
     })
 }
 
-parseStyleXFile("./examples/Simple.stylex")
+parseStyleXFile("./examples/MenuColumn.stylex")
     .then(ast => console.log(ast))
     .catch(err => console.error(err))

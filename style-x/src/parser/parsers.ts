@@ -14,9 +14,13 @@ const comparatorParser = createParser("parseComparator", /[<>&|]/s, {
     }
 })
 
+const operatorParser = createParser("parseOperator", /[+%]/s, {
+    parseFirst: (char, ln, pos) => tokenizeCharacter("operator", char, ln, pos)
+})
+
 const equalParser = createParser("parseEqual", /=/s, {
     parseFirst: (char, ln, pos) => tokenizeIncompleteCharacter("equal", char, ln, pos),
-    parseNext: (char, token, ln, pos) => {
+    parseNext: (char, token) => {
         if (char == ">") return retokenizeToken("arrow", token, "=>", { complete: true })
         else if (char == "=") return retokenizeToken("comparator", token, "==", { complete: true })
         else return retokenizeToken("equal", token, "=", { complete: true, unget: true })
@@ -69,7 +73,7 @@ const identifierParser = createParser("parseIdentifier", /[a-zA-Z_]/s, {
         if (!alphanum) {
             const primitive = primitiveTypes.find(type => type == token.value)
             if (primitive) return retokenizeToken("primitive_type", token, primitive, { complete: true, unget: true })
-            return retokenizeToken("primitive_type", token, token.value, { complete: true, unget: true })
+            return retokenizeToken("identifier", token, token.value, { complete: true, unget: true })
         }
         return retokenizeToken("identifier", token, token.value + char, { complete: false })
     }
@@ -101,6 +105,7 @@ const markerParser = createParser("parseMarker", /@/s, {
 
 export const parsers: Parser[] = [
     comparatorParser,
+    operatorParser,
     equalParser,
     breakParser,
     dotParser,

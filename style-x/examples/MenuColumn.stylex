@@ -14,8 +14,8 @@ const (mainDate, time) = ((date) => {
 @component
 Box.layout(
     [] = padding(20),
-    [0 -> 700] = none,
-    [700 -> _] = col.align(center).justify(space_between)
+    [0, 700] = none,
+    [700, _] = col.align(center).justify(space_between)
 ).size(fill)
     Box.layout(col.align(start)).size((fill, auto))
         Img.layout(
