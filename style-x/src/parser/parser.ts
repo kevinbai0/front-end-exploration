@@ -1,31 +1,12 @@
 import { TokenType } from "../lexer/lexerDefinitions"
+import { Parser } from "./parserDefinitions"
+import { createRootParser } from "./parsers"
 
-type StreamReturn = {
-    value: TokenType
-    next: () => StreamReturn | null
-}
+export function parse(tokens: TokenType[]) {
+    const parser: Parser<ProgramAST> = createRootParser()
 
-type Stream = (current: TokenType, next: number) => StreamReturn
-
-function createTokenStream(tokens: TokenType[]) {
-    const _stream: Stream = (current: TokenType, next: number) => ({
-        value: current,
-        next: () => {
-            if (next >= tokens.length) return null
-            return _stream(tokens[next], next + 1)
-        }
-    })
-    return () => _stream(tokens[0], 1)
-}
-
-export function getExpectsEnvironment(tokens: TokenType[]) {
-    const tokStream = createTokenStream(tokens)
-
-    function recurseStream(curr: StreamReturn | null, ast: AST): null {
-        if (!curr) return null
-        console.log(curr.value)
-        return recurseStream(curr.next(), ast)
+    for (const token of tokens) {
+        parser.receiveToken(token)
+        console.log(parser.ast)
     }
-
-    recurseStream(tokStream(), null)
 }

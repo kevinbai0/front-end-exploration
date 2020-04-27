@@ -1,12 +1,12 @@
 import fs from "fs"
-import Tokenizer from "./lexer/lexer"
-import { getExpectsEnvironment } from "./parser/expects"
+import Lexer from "./lexer/lexer"
+import { parse } from "./parser/parser"
 
 async function parseStyleXFile(fileName: string) {
-    const tokenizer = new Tokenizer()
+    const lexer = new Lexer()
 
-    await fileReader(fileName, tokenizer.readChar)
-    getExpectsEnvironment(tokenizer.tokens)
+    await fileReader(fileName, lexer.readChar)
+    parse(lexer.tokens)
 
     return {}
 }

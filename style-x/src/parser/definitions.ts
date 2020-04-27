@@ -101,6 +101,21 @@ type ExpressionLiteral = {
     defaultValue: ValueLiteral
 }
 
-type Literals = TypeLiteral | ValueLiteral | ExpressionLiteral | MarkerLiteral | ModuleLiteral | FunctionDefinitionLiteral | FunctionDefinitionParamLiteral
+type ProgramAST = {
+    id: "program"
+    imports?: ImportMarkerLiteral
+    expects?: ExpectsMarkerLiteral
+    handlers?: HandlersMarkerLiteral
+    component?: ComponentMarkerLiteral
+}
 
-type AST = Literals[] | null
+type AST =
+    | TypeLiteral
+    | ValueLiteral
+    | ExpressionLiteral
+    | MarkerLiteral
+    | ModuleLiteral
+    | FunctionDefinitionLiteral
+    | FunctionDefinitionParamLiteral
+    | ProgramAST
+    | null

@@ -1,11 +1,6 @@
 import { TokenType, PartialToken, SubLexer } from "./lexerDefinitions"
 import { lexers } from "./sublexers"
 
-export const isNumeric = (char: number) => "0".charCodeAt(0) <= char && char <= "9".charCodeAt(0)
-export const isAlphabetic = (char: number) =>
-    ("a".charCodeAt(0) <= char && char <= "z".charCodeAt(0)) || ("A".charCodeAt(0) <= char && char <= "Z".charCodeAt(0)) || char == "_".charCodeAt(0)
-export const isAlphaNumeric = (char: number) => isNumeric(char) || isAlphabetic(char)
-
 type TokenState = {
     parser: SubLexer | null
     token?: TokenType
@@ -14,7 +9,7 @@ type TokenState = {
     tokenComputeState: unknown
 }
 
-export default class Tokenizer {
+export default class Lexer {
     private state: TokenState = {
         parser: null,
         token: undefined,
@@ -31,7 +26,7 @@ export default class Tokenizer {
         this.state.token = undefined
         this.state.parser = null
 
-        this._handlePartialToken(this._beginTokenization(char, charCode), char, charCode)
+        this._handlePartialToken(this._beginTokenization(char), char, charCode)
     }
 
     private _handlePartialToken = (token: PartialToken | null, char: string, charCode: number) => {
@@ -40,9 +35,9 @@ export default class Tokenizer {
             this.state.token = token.token
             return
         }
+        this.state.token = undefined
         if (token.token.type == "comment") return
         this.tokens.push(token.token)
-        this.state.token = undefined
         if (token.unget) {
             this.readChar(char, charCode, true)
         }
@@ -66,7 +61,7 @@ export default class Tokenizer {
         this._handlePartialToken(this.state.parser!.tokenizeNext!(char, this.state.token, this.state.lineNumber, this.state.position), char, charCode)
     }
 
-    private _beginTokenization = (char: string, charCode: number): PartialToken | null => {
+    private _beginTokenization = (char: string): PartialToken | null => {
         const match = lexers.find(val => char.match(val.exp))
         if (!match?.id) throw new Error(`Unexpected token "${char}" with type "${match?.id}" on line ${this.state.lineNumber}:${this.state.position}`)
 
