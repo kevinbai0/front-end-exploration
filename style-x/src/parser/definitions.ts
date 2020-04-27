@@ -1,121 +1,116 @@
+export interface AST {
+    id: ASTUnion["id"]
+}
+
 // types
-type TypescriptTypeLiteral = {
+export interface TypescriptTypeAST extends AST {
     id: "typescript_type"
     value: "string"
 }
 
-type StringTypeLiteral = {
+export interface StringTypeAST extends AST {
     id: "string_type"
     value: "string"
 }
 
-type NumberTypeLiteral = {
+export interface NumberTypeAST extends AST {
     id: "number_type"
     value: "number"
 }
 
-type BooleanTypeLiteral = {
+export interface BooleanTypeAST extends AST {
     id: "boolean_type"
     value: "boolean"
 }
 
-type UndefinedTypeLiteral = {
+export interface UndefinedTypeAST extends AST {
     id: "undefined_type"
     value: "undefined"
 }
 
-type TypeLiteral = StringTypeLiteral | NumberTypeLiteral | BooleanTypeLiteral | UndefinedTypeLiteral | TypescriptTypeLiteral
+export type TypeAST = StringTypeAST | NumberTypeAST | BooleanTypeAST | UndefinedTypeAST | TypescriptTypeAST
 
 // values
-type StringLiteral = {
+export interface StringAST extends AST {
     id: "string_literal"
     value: string
 }
 
-type NumberLiteral = {
+export interface NumberAST extends AST {
     id: "number_literal"
     value: number
 }
 
-type BooleanLiteral = {
+export interface BooleanAST extends AST {
     id: "boolean_literal"
     value: boolean
 }
 
-type UndefinedLiteral = {
+export interface UndefinedAST extends AST {
     id: "undefined_literal"
     value: undefined
 }
 
-type ObjectLiteral = {
+export interface ObjectAST extends AST {
     id: "object_literal"
     value: object
 }
 
-type ValueLiteral = StringLiteral | NumberLiteral | BooleanLiteral | UndefinedLiteral | ObjectLiteral
+type ValueAST = StringAST | NumberAST | BooleanAST | UndefinedAST | ObjectAST
 
 // modules defined inside @import
-type ModuleLiteral = {
+export interface ModuleAST extends AST {
     id: "module_literal"
     value: string
 }
 
-type FunctionDefinitionParamLiteral = {
+export interface FunctionDefinitionParamAST extends AST {
     id: "function_defintion_param_literal"
     identifier: string
-    type: TypeLiteral
+    type: TypeAST
 }
 
-type FunctionDefinitionLiteral = {
+export interface FunctionDefinitionAST extends AST {
     id: "function_definition_literal"
     identifier: string
-    params: FunctionDefinitionParamLiteral[]
-    return: TypeLiteral
+    params: FunctionDefinitionParamAST[]
+    return: TypeAST
 }
 
-type ImportMarkerLiteral = {
+export interface ImportMarkerAST extends AST {
     id: "import_marker_literal"
-    value: ModuleLiteral[]
+    value: ModuleAST[]
 }
 
-type ExpectsMarkerLiteral = {
+export interface ExpectsMarkerAST extends AST {
     id: "expects_marker_literal"
-    value: ExpressionLiteral[]
+    value: ExpressionAST[]
 }
 
-type HandlersMarkerLiteral = {
+export interface HandlersMarkerAST extends AST {
     id: "handlers_marker_literal"
-    value: (FunctionDefinitionLiteral | TypescriptTypeLiteral)[]
+    value: (FunctionDefinitionAST | TypescriptTypeAST)[]
 }
 
-type ComponentMarkerLiteral = {
+export interface ComponentMarkerAST extends AST {
     id: "component_marker_literal"
 }
 
-type MarkerLiteral = ImportMarkerLiteral | ExpectsMarkerLiteral | HandlersMarkerLiteral | ComponentMarkerLiteral
+export type MarkerAST = ImportMarkerAST | ExpectsMarkerAST | HandlersMarkerAST | ComponentMarkerAST
 
-type ExpressionLiteral = {
+export interface ExpressionAST extends AST {
     id: "expression"
     identifier: string
-    type: TypeLiteral
-    defaultValue: ValueLiteral
+    type?: TypeAST
+    defaultValue?: ValueAST
 }
 
-type ProgramAST = {
+export interface ProgramAST extends AST {
     id: "program"
-    imports?: ImportMarkerLiteral
-    expects?: ExpectsMarkerLiteral
-    handlers?: HandlersMarkerLiteral
-    component?: ComponentMarkerLiteral
+    imports?: ImportMarkerAST
+    expects?: ExpectsMarkerAST
+    handlers?: HandlersMarkerAST
+    component?: ComponentMarkerAST
 }
 
-type AST =
-    | TypeLiteral
-    | ValueLiteral
-    | ExpressionLiteral
-    | MarkerLiteral
-    | ModuleLiteral
-    | FunctionDefinitionLiteral
-    | FunctionDefinitionParamLiteral
-    | ProgramAST
-    | null
+export type ASTUnion = TypeAST | ValueAST | ExpressionAST | MarkerAST | ModuleAST | FunctionDefinitionAST | FunctionDefinitionParamAST | ProgramAST
