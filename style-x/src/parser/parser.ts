@@ -6,6 +6,5 @@ export function parse(tokens: TokenType[]) {
 
     for (const token of tokens) {
         parser.receiveToken(token)
-        console.log(parser.getAst())
     }
 }

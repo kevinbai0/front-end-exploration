@@ -1,20 +1,29 @@
+// version 0.0.1
+
 @expects
-    name: string = "Rose"
-    date: Date = new Date()
-    articles: Article[] = []
-    weather?: Weather
-    featuredArticle: Article
-    authorOfMonth?: Author
-    categories: Category[]
+    name = `Kevin`
+    dateStr = `Feb 02 2020`
+    articles = []
+    weather = {}
+    featuredArticle: {
+    }
+    authorOfMonth = {
+        name = `Kevin`
+        imgSrc = ``
+    }
+    categories = [
+        `Dogs`
+        `Cats`
+    ]
 
 @handlers
-    articleSelected?: (article: Article) => void
+    articleSelected := fun(article: {})
 
 @component
-Box{
-    layout(width):
-        (row, _)
-    size(): strict-fill
-}
-    MenuColumn{}.date.categories
-    Dashboard{}
+Box[
+    layout = row,
+    size = fill
+](children = [
+    MenuColumn[dateStr = dateStr, categories = categories],
+    Dashboard
+]

@@ -1,4 +1,4 @@
-import { markers, primitiveTypes, createSubLexer, SubLexer } from "./lexerDefinitions"
+import { markers, primitiveTypes, createSubLexer, SubLexer, reservedKeywords } from "./lexerDefinitions"
 import { tokenizeIncompleteCharacter, retokenizeToken, tokenizeCharacter } from "./lexerMethods"
 
 const comparatorLexer = createSubLexer("parseComparator", /[<>&|]/s, {
@@ -72,7 +72,10 @@ const identifierLexer = createSubLexer("parseIdentifier", /[a-zA-Z_]/s, {
         const alphanum = char.match(/[a-zA-Z_]/s)
         if (!alphanum) {
             const primitive = primitiveTypes.find(type => type == token.value)
+            const keyword = reservedKeywords.find(word => word == token.value)
             if (primitive) return retokenizeToken("primitive_type", token, primitive, { complete: true, unget: true })
+            if (keyword) return retokenizeToken("reserved_keyword", token, keyword, { complete: true, unget: true })
+
             return retokenizeToken("identifier", token, token.value, { complete: true, unget: true })
         }
         return retokenizeToken("identifier", token, token.value + char, { complete: false })

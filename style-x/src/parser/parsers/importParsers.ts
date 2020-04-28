@@ -8,7 +8,7 @@ import { ImportMarkerAST, ModuleAST } from "../definitions"
  */
 export class ImportMarkerParser extends Parser<ImportMarkerAST> {
     constructor() {
-        super("root_import", {
+        super("parse_root_import", {
             id: "import_marker_literal",
             value: []
         })
@@ -19,22 +19,21 @@ export class ImportMarkerParser extends Parser<ImportMarkerAST> {
         if (token.value == "}" && ast == null) throw unexpectedToken(token)
 
         if (token.value == "{") {
-            this.setDelegate(new ModuleParser(), moduleAst => {
+            return this.setDelegate(new ModuleParser(), moduleAst => {
                 this.setAst({
                     ...(ast as ImportMarkerAST),
                     value: [...(ast as ImportMarkerAST).value, moduleAst as ModuleAST]
                 })
             })
-            return { complete: false }
         }
         // assumes } token is received
-        return { complete: true }
+        return this.endParser()
     }
 }
 
 export class ModuleParser extends Parser<ModuleAST> {
     constructor() {
-        super("module", {
+        super("parse_module", {
             id: "module_literal",
             value: ""
         })
@@ -42,14 +41,13 @@ export class ModuleParser extends Parser<ModuleAST> {
 
     handleToken = (token: TokenType, ast: ModuleAST) => {
         if (!ast.value && token.type == "identifier") {
-            this.setAst({
+            return this.setAst({
                 id: "module_literal",
                 value: token.value
             })
-            return { complete: false }
         }
-        if (ast.value && token.type == "break") return { complete: true }
-        if (ast.value && token.type == "curly_brace" && token.value == "}") return { complete: true, unget: true }
+        if (ast.value && token.type == "break") return this.endParser()
+        if (ast.value && token.type == "curly_brace" && token.value == "}") return this.endParser({ unget: true })
         throw unexpectedToken(token)
     }
 }

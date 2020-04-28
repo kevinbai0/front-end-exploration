@@ -1,20 +1,28 @@
 import { TokenType } from "../lexer/lexerDefinitions"
 import { AST } from "prettier"
 
-export type ParseType = "root_program" | "root_import" | "root_expects" | "root_handlers" | "root_component" | "module" | "expression"
-export type HandleTokenMethod = (
-    token: TokenType,
-    currAst: AST
-) => {
-    complete: boolean
-    unget?: boolean
-}
+export type ParseType =
+    | "parse_root_program"
+    | "parse_root_import"
+    | "parse_root_expects"
+    | "parse_root_handlers"
+    | "parse_root_component"
+    | "parse_module"
+    | "parse_expression"
+    | "parse_type"
+    | "parse_value"
+    | "parse_object"
+    | "parse_array"
+
+export type HandleTokenMethod<T extends AST> = (token: TokenType, currAst: T) => true
 
 export class Parser<T extends AST> {
     readonly id: ParseType
     private ast: T
     private _delegateParser?: Parser<AST>
     private _delegateFinishedHandler?: (ast: AST) => void
+    private complete = false
+    private shouldUnget?: boolean
 
     constructor(id: ParseType, ast: T) {
         this.id = id
@@ -26,39 +34,49 @@ export class Parser<T extends AST> {
         return this.ast
     }
 
-    protected setAst = (ast: T) => {
+    protected setAst = (ast: T): true => {
         this.ast = ast
+        return true
     }
-    protected setDelegate = <K extends AST>(parser: Parser<K>, completionHandler: (ast: K) => void) => {
+    protected setDelegate = <K extends AST>(parser: Parser<K>, completionHandler: (ast: K) => void): true => {
         this._delegateParser = parser
         this._delegateFinishedHandler = completionHandler
+        this._delegateParser.onEnd = () => {
+            this._delegateFinishedHandler && this._delegateFinishedHandler(this._delegateParser!.ast)
+            // if the delegate parser completed, then unset it and let current parser parse
+            this._delegateParser = undefined
+            this._delegateFinishedHandler = undefined
+        }
+        return true
     }
 
-    protected handleToken = (token: TokenType, currAst: T): { complete: boolean; unget?: boolean } => ({ complete: false })
+    protected endParser(options?: { unget: boolean }): true {
+        if (this._delegateParser?.complete === false) {
+            console.error(new Error(`Parser "${this.id}" ended but delegate parser "${this._delegateParser.id}" is still parsing`))
+        }
+        this.complete = true
+        this.shouldUnget = options?.unget
 
-    public receiveToken: (
-        this: Parser<T>,
-        token: TokenType
-    ) => {
-        complete: boolean
-        unget?: boolean
-    } = token => {
-        if (this._delegateParser) {
-            const parsed = this._delegateParser.receiveToken(token)
-            if (!parsed.complete) return parsed
-            this._delegateFinishedHandler && this._delegateFinishedHandler(this._delegateParser.ast)
-            if (parsed.unget) {
-                const res = this.handleToken(token, this.ast)
-                return res
-            }
-            // if the delegate parser completed, then unset it and let other parser parse
-            this._delegateParser = undefined
-            return {
-                complete: false
-            }
+        this.onEnd()
+
+        return true
+    }
+
+    private onEnd = () => {
+        // to overwrite
+    }
+
+    protected handleToken: HandleTokenMethod<T> = () => true
+
+    public receiveToken: (this: Parser<T>, token: TokenType) => void = token => {
+        if (this.complete) {
+            console.error(new Error(`Parser "${this.id}" ended but still receiving tokens`))
+            return
+        }
+        if (this._delegateParser && !this._delegateParser.complete) {
+            return this._delegateParser.receiveToken(token)
         }
 
-        const res = this.handleToken(token, this.ast)
-        return res
+        this.handleToken(token, this.ast)
     }
 }

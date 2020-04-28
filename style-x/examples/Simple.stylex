@@ -1,12 +1,12 @@
 // version 0.0.1
 
 @expects {
-    name: string = `Kevin`
+    name = `Kevin`
 }
 
 @handlers {
-    onClick?: () => void
+    onClick := fun()
 }
 
 @component
-Box.layout(row).size(fill)
+Box[size = fill, layout = row]

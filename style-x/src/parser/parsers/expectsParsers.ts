@@ -1,47 +1,26 @@
-import { Parser } from "../parserDefinitions"
-import { ExpectsMarkerAST, ExpressionAST } from "../definitions"
-import { TokenType } from "../../lexer/lexerDefinitions"
+import { Parser, HandleTokenMethod } from "../parserDefinitions"
+import { ExpectsMarkerAST } from "../definitions"
+import { ObjectParser } from "./valueParsers"
+import { unexpectedToken } from "./rootParser"
 
 export class ExpectsMarkerParser extends Parser<ExpectsMarkerAST> {
     constructor() {
-        super("root_expects", {
-            id: "expects_marker_literal",
-            value: []
+        super("parse_root_expects", {
+            id: "expects_marker_literal"
         })
     }
-    handleToken = (token: TokenType, ast: ExpectsMarkerAST) => {
+    handleToken: HandleTokenMethod<ExpectsMarkerAST> = (token, ast) => {
         if (token.type == "curly_brace") {
-            if (ast.value.length && token.value == "}") return { complete: true }
-            if (!ast.value.length && token.value == "{") {
-                this.setDelegate(new ExpressionParser(), exprAst => {
+            if (!ast.value && token.value == "{") {
+                return this.setDelegate(new ObjectParser(), objAst => {
                     this.setAst({
                         ...ast,
-                        value: [...ast.value, exprAst]
+                        value: objAst
                     })
+                    this.endParser()
                 })
-                return { complete: false }
             }
         }
-        return { complete: false }
-    }
-}
-
-export class ExpressionParser extends Parser<ExpressionAST> {
-    constructor() {
-        super("expression", {
-            id: "expression",
-            identifier: ""
-        })
-    }
-
-    handleToken = (token: TokenType, ast: ExpressionAST) => {
-        if (token.type == "identifier" && !ast.identifier) {
-            this.setAst({
-                ...ast,
-                identifier: token.value
-            })
-            return { complete: false }
-        }
-        return { complete: false }
+        throw unexpectedToken(token)
     }
 }
