@@ -47,7 +47,7 @@ export class ModuleParser extends Parser<ModuleAST> {
             })
         }
         if (ast.value && token.type == "break") return this.endParser()
-        if (ast.value && token.type == "curly_brace" && token.value == "}") return this.endParser({ unget: true })
+        if (ast.value && token.type == "curly_brace" && token.value == "}") return this.endParser({ refeed: token })
         throw unexpectedToken(token)
     }
 }

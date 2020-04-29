@@ -13,6 +13,7 @@ export type ParseType =
     | "parse_value"
     | "parse_object"
     | "parse_array"
+    | "parse_function_parameter"
 
 export type HandleTokenMethod<T extends AST> = (token: TokenType, currAst: T) => true
 
@@ -22,7 +23,6 @@ export class Parser<T extends AST> {
     private _delegateParser?: Parser<AST>
     private _delegateFinishedHandler?: (ast: AST) => void
     private complete = false
-    private shouldUnget?: boolean
 
     constructor(id: ParseType, ast: T) {
         this.id = id
@@ -41,29 +41,32 @@ export class Parser<T extends AST> {
     protected setDelegate = <K extends AST>(parser: Parser<K>, completionHandler: (ast: K) => void): true => {
         this._delegateParser = parser
         this._delegateFinishedHandler = completionHandler
-        this._delegateParser.onEnd = () => {
-            this._delegateFinishedHandler && this._delegateFinishedHandler(this._delegateParser!.ast)
-            // if the delegate parser completed, then unset it and let current parser parse
+        this._delegateParser.onEnd = refeed => {
+            const ast = this._delegateParser?.ast
             this._delegateParser = undefined
+            this._delegateFinishedHandler && this._delegateFinishedHandler(ast)
+            // if the delegate parser completed, then unset it and let current parser parse
             this._delegateFinishedHandler = undefined
+            if (refeed && !this.complete) {
+                this.receiveToken(refeed)
+            }
         }
         return true
     }
 
-    protected endParser(options?: { unget: boolean }): true {
+    protected endParser(options?: { refeed: TokenType }): true {
         if (this._delegateParser?.complete === false) {
             console.error(new Error(`Parser "${this.id}" ended but delegate parser "${this._delegateParser.id}" is still parsing`))
         }
         this.complete = true
-        this.shouldUnget = options?.unget
 
-        this.onEnd()
+        this.onEnd(options?.refeed)
 
         return true
     }
 
-    private onEnd = () => {
-        // to overwrite
+    private onEnd = (refeed?: TokenType) => {
+        // to overwrite by delegate parser
     }
 
     protected handleToken: HandleTokenMethod<T> = () => true

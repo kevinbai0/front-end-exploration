@@ -58,25 +58,23 @@ export interface ArrayAST extends AST {
     value?: ValueAST[]
 }
 
-export interface ValueAST extends AST {
-    id: "value_ast"
-    value?: StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | ModuleAST
-}
-
-export type ValueLiterals = StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | ModuleAST
-
-export interface FunctionDefinitionParamAST extends AST {
+export interface FunctionCallAST extends AST {
     id: "function_defintion_param_literal"
     identifier: string
-    type: TypeAST
+    value?: FunctionParameterAST[]
 }
 
-export interface FunctionDefinitionAST extends AST {
-    id: "function_definition_literal"
-    identifier: string
-    params: FunctionDefinitionParamAST[]
-    return: TypeAST
+export interface FunctionParameterAST extends AST {
+    id: "function_parameter_literal"
+    value?: ExpressionAST
 }
+
+export interface ValueAST extends AST {
+    id: "value_ast"
+    value?: StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | FunctionCallAST | ModuleAST
+}
+
+export type ValueLiterals = StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | ModuleAST | FunctionCallAST
 
 export interface ImportMarkerAST extends AST {
     id: "import_marker_literal"
@@ -90,7 +88,7 @@ export interface ExpectsMarkerAST extends AST {
 
 export interface HandlersMarkerAST extends AST {
     id: "handlers_marker_literal"
-    value: (FunctionDefinitionAST | TypescriptTypeAST)[]
+    value?: FunctionCallAST
 }
 
 export interface ComponentMarkerAST extends AST {
@@ -113,4 +111,4 @@ export interface ProgramAST extends AST {
     component?: ComponentMarkerAST
 }
 
-export type ASTUnion = TypeAST | ValueLiterals | ValueAST | ExpressionAST | MarkerAST | FunctionDefinitionAST | FunctionDefinitionParamAST | ProgramAST
+export type ASTUnion = TypeAST | ValueLiterals | ValueAST | ExpressionAST | MarkerAST | ProgramAST | FunctionParameterAST

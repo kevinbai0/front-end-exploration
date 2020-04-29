@@ -1,5 +1,5 @@
 import { Parser, HandleTokenMethod } from "../parserDefinitions"
-import { ValueAST, ObjectAST, ExpressionAST, ArrayAST, ValueLiterals } from "../definitions"
+import { ValueAST, ObjectAST, ExpressionAST, ArrayAST, ValueLiterals, FunctionCallAST } from "../definitions"
 import { unexpectedToken } from "./rootParser"
 import { TokenType } from "../../lexer/lexerDefinitions"
 
@@ -20,6 +20,7 @@ export class ObjectParser extends Parser<ObjectAST> {
             })
         }
         if (token.type == "curly_brace" && token.value == "}") {
+            console.log(ast)
             return this.endParser()
         }
         throw unexpectedToken(token)
@@ -64,6 +65,20 @@ export class ValueParser extends Parser<ValueAST> {
     }
 
     handleToken: HandleTokenMethod<ValueAST> = (token, ast) => {
+        if (ast.value?.id == "module_literal") {
+            // we need to look at the current token and see if it is a parenthesis
+            if ((token.type == "paren" && token.value == "(") || (token.type == "square_brace" && token.value == "[")) {
+                return this.setDelegate(new FunctionParameterParser(token.value, ast.value.value), funAst => {
+                    this.setAst({
+                        ...ast,
+                        value: funAst
+                    })
+                    this.endParser()
+                })
+            }
+            return this.endParser({ refeed: token })
+        }
+
         if (token.type == "string") {
             this.setAst({
                 ...ast,
@@ -98,7 +113,8 @@ export class ValueParser extends Parser<ValueAST> {
                     position: token.position
                 }
             })
-            return this.endParser()
+            // don't end parser since we need to check for fun calls
+            return true
         } else if (token.type == "curly_brace" && token.value == "{") {
             return this.setDelegate(new ObjectParser(), objAst => {
                 this.setAst({
@@ -150,5 +166,34 @@ export class ArrayParser extends Parser<ArrayAST> {
                 value: [...(ast.value || []), valAst]
             })
         })
+    }
+}
+
+export class FunctionParameterParser extends Parser<FunctionCallAST> {
+    openCharacter: "(" | "["
+    constructor(openCharacter: "(" | "[", identifier: string) {
+        super("parse_function_parameter", {
+            id: "function_defintion_param_literal",
+            identifier
+        })
+        this.openCharacter = openCharacter
+    }
+
+    handleToken: HandleTokenMethod<FunctionCallAST> = (token, ast) => {
+        if (token.type == "identifier") {
+            return this.setDelegate(new ExpressionParser(token.value), exprAst => {
+                this.setAst({
+                    ...ast,
+                    value: [...(ast.value || []), { id: "function_parameter_literal", value: exprAst }]
+                })
+            })
+        }
+        if (token.type == "paren" && this.openCharacter == "(") {
+            return this.endParser()
+        }
+        if (token.type == "square_brace" && this.openCharacter == "[") {
+            return this.endParser()
+        }
+        throw unexpectedToken(token)
     }
 }

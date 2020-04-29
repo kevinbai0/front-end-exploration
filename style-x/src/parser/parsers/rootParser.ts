@@ -32,6 +32,13 @@ export class RootParser extends Parser<ProgramAST> {
                         expects: completedAst
                     })
                 })
+            case "@handlers":
+                return this.setDelegate(new ExpectsMarkerParser(), completedAst => {
+                    this.setAst({
+                        ...ast,
+                        expects: completedAst
+                    })
+                })
             default:
                 throw unexpectedToken(token)
         }
