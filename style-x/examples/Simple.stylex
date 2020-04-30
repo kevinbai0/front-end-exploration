@@ -5,8 +5,8 @@
 }
 
 @handlers {
-    onClick := fun()
+    onClick = fun()
 }
 
 @component
-Box[size = fill, layout = row]
+Box(size = fill, layout = row)

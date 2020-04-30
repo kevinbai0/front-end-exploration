@@ -1,15 +1,15 @@
 import { Parser, HandleTokenMethod } from "../parserDefinitions"
-import { ExpectsMarkerAST } from "../definitions"
+import { ExpectHandlerMarkerAST } from "../definitions"
 import { ObjectParser } from "./valueParsers"
 import { unexpectedToken } from "./rootParser"
 
-export class ExpectsMarkerParser extends Parser<ExpectsMarkerAST> {
-    constructor() {
+export class ExpectHandleMarkerParser extends Parser<ExpectHandlerMarkerAST> {
+    constructor(name: "expects_marker_literal" | "handlers_marker_literal") {
         super("parse_root_expects", {
-            id: "expects_marker_literal"
+            id: name
         })
     }
-    handleToken: HandleTokenMethod<ExpectsMarkerAST> = (token, ast) => {
+    handleToken: HandleTokenMethod<ExpectHandlerMarkerAST> = (token, ast) => {
         if (token.type == "curly_brace") {
             if (!ast.value && token.value == "{") {
                 return this.setDelegate(new ObjectParser(), objAst => {

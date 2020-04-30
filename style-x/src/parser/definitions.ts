@@ -81,21 +81,16 @@ export interface ImportMarkerAST extends AST {
     value: ModuleAST[]
 }
 
-export interface ExpectsMarkerAST extends AST {
-    id: "expects_marker_literal"
+export interface ExpectHandlerMarkerAST extends AST {
+    id: "expects_marker_literal" | "handlers_marker_literal"
     value?: ObjectAST
-}
-
-export interface HandlersMarkerAST extends AST {
-    id: "handlers_marker_literal"
-    value?: FunctionCallAST
 }
 
 export interface ComponentMarkerAST extends AST {
     id: "component_marker_literal"
 }
 
-export type MarkerAST = ImportMarkerAST | ExpectsMarkerAST | HandlersMarkerAST | ComponentMarkerAST
+export type MarkerAST = ImportMarkerAST | ExpectHandlerMarkerAST | ComponentMarkerAST
 
 export interface ExpressionAST extends AST {
     id: "expression"
@@ -106,8 +101,8 @@ export interface ExpressionAST extends AST {
 export interface ProgramAST extends AST {
     id: "program"
     imports?: ImportMarkerAST
-    expects?: ExpectsMarkerAST
-    handlers?: HandlersMarkerAST
+    expects?: ExpectHandlerMarkerAST
+    handlers?: ExpectHandlerMarkerAST
     component?: ComponentMarkerAST
 }
 

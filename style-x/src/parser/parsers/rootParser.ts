@@ -2,7 +2,7 @@ import { Parser } from "../parserDefinitions"
 import { TokenType } from "../../lexer/lexerDefinitions"
 import { ImportMarkerParser } from "./importParsers"
 import { ProgramAST } from "../definitions"
-import { ExpectsMarkerParser } from "./expectsParsers"
+import { ExpectHandleMarkerParser } from "./expectsParsers"
 
 export function unexpectedToken(token: TokenType) {
     return new Error(`Unexpected token "${token.value}" on line ${token.lineNumber}:${token.position}`)
@@ -26,14 +26,14 @@ export class RootParser extends Parser<ProgramAST> {
                     })
                 })
             case "@expects":
-                return this.setDelegate(new ExpectsMarkerParser(), completedAst => {
+                return this.setDelegate(new ExpectHandleMarkerParser("expects_marker_literal"), completedAst => {
                     this.setAst({
                         ...ast,
                         expects: completedAst
                     })
                 })
             case "@handlers":
-                return this.setDelegate(new ExpectsMarkerParser(), completedAst => {
+                return this.setDelegate(new ExpectHandleMarkerParser("handlers_marker_literal"), completedAst => {
                     this.setAst({
                         ...ast,
                         expects: completedAst
