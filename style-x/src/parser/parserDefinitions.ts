@@ -28,6 +28,7 @@ export class Parser<T extends AST> {
     private _delegateParser?: Parser<AST>
     private _delegateFinishedHandler?: (ast: AST, refeed?: TokenType) => void
     private complete = false
+    protected previousToken?: TokenType
 
     constructor(id: ParseType, ast: T) {
         this.id = id
@@ -91,5 +92,6 @@ export class Parser<T extends AST> {
         }
 
         this.handleToken(token, this.ast)
+        this.previousToken = token
     }
 }

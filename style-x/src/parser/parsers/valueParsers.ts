@@ -11,7 +11,7 @@ import {
     KeyValueAST,
     RangeAST,
     VariableAST
-} from "../definitions"
+} from "../../lang/definitions"
 import { unexpectedToken } from "./rootParser"
 import { TokenType } from "../../lexer/lexerDefinitions"
 
@@ -22,15 +22,11 @@ export class ObjectParser extends Parser<ObjectAST> {
         })
     }
 
-    lastToken?: TokenType
-
     handleToken: HandleTokenMethod<ObjectAST> = (token, ast) => {
-        if (token.type == "break" && ast.value && this.lastToken?.type != "break") {
-            this.lastToken = token
+        if (token.type == "break" && ast.value && this.previousToken?.type != "break") {
             return true
         }
         if (token.type == "identifier" || token.type == "arrow") {
-            this.lastToken = token
             return this.setDelegate(new ExpressionParser(token), exprAst => {
                 this.setAst({
                     ...ast,
@@ -41,7 +37,6 @@ export class ObjectParser extends Parser<ObjectAST> {
             })
         }
         if (token.type == "curly_brace" && token.value == "}") {
-            this.lastToken = token
             return this.endParser()
         }
         throw unexpectedToken(token, this.id)
@@ -281,15 +276,11 @@ export class FunctionParameterParser extends Parser<FunctionCallAST> {
         })
     }
 
-    lastToken?: TokenType
-
     handleToken: HandleTokenMethod<FunctionCallAST> = (token, ast) => {
-        if (token.type == "break" && ast.value && this.lastToken?.type != "break") {
-            this.lastToken = token
+        if (token.type == "break" && ast.value && this.previousToken?.type != "break") {
             return true
         }
         if (token.type == "identifier") {
-            this.lastToken = token
             return this.setDelegate(new ExpressionParser(token), exprAst => {
                 this.setAst({
                     ...ast,
@@ -300,7 +291,6 @@ export class FunctionParameterParser extends Parser<FunctionCallAST> {
             })
         }
         if (token.type == "paren" && token.value == ")") {
-            this.lastToken = token
             return this.endParser()
         }
         throw unexpectedToken(token, this.id)
@@ -320,17 +310,9 @@ export class VariableParser extends Parser<VariableAST> {
         if (this.firstIdentifier) this.receiveToken(this.firstIdentifier)
     }
 
-    tokens: TokenType[] = []
-
-    lastToken = (): TokenType | undefined => {
-        if (this.tokens.length == 0) return
-        return this.tokens[this.tokens.length - 1]
-    }
-
     handleToken: HandleTokenMethod<VariableAST> = (token, ast) => {
         // we need to look at the current token and see if it is a parenthesis
-        if (token.type == "identifier" && this.tokens.length == 0) {
-            this.tokens.push(token)
+        if (token.type == "identifier" && !this.previousToken) {
             return this.setAst({
                 ...ast,
                 value: {
@@ -338,11 +320,9 @@ export class VariableParser extends Parser<VariableAST> {
                     identifiers: [...(ast.value?.identifiers || []), token.value]
                 }
             })
-        } else if (token.type == "dot" && this.lastToken()?.type == "identifier") {
-            this.tokens.push(token)
+        } else if (token.type == "dot" && this.previousToken?.type == "identifier") {
             return true
-        } else if (token.type == "identifier" && this.lastToken()?.type == "dot") {
-            this.tokens.push(token)
+        } else if (token.type == "identifier" && this.previousToken?.type == "dot") {
             return this.setAst({
                 ...ast,
                 value: {
@@ -350,8 +330,7 @@ export class VariableParser extends Parser<VariableAST> {
                     identifiers: [...(ast.value?.identifiers || []), token.value]
                 }
             })
-        } else if (token.type == "paren" && token.value == "(" && (this.lastToken()?.type == "identifier" || this.lastToken()?.value == "(")) {
-            this.tokens.push(token)
+        } else if (token.type == "paren" && token.value == "(" && (this.previousToken?.type == "identifier" || this.previousToken?.value == "(")) {
             return this.setDelegate(new FunctionParameterParser(), (funAst, refeed) => {
                 this.setAst({
                     ...ast,
@@ -429,7 +408,6 @@ export class TupleParser extends Parser<TupleAST> {
 
         // if we get some other token, process as a value for the tuple
         if (token.type != "identifier" && !this.danglingIdentifier) {
-            console.log("OIJDFOIJSDIOJ", token)
             return this.setDelegate(new ValueParser(token), (valAst, refeed) => {
                 this.setAst({
                     ...ast,

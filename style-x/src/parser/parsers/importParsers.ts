@@ -1,7 +1,7 @@
 import { unexpectedToken } from "./rootParser"
 import { Parser, HandleTokenMethod } from "../parserDefinitions"
 import { TokenType } from "../../lexer/lexerDefinitions"
-import { ModuleAST, ImportExpressionAST } from "../definitions"
+import { ModuleAST, ImportExpressionAST } from "../../lang/definitions"
 
 /**
  * Expects { module, module, module }

@@ -1,5 +1,6 @@
-import { markers, primitiveTypes, createSubLexer, SubLexer, reservedKeywords } from "./lexerDefinitions"
+import { createSubLexer, SubLexer } from "./lexerDefinitions"
 import { tokenizeIncompleteCharacter, retokenizeToken, tokenizeCharacter } from "./lexerMethods"
+import { primitiveTypes, reservedKeywords, markers } from "../lang/keywords"
 
 const comparatorLexer = createSubLexer("parseComparator", /[<>&|]/s, {
     tokenizeFirst: (char, ln, pos) => tokenizeIncompleteCharacter("comparator", char, ln, pos),

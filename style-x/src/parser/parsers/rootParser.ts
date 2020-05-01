@@ -1,7 +1,7 @@
 import { Parser, ParseType } from "../parserDefinitions"
 import { TokenType } from "../../lexer/lexerDefinitions"
 import { ImportExpressionParser } from "./importParsers"
-import { ProgramAST } from "../definitions"
+import { ProgramAST } from "../../lang/definitions"
 import { ExpressionParser, ValueParser } from "./valueParsers"
 
 export function unexpectedToken(token: TokenType, parser: ParseType) {
