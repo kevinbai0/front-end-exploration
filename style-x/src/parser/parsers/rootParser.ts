@@ -2,7 +2,7 @@ import { Parser, ParseType } from "../parserDefinitions"
 import { TokenType } from "../../lexer/lexerDefinitions"
 import { ImportExpressionParser } from "./importParsers"
 import { ProgramAST } from "../definitions"
-import { ExpressionParser } from "./valueParsers"
+import { ExpressionParser, ValueParser } from "./valueParsers"
 
 export function unexpectedToken(token: TokenType, parser: ParseType) {
     return new Error(`Unexpected token "${token.value}" on line ${token.lineNumber}:${token.position} in ${parser}`)
@@ -33,8 +33,18 @@ export class RootParser extends Parser<ProgramAST> {
                         definitions: [...ast.definitions, exprAst]
                     })
                 })
+            case "@component":
+                return this.setDelegate(new ValueParser(), newAst => {
+                    this.setAst({
+                        ...ast,
+                        component: {
+                            id: "component_marker_literal",
+                            value: newAst
+                        }
+                    })
+                })
             default:
-                console.log(ast.definitions)
+                if (token.type == "eof") return this.endParser()
                 throw unexpectedToken(token, this.id)
         }
     }

@@ -10,11 +10,15 @@ export type ParseType =
     | "parse_module"
     | "parse_from_module"
     | "parse_expression"
+    | "parse_key_value"
     | "parse_type"
     | "parse_value"
     | "parse_object"
     | "parse_array"
+    | "parse_variable"
+    | "parse_tuple"
     | "parse_function_parameter"
+    | "parse_conditional_expression"
 
 export type HandleTokenMethod<T extends AST> = (token: TokenType, currAst: T) => true
 
@@ -52,7 +56,12 @@ export class Parser<T extends AST> {
                 this.receiveToken(refeed)
             }
         }
+        this._delegateParser.onInit()
         return true
+    }
+
+    protected onInit = () => {
+        // override
     }
 
     protected endParser(options?: { refeed?: TokenType }): true {

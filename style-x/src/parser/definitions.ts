@@ -17,7 +17,7 @@ export interface StringAST extends AST {
 
 export interface NumberAST extends AST {
     id: "number_literal"
-    value?: number
+    value?: string
 }
 
 export interface BooleanAST extends AST {
@@ -30,10 +30,9 @@ export interface ObjectAST extends AST {
     value?: ExpressionAST[]
 }
 
-export interface TupleAST<T extends number> extends AST {
+export interface TupleAST extends AST {
     id: "tuple_literal"
-    length: T
-    value?: (ValueAST | ExpressionAST)[]
+    value?: (ValueAST | KeyValueAST)[]
 }
 
 export interface ArrayAST extends AST {
@@ -42,8 +41,7 @@ export interface ArrayAST extends AST {
 }
 
 export interface FunctionCallAST extends AST {
-    id: "function_defintion_param_literal"
-    identifier: string
+    id: "function_definition_param_literal"
     value?: FunctionParameterAST[]
 }
 
@@ -52,34 +50,42 @@ export interface FunctionParameterAST extends AST {
     value?: ExpressionAST
 }
 
-export interface RangeConditionalAST extends AST {
-    id: "range_expression_conditional"
-    from: NumberAST
-    to: NumberAST
+export interface RangeAST extends AST {
+    id: "range_literal"
+    value?: {
+        from?: NumberAST
+        to?: NumberAST
+    }
 }
 
-export interface ConditionalExpressionAST<Length extends number> extends AST {
+export interface VariableAST extends AST {
+    id: "variable_literal"
+    value?: {
+        identifiers: string[]
+        fnCall?: FunctionCallAST
+    }
+}
+
+export interface ConditionalExpressionAST extends AST {
     id: "expression_conditional"
-    ifThen: {
-        condition: TupleAST<Length>
-        value: ObjectAST
-    }[]
+    condition?: TupleAST
+    value?: ObjectAST
 }
 
-export interface ConditionalObjectAST<Length extends number> extends AST {
+export interface ConditionalObjectAST extends AST {
     id: "object_conditional"
-    conditions: TupleAST<Length>
-    expressions: ConditionalExpressionAST<Length>
+    conditions: TupleAST
+    expressions: ConditionalExpressionAST
 }
 
-export type ConditionalASTs = ConditionalExpressionAST<number> | ConditionalObjectAST<number>
+export type ConditionalASTs = ConditionalExpressionAST | ConditionalObjectAST
 
 export interface ValueAST extends AST {
     id: "value_ast"
-    value?: StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | FunctionCallAST | ModuleAST | TupleAST<number> | RangeConditionalAST
+    value?: StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | FunctionCallAST | VariableAST | RangeAST | TupleAST
 }
 
-export type ValueLiterals = StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | ModuleAST | FunctionCallAST | TupleAST<number> | RangeConditionalAST
+export type ValueLiterals = StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | VariableAST | FunctionCallAST | RangeAST | TupleAST
 
 export interface ImportExpressionAST extends AST {
     id: "import_marker_literal"
@@ -88,10 +94,14 @@ export interface ImportExpressionAST extends AST {
 }
 export interface ComponentMarkerAST extends AST {
     id: "component_marker_literal"
+    value: ValueAST
 }
-
 export interface ExpressionAST extends AST {
     id: "expression"
+    value?: KeyValueAST | ConditionalExpressionAST
+}
+export interface KeyValueAST extends AST {
+    id: "key_value"
     identifier: string
     value?: ValueAST
 }
@@ -103,4 +113,14 @@ export interface ProgramAST extends AST {
     component?: ComponentMarkerAST
 }
 
-export type ASTUnion = ValueLiterals | ValueAST | ExpressionAST | ImportExpressionAST | ComponentMarkerAST | ProgramAST | FunctionParameterAST | ConditionalASTs
+export type ASTUnion =
+    | ValueLiterals
+    | ValueAST
+    | ModuleAST
+    | ExpressionAST
+    | KeyValueAST
+    | ImportExpressionAST
+    | ComponentMarkerAST
+    | ProgramAST
+    | FunctionParameterAST
+    | ConditionalASTs

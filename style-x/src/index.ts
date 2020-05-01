@@ -6,6 +6,7 @@ async function parseStyleXFile(fileName: string) {
     const lexer = new Lexer()
 
     await fileReader(fileName, lexer.readChar)
+    lexer.end()
     parse(lexer.tokens)
 
     return {}
@@ -26,6 +27,6 @@ function fileReader(fileName: string, readChar: (char: string, code: number) => 
     })
 }
 
-parseStyleXFile("./examples/Page.stylex")
+parseStyleXFile("./examples/MenuColumn.stylex")
     .then(ast => console.log(ast))
     .catch(err => console.error(err))

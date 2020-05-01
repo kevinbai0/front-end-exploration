@@ -61,6 +61,16 @@ export default class Lexer {
         this._handlePartialToken(this.state.parser!.tokenizeNext!(char, this.state.token, this.state.lineNumber, this.state.position), char, charCode)
     }
 
+    end() {
+        this.tokens.push({
+            type: "eof",
+            value: "",
+            length: 0,
+            lineNumber: this.state.lineNumber,
+            position: this.state.position
+        })
+    }
+
     private _beginTokenization = (char: string): PartialToken | null => {
         const match = lexers.find(val => char.match(val.exp))
         if (!match?.id) throw new Error(`Unexpected token "${char}" with type "${match?.id}" on line ${this.state.lineNumber}:${this.state.position}`)

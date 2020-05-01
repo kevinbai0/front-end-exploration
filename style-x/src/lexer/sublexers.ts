@@ -75,6 +75,7 @@ const identifierLexer = createSubLexer("parseIdentifier", /[a-zA-Z_]/s, {
             const keyword = reservedKeywords.find(word => word == token.value)
             if (primitive) return retokenizeToken("primitive_type", token, primitive, { complete: true, unget: true })
             if (keyword) return retokenizeToken("reserved_keyword", token, keyword, { complete: true, unget: true })
+            if (token.value == "inf") return retokenizeToken("number", token, "inf", { complete: true, unget: true })
 
             return retokenizeToken("identifier", token, token.value, { complete: true, unget: true })
         }

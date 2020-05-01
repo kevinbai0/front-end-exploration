@@ -34,6 +34,7 @@ export type TokenTypes =
     | "primitive_type"
     | "marker"
     | "unknown"
+    | "eof"
 
 export type TokenizeTypes =
     | "parseBreakSymbol"

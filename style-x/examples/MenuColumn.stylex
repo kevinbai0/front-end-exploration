@@ -21,14 +21,14 @@ Box(
     padding = 20,
     size = fill,
     spread = cond(switch = size.width, values = {
-        ->[0 to 700] = { layout = none }
-        ->[700 to inf] = { layout = col(align = center, justify = space_between) }
+        =>[0 to 700] = { layout = none }
+        =>[700 to inf] = { layout = col(align = center, justify = space_between) }
     })
 )(children = [
-    Box[
+    Box(
         layout = col(align = start),
         size = (fill, auto)
-    ](children = [
+    )(children = [
         Img(
             size = 50,
             src = imageSrc,
@@ -41,8 +41,8 @@ Box(
     Box(
         layout = col(align = start)
         spread = cond(switch = parent.size.height, values = {
-            ->[0 to 700] = { size.height = 70%} // constrain height to maximum of 70% height of parent
-            ->[700 to inf] = { size.height = 20 }
+            =>[0 to 700] = { size = (auto, 700) } // constrain height to maximum of 70% height of parent
+            =>[700 to inf] = { size = (auto, 200) }
         })
     )
 ])
