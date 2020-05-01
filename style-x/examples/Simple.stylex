@@ -1,12 +1,10 @@
 // version 0.0.1
 
-@expects {
-    name = `Kevin`
-}
+let name = `Kevin`
 
-@handlers {
-    onClick = fun()
-}
+
+let onClick = fun()
+
 
 @component
 Box(size = fill, layout = row)

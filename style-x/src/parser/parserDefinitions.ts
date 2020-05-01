@@ -8,6 +8,7 @@ export type ParseType =
     | "parse_root_handlers"
     | "parse_root_component"
     | "parse_module"
+    | "parse_from_module"
     | "parse_expression"
     | "parse_type"
     | "parse_value"
@@ -21,7 +22,7 @@ export class Parser<T extends AST> {
     readonly id: ParseType
     private ast: T
     private _delegateParser?: Parser<AST>
-    private _delegateFinishedHandler?: (ast: AST) => void
+    private _delegateFinishedHandler?: (ast: AST, refeed?: TokenType) => void
     private complete = false
 
     constructor(id: ParseType, ast: T) {
@@ -38,13 +39,13 @@ export class Parser<T extends AST> {
         this.ast = ast
         return true
     }
-    protected setDelegate = <K extends AST>(parser: Parser<K>, completionHandler: (ast: K) => void): true => {
+    protected setDelegate = <K extends AST>(parser: Parser<K>, completionHandler: (ast: K, refeed?: TokenType) => void): true => {
         this._delegateParser = parser
         this._delegateFinishedHandler = completionHandler
         this._delegateParser.onEnd = refeed => {
             const ast = this._delegateParser?.ast
             this._delegateParser = undefined
-            this._delegateFinishedHandler && this._delegateFinishedHandler(ast)
+            this._delegateFinishedHandler && this._delegateFinishedHandler(ast, refeed)
             // if the delegate parser completed, then unset it and let current parser parse
             this._delegateFinishedHandler = undefined
             if (refeed && !this.complete) {
@@ -54,7 +55,7 @@ export class Parser<T extends AST> {
         return true
     }
 
-    protected endParser(options?: { refeed: TokenType }): true {
+    protected endParser(options?: { refeed?: TokenType }): true {
         if (this._delegateParser?.complete === false) {
             console.error(new Error(`Parser "${this.id}" ended but delegate parser "${this._delegateParser.id}" is still parsing`))
         }

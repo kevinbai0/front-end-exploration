@@ -76,21 +76,14 @@ export interface ValueAST extends AST {
 
 export type ValueLiterals = StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | ModuleAST | FunctionCallAST
 
-export interface ImportMarkerAST extends AST {
+export interface ImportExpressionAST extends AST {
     id: "import_marker_literal"
     value: ModuleAST[]
+    fromModule: ModuleAST
 }
-
-export interface ExpectHandlerMarkerAST extends AST {
-    id: "expects_marker_literal" | "handlers_marker_literal"
-    value?: ObjectAST
-}
-
 export interface ComponentMarkerAST extends AST {
     id: "component_marker_literal"
 }
-
-export type MarkerAST = ImportMarkerAST | ExpectHandlerMarkerAST | ComponentMarkerAST
 
 export interface ExpressionAST extends AST {
     id: "expression"
@@ -100,10 +93,9 @@ export interface ExpressionAST extends AST {
 
 export interface ProgramAST extends AST {
     id: "program"
-    imports?: ImportMarkerAST
-    expects?: ExpectHandlerMarkerAST
-    handlers?: ExpectHandlerMarkerAST
+    imports: ImportExpressionAST[]
+    definitions: ExpressionAST[]
     component?: ComponentMarkerAST
 }
 
-export type ASTUnion = TypeAST | ValueLiterals | ValueAST | ExpressionAST | MarkerAST | ProgramAST | FunctionParameterAST
+export type ASTUnion = TypeAST | ValueLiterals | ValueAST | ExpressionAST | ImportExpressionAST | ComponentMarkerAST | ProgramAST | FunctionParameterAST

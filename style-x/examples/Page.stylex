@@ -1,9 +1,8 @@
 // version 0.0.1
-import { defaultArticle, defaultWeather } from `properties`
+import { defaultArticle, defaultWeather } from Properties
 import MenuColumn
 import Dashboard
 
-@expects
 let name = `Kevin`
 let dateStr = `Feb 02 2020`
 let articles = [
@@ -17,7 +16,6 @@ let authorOfMonth = {
 }
 let categories = [`Dogs`, `Cats`]
 
-@handlers
 let articleSelected = fun(article = defaultArticle)
 
 @component

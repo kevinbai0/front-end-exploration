@@ -26,6 +26,6 @@ function fileReader(fileName: string, readChar: (char: string, code: number) => 
     })
 }
 
-parseStyleXFile("./examples/MenuColumn.stylex")
+parseStyleXFile("./examples/Page.stylex")
     .then(ast => console.log(ast))
     .catch(err => console.error(err))

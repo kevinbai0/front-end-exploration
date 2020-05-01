@@ -1,46 +1,41 @@
-import { Parser } from "../parserDefinitions"
+import { Parser, ParseType } from "../parserDefinitions"
 import { TokenType } from "../../lexer/lexerDefinitions"
-import { ImportMarkerParser } from "./importParsers"
+import { ImportExpressionParser } from "./importParsers"
 import { ProgramAST } from "../definitions"
-import { ExpectHandleMarkerParser } from "./expectsParsers"
+import { ExpressionParser } from "./valueParsers"
 
-export function unexpectedToken(token: TokenType) {
-    return new Error(`Unexpected token "${token.value}" on line ${token.lineNumber}:${token.position}`)
+export function unexpectedToken(token: TokenType, parser: ParseType) {
+    return new Error(`Unexpected token "${token.value}" on line ${token.lineNumber}:${token.position} in ${parser}`)
 }
 
 export class RootParser extends Parser<ProgramAST> {
     constructor() {
         super("parse_root_program", {
-            id: "program"
+            id: "program",
+            definitions: [],
+            imports: []
         })
     }
 
     protected handleToken = (token: TokenType, ast: ProgramAST) => {
-        if (token.type != "marker") throw unexpectedToken(token)
         switch (token.value) {
-            case "@import":
-                return this.setDelegate(new ImportMarkerParser(), completedAst => {
+            case "import":
+                return this.setDelegate(new ImportExpressionParser(token), completedAst => {
                     this.setAst({
                         ...ast,
-                        imports: completedAst
+                        imports: [...ast.imports, completedAst]
                     })
                 })
-            case "@expects":
-                return this.setDelegate(new ExpectHandleMarkerParser("expects_marker_literal"), completedAst => {
+            case "let":
+                return this.setDelegate(new ExpressionParser(), exprAst => {
                     this.setAst({
                         ...ast,
-                        expects: completedAst
-                    })
-                })
-            case "@handlers":
-                return this.setDelegate(new ExpectHandleMarkerParser("handlers_marker_literal"), completedAst => {
-                    this.setAst({
-                        ...ast,
-                        expects: completedAst
+                        definitions: [...ast.definitions, exprAst]
                     })
                 })
             default:
-                throw unexpectedToken(token)
+                console.log(ast.definitions)
+                throw unexpectedToken(token, this.id)
         }
     }
 }

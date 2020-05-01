@@ -15,15 +15,16 @@ export class ObjectParser extends Parser<ObjectAST> {
             return this.setDelegate(new ExpressionParser(token.value), exprAst => {
                 this.setAst({
                     ...ast,
-                    value: [...(ast.value || []), exprAst]
+                    value: [...(ast.value || []), exprAst],
+                    lineNumber: token.lineNumber,
+                    position: token.position
                 })
             })
         }
         if (token.type == "curly_brace" && token.value == "}") {
-            console.log(ast)
             return this.endParser()
         }
-        throw unexpectedToken(token)
+        throw unexpectedToken(token, this.id)
     }
 }
 
@@ -44,17 +45,17 @@ export class ExpressionParser extends Parser<ExpressionAST> {
         }
         if (token.type == "equal" && ast.identifier) {
             // delegate value
-            return this.setDelegate(new ValueParser(), valAst => {
+            return this.setDelegate(new ValueParser(), (valAst, refeed) => {
                 this.setAst({
                     ...ast,
                     value: valAst,
                     lineNumber: token.lineNumber,
                     position: token.position
                 })
-                this.endParser()
+                this.endParser({ refeed })
             })
         }
-        throw unexpectedToken(token)
+        throw unexpectedToken(token, this.id)
     }
 }
 
@@ -68,12 +69,14 @@ export class ValueParser extends Parser<ValueAST> {
         if (ast.value?.id == "module_literal") {
             // we need to look at the current token and see if it is a parenthesis
             if ((token.type == "paren" && token.value == "(") || (token.type == "square_brace" && token.value == "[")) {
-                return this.setDelegate(new FunctionParameterParser(token.value, ast.value.value), funAst => {
+                return this.setDelegate(new FunctionParameterParser(token.value, ast.value.value), (funAst, refeed) => {
                     this.setAst({
                         ...ast,
-                        value: funAst
+                        value: funAst,
+                        lineNumber: token.lineNumber,
+                        position: token.position
                     })
-                    this.endParser()
+                    this.endParser({ refeed })
                 })
             }
             return this.endParser({ refeed: token })
@@ -116,26 +119,26 @@ export class ValueParser extends Parser<ValueAST> {
             // don't end parser since we need to check for fun calls
             return true
         } else if (token.type == "curly_brace" && token.value == "{") {
-            return this.setDelegate(new ObjectParser(), objAst => {
+            return this.setDelegate(new ObjectParser(), (objAst, refeed) => {
                 this.setAst({
                     ...ast,
                     value: objAst,
                     lineNumber: objAst.lineNumber,
                     position: objAst.position
                 })
-                this.endParser()
+                this.endParser({ refeed })
             })
         } else if (token.type == "square_brace" && token.value == "[") {
-            return this.setDelegate(new ArrayParser(), arrAst => {
+            return this.setDelegate(new ArrayParser(), (arrAst, refeed) => {
                 this.setAst({
                     ...ast,
                     value: arrAst,
                     lineNumber: token.lineNumber,
                     position: token.position
                 })
-                this.endParser()
+                this.endParser({ refeed })
             })
-        } else throw unexpectedToken(token)
+        } else throw unexpectedToken(token, this.id)
     }
 }
 
@@ -163,7 +166,9 @@ export class ArrayParser extends Parser<ArrayAST> {
             }
             this.setAst({
                 ...ast,
-                value: [...(ast.value || []), valAst]
+                value: [...(ast.value || []), valAst],
+                lineNumber: token.lineNumber,
+                position: token.position
             })
         })
     }
@@ -184,7 +189,9 @@ export class FunctionParameterParser extends Parser<FunctionCallAST> {
             return this.setDelegate(new ExpressionParser(token.value), exprAst => {
                 this.setAst({
                     ...ast,
-                    value: [...(ast.value || []), { id: "function_parameter_literal", value: exprAst }]
+                    value: [...(ast.value || []), { id: "function_parameter_literal", value: exprAst }],
+                    lineNumber: token.lineNumber,
+                    position: token.position
                 })
             })
         }
@@ -194,6 +201,6 @@ export class FunctionParameterParser extends Parser<FunctionCallAST> {
         if (token.type == "square_brace" && this.openCharacter == "[") {
             return this.endParser()
         }
-        throw unexpectedToken(token)
+        throw unexpectedToken(token, this.id)
     }
 }
