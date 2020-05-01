@@ -1,30 +1,26 @@
-import fs from "fs"
+import fs, { readSync, read } from "fs"
 import Lexer from "./lexer/lexer"
-import { parse } from "./parser/parser"
+import { pipeline } from "stream"
+import { ParserStream } from "./parser/parser"
+import { AST, ProgramAST } from "./lang/definitions"
 
 async function parseStyleXFile(fileName: string) {
-    const lexer = new Lexer()
+    const stream = runnableStream(fileName)
 
-    await fileReader(fileName, lexer.readChar)
-    lexer.end()
-    parse(lexer.tokens)
+    stream.on("close", (data: ProgramAST) => {
+        console.log(data)
+    })
 
     return {}
 }
 
-function fileReader(fileName: string, readChar: (char: string, code: number) => void) {
-    return new Promise((res, rej) => {
-        const readable = fs.createReadStream(fileName, {
-            encoding: "utf8"
-        })
-        readable.on("readable", function() {
-            let chunk: string
-            while (null !== (chunk = readable.read(1)) /* here */) {
-                readChar(chunk, chunk.charCodeAt(0))
-            }
-        })
-        readable.on("end", res)
+function runnableStream(fileName: string) {
+    const readable = fs.createReadStream(fileName, {
+        highWaterMark: 1
     })
+    const stream = readable.pipe(new Lexer()).pipe(new ParserStream())
+
+    return stream
 }
 
 parseStyleXFile("./examples/MenuColumn.stylex")

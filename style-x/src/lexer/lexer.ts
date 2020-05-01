@@ -1,5 +1,6 @@
 import { TokenType, PartialToken, SubLexer } from "./lexerDefinitions"
 import { lexers } from "./sublexers"
+import { Transform, TransformCallback } from "stream"
 
 type TokenState = {
     parser: SubLexer | null
@@ -9,7 +10,7 @@ type TokenState = {
     tokenComputeState: unknown
 }
 
-export default class Lexer {
+export default class Lexer extends Transform {
     private state: TokenState = {
         parser: null,
         token: undefined,
@@ -18,9 +19,14 @@ export default class Lexer {
         tokenComputeState: undefined
     }
 
-    private _sourceCode = ""
-
-    tokens: TokenType[] = []
+    constructor() {
+        super({
+            readableObjectMode: true,
+            writableObjectMode: false,
+            readableHighWaterMark: 1,
+            writableHighWaterMark: 1
+        })
+    }
 
     private _refeedChar = (char: string, charCode: number) => {
         this.state.token = undefined
@@ -37,16 +43,21 @@ export default class Lexer {
         }
         this.state.token = undefined
         if (token.token.type == "comment") return
-        this.tokens.push(token.token)
+        this.push(token.token)
         if (token.unget) {
             this.readChar(char, charCode, true)
         }
     }
 
-    readChar = (char: string, charCode: number, refeed = false) => {
+    _transform(chunk: Buffer, _: string, callback: TransformCallback) {
+        const value = chunk.toString("utf-8")
+        this.readChar(value, value.charCodeAt(0))
+        callback()
+    }
+
+    private readChar = (char: string, charCode: number, refeed = false) => {
         if (!refeed) {
             this.state.position += 1
-            this._sourceCode += char
             if (char == "\n") {
                 this.state.lineNumber += 1
                 this.state.position = -1
@@ -61,8 +72,8 @@ export default class Lexer {
         this._handlePartialToken(this.state.parser!.tokenizeNext!(char, this.state.token, this.state.lineNumber, this.state.position), char, charCode)
     }
 
-    end() {
-        this.tokens.push({
+    _flush() {
+        this.push({
             type: "eof",
             value: "",
             length: 0,
