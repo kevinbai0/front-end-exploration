@@ -2,6 +2,7 @@ import fs from "fs"
 import Lexer from "./lexer/lexer"
 import { ParserStream } from "./parser/parser"
 import { ProgramAST } from "./lang/definitions"
+import { transpileProgram } from "./transpiler/main"
 
 async function parseStyleXFile(fileName: string) {
     const stream = runnableStream(fileName)
@@ -13,7 +14,7 @@ async function parseStyleXFile(fileName: string) {
     return {}
 }
 
-function runnableStream(fileName: string) {
+export function runnableStream(fileName: string) {
     const readable = fs.createReadStream(fileName, {
         highWaterMark: 1
     })
@@ -22,6 +23,4 @@ function runnableStream(fileName: string) {
     return stream
 }
 
-parseStyleXFile("./examples/MenuColumn.stylex")
-    .then(ast => console.log(ast))
-    .catch(err => console.error(err))
+transpileProgram("./examples/", "MenuColumn.stylex")

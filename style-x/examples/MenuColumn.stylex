@@ -14,12 +14,10 @@ let categories = [
     }
 ]
 
-let categorySelected = fun(categoryIndex = 0)
-
 @component
 Box(
     padding = 20,
-    size = (width: 30%, height: fill),
+    size = (width: 300, height: fill),
     maxSize = (400, fill),
     minSize = (200, fill),
     spread = cond(switch = size.width, values = {

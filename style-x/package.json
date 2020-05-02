@@ -9,7 +9,8 @@
         "dev": "webpack --watch",
         "dev:server": "webpack-dev-server --config webpack.server.js",
         "start": "node ./dist/bundle.js",
-        "debug": "node --inspect --inspect-brk ./dist/bundle.js"
+        "debug": "node --inspect --inspect-brk ./dist/bundle.js",
+        "lint": "eslint --fix"
     },
     "repository": {
         "type": "git",
