@@ -1,8 +1,7 @@
-import fs, { readSync, read } from "fs"
+import fs from "fs"
 import Lexer from "./lexer/lexer"
-import { pipeline } from "stream"
 import { ParserStream } from "./parser/parser"
-import { AST, ProgramAST } from "./lang/definitions"
+import { ProgramAST } from "./lang/definitions"
 
 async function parseStyleXFile(fileName: string) {
     const stream = runnableStream(fileName)

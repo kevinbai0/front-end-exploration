@@ -65,19 +65,19 @@ For style changes based on state, we can extract those functions and run them at
 
 ## Basic Example
 
-```none
-const boxLayout =
-    (width, parentLayout, parentPosition):
-        [0 -> 1200] => (row, _), // row layout, relative positioning
-        [1200 -> _] => (col, TopLeft(5%, 10%)) // col layout, absolute positioning with left: 5%, top: 10%
-    (childrenSize, width, layout, position):
-        (100, _) -> (50%, 80%) -> (500, _))
+```stylex
+let boxLayout = cond(switch = size.width, values = {
+    =>[0 to 1200] = { layout = row }
+    =>[1200 to inf] = { layout = col, position = (5%, 10%) }
+})
 
-Box{boxLayout}.fg(background).bg(white)
-    RowItem{}.text("Item")
-    RowItem{}.text("Item2")
+Box(spread = boxLayout, style = { fg = theme.background, bg = theme.white })
+(children = [
+    RowItem(text = `Item`),
+    RowItem(text = `Item2`)
+])
 
-// output css for layout
+// output css for layout (use grid to layout rows and columns to take advantage of grid-gap)
 .box {
     display: grid;
     grid-template-rows: 1fr;
@@ -102,10 +102,8 @@ Box{boxLayout}.fg(background).bg(white)
 }
 ```
 
-
 Conceptually, it's a functional language that compiles computes the layout of any user interface.
 
 It's a tree representation of each component + a tree representation of each component's layout. Except, it takes advantage of powerful pattern matching for an expressive syntax.
 
 It's like html or css where it only contains information about the structure, but it represents the data in a very powerful way.
-

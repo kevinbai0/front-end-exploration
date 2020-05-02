@@ -1,7 +1,5 @@
-export type Marker = "@import" | "@expects" | "@handlers" | "@component"
-export type PrimitiveType = "string" | "number" | "any" | "object" | "void"
-export type ReservedKeywordType = "true" | "false"
+export type Marker = "@component"
+export type ReservedKeywordType = "true" | "false" | "cond" | "let"
 
-export const markers: Marker[] = ["@import", "@expects", "@handlers", "@component"]
-export const primitiveTypes: PrimitiveType[] = ["string", "number", "any", "object", "void"]
+export const markers: Marker[] = ["@component"]
 export const reservedKeywords: ReservedKeywordType[] = ["true", "false"]

@@ -1,6 +1,6 @@
 import { createSubLexer, SubLexer } from "./lexerDefinitions"
 import { tokenizeIncompleteCharacter, retokenizeToken, tokenizeCharacter } from "./lexerMethods"
-import { primitiveTypes, reservedKeywords, markers } from "../lang/keywords"
+import { markers } from "../lang/keywords"
 
 const comparatorLexer = createSubLexer("parseComparator", /[<>&|]/s, {
     tokenizeFirst: (char, ln, pos) => tokenizeIncompleteCharacter("comparator", char, ln, pos),
@@ -72,10 +72,6 @@ const identifierLexer = createSubLexer("parseIdentifier", /[a-zA-Z_]/s, {
     tokenizeNext: (char, token, ln, pos) => {
         const alphanum = char.match(/[a-zA-Z_]/s)
         if (!alphanum) {
-            const primitive = primitiveTypes.find(type => type == token.value)
-            const keyword = reservedKeywords.find(word => word == token.value)
-            if (primitive) return retokenizeToken("primitive_type", token, primitive, { complete: true, unget: true })
-            if (keyword) return retokenizeToken("reserved_keyword", token, keyword, { complete: true, unget: true })
             if (token.value == "inf") return retokenizeToken("number", token, "inf", { complete: true, unget: true })
 
             return retokenizeToken("identifier", token, token.value, { complete: true, unget: true })

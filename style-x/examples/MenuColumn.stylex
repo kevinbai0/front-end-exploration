@@ -19,7 +19,9 @@ let categorySelected = fun(categoryIndex = 0)
 @component
 Box(
     padding = 20,
-    size = fill,
+    size = (width: 30%, height: fill),
+    maxSize = (400, fill),
+    minSize = (200, fill),
     spread = cond(switch = size.width, values = {
         =>[0 to 700] = { layout = none }
         =>[700 to inf] = { layout = col(align = center, justify = space_between) }
