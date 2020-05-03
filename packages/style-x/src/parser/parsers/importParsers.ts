@@ -99,7 +99,7 @@ export class FromModuleParser extends Parser<ModuleAST> {
         })
     }
     handleToken: HandleTokenMethod<ModuleAST> = (token, ast) => {
-        if (token.type == "identifier" && !ast.value) {
+        if (token.type == "string" && !ast.value) {
             this.setAst({
                 ...ast,
                 value: token.value

@@ -2,7 +2,7 @@ import fs from "fs"
 import Lexer from "./lexer/lexer"
 import { ParserStream } from "./parser/parser"
 import { ProgramAST } from "./lang/definitions"
-import { transpileProgram } from "./transpiler/main"
+import { transpileProject } from "./transpiler/main"
 
 async function parseStyleXFile(fileName: string) {
     const stream = runnableStream(fileName)
@@ -23,4 +23,4 @@ export function runnableStream(fileName: string) {
     return stream
 }
 
-transpileProgram("./examples/", "Page.stylex")
+transpileProject("./example")

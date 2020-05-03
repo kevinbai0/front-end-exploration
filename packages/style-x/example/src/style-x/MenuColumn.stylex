@@ -1,0 +1,48 @@
+// version 0.0.1
+
+let dateStr = `Mar 02, 2020`
+let timeStr = `10:40 am`
+let imgSrc = ``
+let categories = [
+    {
+        articleName = `Hello world`
+        author = `Kevin Bai`
+    },
+    {
+        articleName = `Writing your interpreter`
+        author = `Kevin Bai`
+    }
+]
+
+@component
+Box(
+    padding = 20,
+    size = (width: 300, height: fill),
+    maxSize = (400, fill),
+    minSize = (200, fill),
+    spread = cond(switch = size.width, values = {
+        =>[0 to 700] = { layout = none }
+        =>[700 to inf] = { layout = col(align = center, justify = space_between) }
+    })
+)(children = [
+    Box(
+        layout = col(align = start),
+        size = (fill, auto)
+    )(children = [
+        Img(
+            size = 50,
+            src = imageSrc,
+            style = { radius = 25, marginBottom = 10 }
+        ),
+        // .as will only be used in web apps and is purely for SEO
+        Text(value = dateStr, style = { extends = CaptionStyle }), // CaptionStyle is defined as a theme
+        Text(value = timeStr, style = { extends = BodyStyle })
+    ]),
+    Box(
+        layout = col(align = start)
+        spread = cond(switch = parent.size.height, values = {
+            =>[0 to 700] = { size = (auto, 700) } // constrain height to maximum of 70% height of parent
+            =>[700 to inf] = { size = (auto, 200) }
+        })
+    )
+])

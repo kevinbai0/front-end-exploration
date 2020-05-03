@@ -40,7 +40,7 @@ identifier.property.property
 
 ## React & Typescript
 
-Currently Style X will only be supported in React with Typescript. 
+Currently Style X will only be supported in React with Typescript.
 
 ### Transpiling
 
@@ -62,7 +62,7 @@ Can be found in [design-system doc](../design-system/README.md).
 
 ## Standard Library
 
-A component is called as a function inside of style-x components: 
+A component is called as a function inside of style-x components:
 
 The following standard components:
 

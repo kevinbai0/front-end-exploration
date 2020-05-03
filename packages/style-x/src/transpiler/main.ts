@@ -1,8 +1,9 @@
 import { runnableStream } from "../index"
-import { ProgramAST, VariableAST } from "../lang/definitions"
+import { ProgramAST } from "../lang/definitions"
 import fs, { WriteStream } from "fs"
+import path from "path"
 import { ObjectValue, expressionArrayToObject } from "./values"
-import { createComponent } from "./components"
+import { searchModule, createFolderTree } from "./modules"
 
 const getAst = (fileName: string) => {
     return new Promise<ProgramAST>((res, rej) => {
@@ -20,10 +21,26 @@ const substitution = (ast: ProgramAST) => {
     const definitions = expressionArrayToObject(ast.definitions)
 }
 
-export const transpileProgram = async (path: string, fileName: string) => {
-    const programAst = await getAst(path + fileName)
+export const transpileProject = async (dir: string) => {
+    const projectDir = path.resolve(".", dir)
 
-    const writeStream = fs.createWriteStream(`./outdir/${fileName}.tsx`)
+    // find entry file
+    const config = JSON.parse(fs.readFileSync(projectDir + "/stylex.config.json").toString())
+    if (!config.entry) throw new Error("Invalid config file")
+    const entry = config.entry as string
+
+    // load all files
+    const projectTree = await createFolderTree(projectDir)
+
+    const entryFile = path.resolve(dir, entry)
+    const programAst = await getAst(entryFile)
+
+    // get imports
+    programAst.imports.forEach(async imp => {
+        const moduleName = imp.fromModule.value.replace(/`/g, "")
+        console.log(searchModule(projectTree, moduleName))
+    })
+    /*const writeStream = fs.createWriteStream(projectDir + "/dist/")
 
     const definitions = expressionArrayToObject(programAst.definitions)
     writeDefinitions(writeStream, definitions)
@@ -34,7 +51,7 @@ export const transpileProgram = async (path: string, fileName: string) => {
 
         writeStream.write(createComponent("Box", exprs))
     }
-    writeStream.end()
+    writeStream.end()*/
 }
 
 const writeDefinitions = (writeStream: WriteStream, definitions: ObjectValue) => {

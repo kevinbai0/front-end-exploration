@@ -1,0 +1,8 @@
+@export const defaultArticle = {
+    name = `Article Name`,
+    author = `Kevin Bai`
+}
+
+@export let defaultWeather = {
+    temperature = `72˚C`
+}
