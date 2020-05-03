@@ -2,12 +2,12 @@
 import path from "path"
 import { listDir, isDirectory } from "../utils/fs"
 
-type File = {
+export type File = {
     moduleName: string
     name: string
     path: string
 }
-type FolderTree = {
+export type FolderTree = {
     path: string
     folders: FolderTree[]
     files: File[]
