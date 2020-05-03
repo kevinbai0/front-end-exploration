@@ -10,6 +10,7 @@ export type ParseType =
     | "parse_module"
     | "parse_from_module"
     | "parse_expression"
+    | "parse_let_expresion"
     | "parse_key_value"
     | "parse_type"
     | "parse_value"
@@ -20,7 +21,7 @@ export type ParseType =
     | "parse_function_parameter"
     | "parse_conditional_expression"
 
-export type HandleTokenMethod<T extends AST> = (token: TokenType, currAst: T) => true
+export type HandleTokenMethod<T extends AST> = (token: TokenType, currAst: T, lastToken?: TokenType) => true
 
 export class Parser<T extends AST> {
     readonly id: ParseType
@@ -28,7 +29,7 @@ export class Parser<T extends AST> {
     private _delegateParser?: Parser<AST>
     private _delegateFinishedHandler?: (ast: AST, refeed?: TokenType) => void
     private complete = false
-    protected previousToken?: TokenType
+    private previousToken?: TokenType
 
     constructor(id: ParseType, ast: T) {
         this.id = id
@@ -76,7 +77,7 @@ export class Parser<T extends AST> {
         return true
     }
 
-    private onEnd = (refeed?: TokenType) => {
+    private onEnd: (refeed?: TokenType) => void = () => {
         // to overwrite by delegate parser
     }
 
@@ -91,7 +92,7 @@ export class Parser<T extends AST> {
             return this._delegateParser.receiveToken(token)
         }
 
-        this.handleToken(token, this.ast)
+        this.handleToken(token, this.ast, this.previousToken)
         this.previousToken = token
     }
 }

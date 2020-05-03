@@ -47,7 +47,7 @@ export class ImportExpressionParser extends Parser<ImportExpressionAST> {
                 lineNumber: token.lineNumber,
                 position: token.position
             })
-        } else if (token.type == "identifier" && token.value != "from") {
+        } else if ((token.type == "identifier" || token.type == "marker") && token.value != "from") {
             if (token.lineNumber != ast.lineNumber && ast.value.length == 1 && !this.isDestructured) {
                 this.setAst({
                     ...ast,

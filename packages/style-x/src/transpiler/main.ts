@@ -21,9 +21,9 @@ const substitution = (ast: ProgramAST) => {
 }
 
 export const transpileProgram = async (path: string, fileName: string) => {
-    const writeStream = fs.createWriteStream(`./src/outdir/${fileName}.tsx`)
-
     const programAst = await getAst(path + fileName)
+
+    const writeStream = fs.createWriteStream(`./outdir/${fileName}.tsx`)
 
     const definitions = expressionArrayToObject(programAst.definitions)
     writeDefinitions(writeStream, definitions)
@@ -34,6 +34,7 @@ export const transpileProgram = async (path: string, fileName: string) => {
 
         writeStream.write(createComponent("Box", exprs))
     }
+    writeStream.end()
 }
 
 const writeDefinitions = (writeStream: WriteStream, definitions: ObjectValue) => {

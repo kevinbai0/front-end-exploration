@@ -1,28 +1,26 @@
 // version 0.0.1
 import { defaultArticle, defaultWeather } from Properties
 import MenuColumn
-import Dashboard
 
-let name = `Kevin`
-let dateStr = `Feb 02 2020`
-let articles = [
+@override let name = `Kevin`
+@override let dateStr = `Feb 02 2020`
+@override let articles = [
     defaultArticle
 ]
-let weather = defaultWeather
-let featuredArticle = defaultArticle
-let authorOfMonth = {
+@override let weather = defaultWeather
+@override let featuredArticle = defaultArticle
+@override let authorOfMonth = {
     name = `Kevin`
     imgSrc = ``
 }
-let categories = [`Dogs`, `Cats`]
+@override let categories = [`Dogs`, `Cats`]
 
-let articleSelected = fun(article = defaultArticle)
+@override let articleSelected = fun(article = defaultArticle)
 
 @component
 Box(
     layout = row,
     size = fill
 )(children = [
-    MenuColumn(dateStr = dateStr, categories = categories),
-    Dashboard
+    MenuColumn(dateStr = dateStr, categories = categories)
 ])

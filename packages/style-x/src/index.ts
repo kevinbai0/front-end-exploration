@@ -23,4 +23,4 @@ export function runnableStream(fileName: string) {
     return stream
 }
 
-transpileProgram("./examples/", "Simple.stylex")
+transpileProgram("./examples/", "Page.stylex")

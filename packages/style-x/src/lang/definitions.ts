@@ -98,6 +98,7 @@ export interface ComponentMarkerAST extends AST {
 }
 export interface ExpressionAST extends AST {
     id: "expression"
+    overridable?: boolean
     value?: KeyValueAST | ConditionalExpressionAST
 }
 export interface KeyValueAST extends AST {
