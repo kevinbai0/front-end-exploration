@@ -5,9 +5,9 @@ import path from "path"
 import { ObjectValue, expressionArrayToObject } from "./values"
 import { searchModule, createFolderTree } from "./modules"
 
-const getAst = (fileName: string) => {
+const getAst = (dir: string) => {
     return new Promise<ProgramAST>((res, rej) => {
-        const stream = runnableStream(fileName)
+        const stream = runnableStream(dir)
 
         stream.on("close", (data: ProgramAST) => {
             res(data)
@@ -38,7 +38,10 @@ export const transpileProject = async (dir: string) => {
     // get imports
     programAst.imports.forEach(async imp => {
         const moduleName = imp.fromModule.value.replace(/`/g, "")
-        console.log(searchModule(projectTree, moduleName))
+        const module = searchModule(projectTree, moduleName)
+        if (module) {
+            console.log(await getAst(module.path))
+        }
     })
     /*const writeStream = fs.createWriteStream(projectDir + "/dist/")
 

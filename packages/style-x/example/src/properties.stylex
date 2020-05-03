@@ -1,4 +1,4 @@
-@export const defaultArticle = {
+@export let defaultArticle = {
     name = `Article Name`,
     author = `Kevin Bai`
 }

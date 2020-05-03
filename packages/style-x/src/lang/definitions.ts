@@ -110,6 +110,7 @@ export interface KeyValueAST extends AST {
 export interface ProgramAST extends AST {
     id: "program"
     imports: ImportExpressionAST[]
+    exports: ExpressionAST[]
     definitions: ExpressionAST[]
     component?: ComponentMarkerAST
 }

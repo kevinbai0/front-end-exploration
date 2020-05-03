@@ -13,7 +13,8 @@ export class RootParser extends Parser<ProgramAST> {
         super("parse_root_program", {
             id: "program",
             definitions: [],
-            imports: []
+            imports: [],
+            exports: []
         })
     }
 
@@ -31,6 +32,13 @@ export class RootParser extends Parser<ProgramAST> {
                     this.setAst({
                         ...ast,
                         definitions: [...ast.definitions, exprAst]
+                    })
+                })
+            case "@export":
+                return this.setDelegate(new LetStatementParser(), exprAst => {
+                    this.setAst({
+                        ...ast,
+                        exports: [...ast.exports, exprAst]
                     })
                 })
             case "let":
