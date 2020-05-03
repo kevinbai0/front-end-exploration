@@ -1,7 +1,8 @@
 import { runnableStream } from "../index"
-import { ProgramAST } from "../lang/definitions"
-import fs from "fs"
+import { ProgramAST, VariableAST } from "../lang/definitions"
+import fs, { WriteStream } from "fs"
 import { ObjectValue, expressionArrayToObject } from "./values"
+import { createComponent } from "./components"
 
 const getAst = (fileName: string) => {
     return new Promise<ProgramAST>((res, rej) => {
@@ -20,15 +21,22 @@ const substitution = (ast: ProgramAST) => {
 }
 
 export const transpileProgram = async (path: string, fileName: string) => {
+    const writeStream = fs.createWriteStream(`./src/outdir/${fileName}.tsx`)
+
     const programAst = await getAst(path + fileName)
+
     const definitions = expressionArrayToObject(programAst.definitions)
-    writeDefinitions(fileName, definitions)
+    writeDefinitions(writeStream, definitions)
+    if (programAst.component?.value?.value?.id == "variable_literal") {
+        const varAst = programAst.component.value.value as VariableAST
+        console.log(varAst.value?.fnCall?.value?.map(val => val.value!).map(val => val.value) || [])
+        const exprs = expressionArrayToObject(varAst.value?.fnCall?.value?.map(val => val.value!) || [])
+
+        writeStream.write(createComponent("Box", exprs))
+    }
 }
 
-const writeDefinitions = (fileName: string, definitions: ObjectValue) => {
-    const writeStream = fs.createWriteStream(`./src/outdir/${fileName}.ts`)
-
+const writeDefinitions = (writeStream: WriteStream, definitions: ObjectValue) => {
     writeStream.write(`import React from "react"\n\n`)
     writeStream.write(`const defaultValues = ${JSON.stringify(definitions).replace(/"/g, "")}\n`)
-    writeStream.end()
 }

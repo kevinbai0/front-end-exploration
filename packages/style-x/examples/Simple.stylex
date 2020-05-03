@@ -2,9 +2,5 @@
 
 let name = `Kevin`
 
-
-let onClick = fun()
-
-
 @component
 Box(size = fill, layout = row)

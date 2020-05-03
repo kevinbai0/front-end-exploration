@@ -10,7 +10,6 @@ export const toNumber = (ast: NumberAST) => {
     return parseFloat(ast.value!)
 }
 
-
 export const toVal = (ast: ValueAST): Value => {
     switch (ast.value?.id) {
         case "number_literal":
@@ -25,6 +24,8 @@ export const toVal = (ast: ValueAST): Value => {
             return ast.value.value?.map(val => toVal(val)) || []
         case "object_literal":
             return toObject(ast.value)!
+        case "variable_literal":
+            return ast.value?.value?.identifiers![0]
         default:
             throw new Error(`Couldn't cast value ${ast}`)
     }
@@ -43,4 +44,9 @@ export const expressionArrayToObject = (asts: ExpressionAST[]) => {
         }
         return accum
     }, {} as { [key: string]: Value })
+}
+
+export const stringifyValue = (value: Value) => {
+    if (typeof value == "object") return JSON.stringify(value).replace(/"/g, "")
+    return `"${value}"`
 }

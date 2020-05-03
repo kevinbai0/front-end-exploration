@@ -1,5 +1,5 @@
 {
-  "name": "style-x",
+  "name": "design-system",
   "version": "0.1.2",
   "description": "My design system",
   "main": "./dist/main.bundle.js",
@@ -21,6 +21,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-typescript": "^7.3.3",
+    "@types/react": "^16.9.34",
     "@types/styled-components": "^4.4.2",
     "@types/styled-system": "^5.1.4",
     "babel-loader": "^8.0.6",
@@ -33,14 +34,16 @@
   },
   "peerDependencies": {
     "react": ">= 16.0",
-    "styled-components": ">= 5.0.0",
-    "react-native": ">= 0.60.0"
+    "react-native": ">= 0.60.0",
+    "styled-components": ">= 5.0.0"
   },
   "resolutions": {
     "@babel/preset-env": "^7.8.7"
   },
   "dependencies": {
-    "@babel/plugin-proposal-numeric-separator": ">= 7.0.0"
+    "@babel/plugin-proposal-numeric-separator": ">= 7.0.0",
+    "design-system": "^2.5.0",
+    "react": "^16.13.1"
   },
   "files": [
     "dist"
