@@ -1,4 +1,4 @@
-import { NumberAST, ValueAST, ObjectAST, ExpressionAST, KeyValueAST } from "../lang/definitions"
+import { NumberAST, ValueAST, ObjectAST, ExpressionAST, KeyValueExpressionAST } from "../lang/definitions"
 
 export type ObjectValue = { [key: string]: Value }
 export type Value = string | number | boolean | Value[] | ObjectValue | Function | Range
@@ -39,7 +39,7 @@ export const expressionArrayToObject = (asts: ExpressionAST[]) => {
     return asts.reduce((accum, expressionAst) => {
         // if expression ast is key value
         if (expressionAst.value?.id == "key_value") {
-            const keyValAst = expressionAst.value as KeyValueAST
+            const keyValAst = expressionAst.value as KeyValueExpressionAST
             accum[keyValAst.identifier] = toVal(keyValAst.value!)
         }
         return accum

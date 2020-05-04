@@ -6,7 +6,7 @@ import {
     ConditionalExpressionAST,
     ObjectAST,
     TupleAST,
-    KeyValueAST,
+    KeyValueExpressionAST,
     ValueAST,
     NumberAST,
     BooleanAST,
@@ -21,8 +21,8 @@ import {
 export const copyProgramAst = (ast: ProgramAST): ProgramAST => ({
     ...ast,
     imports: ast.imports.map(importAst => copyImportAst(importAst)),
-    exports: ast.exports.map(val => copyExpressionAst(val)),
-    definitions: ast.definitions.map(val => copyExpressionAst(val)),
+    exports: ast.exports.map(val => copyKeyValueExpressionAST(val)),
+    definitions: ast.definitions.map(val => copyKeyValueExpressionAST(val)),
     ...(ast.component && {
         component: {
             ...ast.component,
@@ -39,7 +39,7 @@ export const copyImportAst = (ast: ImportExpressionAST): ImportExpressionAST => 
 
 export const copyExpressionAst = (ast: ExpressionAST): ExpressionAST => ({
     ...ast,
-    ...(ast.value && { value: ast.value.id == "expression_conditional" ? copyConditionalExpressionAst(ast.value) : copyKeyValueAst(ast.value) })
+    ...(ast.value && { value: ast.value.id == "expression_conditional" ? copyConditionalExpressionAst(ast.value) : copyKeyValueExpressionAST(ast.value) })
 })
 
 export const copyConditionalExpressionAst = (ast: ConditionalExpressionAST): ConditionalExpressionAST => ({
@@ -55,10 +55,10 @@ export const copyObjectAst = (ast: ObjectAST): ObjectAST => ({
 
 export const copyTupleAst = (ast: TupleAST): TupleAST => ({
     ...ast,
-    ...(ast.value && { value: ast.value.map(val => (val.id == "key_value" ? copyKeyValueAst(val) : copyValueAst(val))) })
+    ...(ast.value && { value: ast.value.map(val => (val.id == "key_value" ? copyKeyValueExpressionAST(val) : copyValueAst(val))) })
 })
 
-export const copyKeyValueAst = (ast: KeyValueAST): KeyValueAST => ({
+export const copyKeyValueExpressionAST = (ast: KeyValueExpressionAST): KeyValueExpressionAST => ({
     ...ast,
     ...(ast.value && { value: copyValueAst(ast.value) })
 })
@@ -124,15 +124,3 @@ export const copyModuleAst = (ast: ModuleAST): ModuleAST => ({ ...ast })
 export const copyNumberAst = (ast: NumberAST): NumberAST => ({ ...ast })
 export const copyBooleanAst = (ast: BooleanAST): BooleanAST => ({ ...ast })
 export const copyStringAst = (ast: StringAST): StringAST => ({ ...ast })
-
-/*
-
-export interface ProgramAST extends AST {
-    id: "program"
-    imports: ImportExpressionAST[]
-    exports: ExpressionAST[]
-    definitions: ExpressionAST[]
-    component?: ComponentMarkerAST
-}
-
-*/

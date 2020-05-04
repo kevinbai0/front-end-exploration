@@ -1,7 +1,6 @@
 // async/await methods for simple fs actions
 
 import fs from "fs"
-import path from "path"
 
 export const listDir = (path: string) => {
     return new Promise<string[]>((resolve, reject) => {

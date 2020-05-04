@@ -8,7 +8,7 @@ import {
     FunctionCallAST,
     ConditionalExpressionAST,
     TupleAST,
-    KeyValueAST,
+    KeyValueExpressionAST,
     RangeAST,
     VariableAST
 } from "../../lang/definitions"
@@ -27,7 +27,7 @@ export class ObjectParser extends Parser<ObjectAST> {
             return true
         }
         if (token.type == "identifier" || token.type == "arrow") {
-            return this.setDelegate(new ExpressionParser({ overridable: false }, token), exprAst => {
+            return this.setDelegate(new ExpressionParser(token), exprAst => {
                 this.setAst({
                     ...ast,
                     value: [...(ast.value || []), exprAst],
@@ -45,7 +45,7 @@ export class ObjectParser extends Parser<ObjectAST> {
 
 export class ExpressionParser extends Parser<ExpressionAST> {
     identifierToken?: TokenType
-    constructor(options: { overridable: boolean }, identifier?: TokenType) {
+    constructor(identifier?: TokenType) {
         super("parse_expression", {
             id: "expression"
         })
@@ -58,10 +58,10 @@ export class ExpressionParser extends Parser<ExpressionAST> {
 
     handleToken: HandleTokenMethod<ExpressionAST> = (token, ast) => {
         if (token.type == "identifier") {
-            return this.setDelegate(new KeyValueParser(token), (keyValueAst, refeed) => {
+            return this.setDelegate(new KeyValueExpressionParser({ overridable: false }, token), (KeyValueExpressionAST, refeed) => {
                 this.setAst({
                     ...ast,
-                    value: keyValueAst
+                    value: KeyValueExpressionAST
                 })
                 this.endParser({ refeed })
             })
@@ -79,12 +79,13 @@ export class ExpressionParser extends Parser<ExpressionAST> {
     }
 }
 
-export class KeyValueParser extends Parser<KeyValueAST> {
+export class KeyValueExpressionParser extends Parser<KeyValueExpressionAST> {
     initToken?: TokenType
-    constructor(initToken?: TokenType) {
+    constructor(options: { overridable: boolean }, initToken?: TokenType) {
         super("parse_key_value", {
             id: "key_value",
-            identifier: ""
+            identifier: "",
+            overridable: options.overridable
         })
 
         this.initToken = initToken
@@ -94,7 +95,7 @@ export class KeyValueParser extends Parser<KeyValueAST> {
         if (this.initToken) this.receiveToken(this.initToken)
     }
 
-    handleToken: HandleTokenMethod<KeyValueAST> = (token, ast) => {
+    handleToken: HandleTokenMethod<KeyValueExpressionAST> = (token, ast) => {
         if (token.type == "identifier" && !ast.value) {
             return this.setAst({
                 ...ast,
@@ -281,7 +282,7 @@ export class FunctionParameterParser extends Parser<FunctionCallAST> {
             return true
         }
         if (token.type == "identifier") {
-            return this.setDelegate(new ExpressionParser({ overridable: false }, token), exprAst => {
+            return this.setDelegate(new ExpressionParser(token), exprAst => {
                 this.setAst({
                     ...ast,
                     value: [...(ast.value || []), { id: "function_parameter_literal", value: exprAst }],

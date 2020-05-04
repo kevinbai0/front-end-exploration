@@ -32,7 +32,7 @@ export interface ObjectAST extends AST {
 
 export interface TupleAST extends AST {
     id: "tuple_literal"
-    value?: (ValueAST | KeyValueAST)[]
+    value?: (ValueAST | KeyValueExpressionAST)[]
 }
 
 export interface ArrayAST extends AST {
@@ -98,20 +98,20 @@ export interface ComponentMarkerAST extends AST {
 }
 export interface ExpressionAST extends AST {
     id: "expression"
-    overridable?: boolean
-    value?: KeyValueAST | ConditionalExpressionAST
+    value?: KeyValueExpressionAST | ConditionalExpressionAST
 }
-export interface KeyValueAST extends AST {
+export interface KeyValueExpressionAST extends AST {
     id: "key_value"
     identifier: string
+    overridable?: boolean
     value?: ValueAST
 }
 
 export interface ProgramAST extends AST {
     id: "program"
     imports: ImportExpressionAST[]
-    exports: ExpressionAST[]
-    definitions: ExpressionAST[]
+    exports: KeyValueExpressionAST[]
+    definitions: KeyValueExpressionAST[]
     component?: ComponentMarkerAST
 }
 
@@ -120,7 +120,7 @@ export type ASTUnion =
     | ValueAST
     | ModuleAST
     | ExpressionAST
-    | KeyValueAST
+    | KeyValueExpressionAST
     | ImportExpressionAST
     | ComponentMarkerAST
     | ProgramAST

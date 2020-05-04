@@ -1,8 +1,8 @@
 import { Parser, ParseType, HandleTokenMethod } from "../parserDefinitions"
 import { TokenType } from "../../lexer/lexerDefinitions"
 import { ImportExpressionParser } from "./importParsers"
-import { ProgramAST, ExpressionAST } from "../../lang/definitions"
-import { ExpressionParser, ValueParser } from "./valueParsers"
+import { ProgramAST, ExpressionAST, KeyValueExpressionAST } from "../../lang/definitions"
+import { ExpressionParser, ValueParser, KeyValueExpressionParser } from "./valueParsers"
 
 export function unexpectedToken(token: TokenType, parser: ParseType) {
     return new Error(`Unexpected token "${token.value}" on line ${token.lineNumber}:${token.position} in ${parser}`)
@@ -42,7 +42,7 @@ export class RootParser extends Parser<ProgramAST> {
                     })
                 })
             case "let":
-                return this.setDelegate(new ExpressionParser({ overridable: false }), exprAst => {
+                return this.setDelegate(new KeyValueExpressionParser({ overridable: false }), exprAst => {
                     this.setAst({
                         ...ast,
                         definitions: [...ast.definitions, exprAst]
@@ -65,16 +65,17 @@ export class RootParser extends Parser<ProgramAST> {
     }
 }
 
-class LetStatementParser extends Parser<ExpressionAST> {
+class LetStatementParser extends Parser<KeyValueExpressionAST> {
     constructor() {
         super("parse_let_expresion", {
-            id: "expression"
+            id: "key_value",
+            identifier: ""
         })
     }
 
-    handleToken: HandleTokenMethod<ExpressionAST> = (token, ast) => {
+    handleToken: HandleTokenMethod<KeyValueExpressionAST> = (token, ast) => {
         if (token.value == "let" && !ast.value) {
-            return this.setDelegate(new ExpressionParser({ overridable: true }), (exprAst, refeed) => {
+            return this.setDelegate(new KeyValueExpressionParser({ overridable: true }), (exprAst, refeed) => {
                 this.setAst(exprAst)
                 this.endParser({ refeed })
             })
