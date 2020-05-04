@@ -82,10 +82,10 @@ export type ConditionalASTs = ConditionalExpressionAST | ConditionalObjectAST
 
 export interface ValueAST extends AST {
     id: "value_ast"
-    value?: StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | FunctionCallAST | VariableAST | RangeAST | TupleAST
+    value?: StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | VariableAST | RangeAST | TupleAST
 }
 
-export type ValueLiterals = StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | VariableAST | FunctionCallAST | RangeAST | TupleAST
+export type ValueLiterals = StringAST | NumberAST | BooleanAST | ObjectAST | ArrayAST | VariableAST | RangeAST | TupleAST
 
 export interface ImportExpressionAST extends AST {
     id: "import_marker_literal"
@@ -126,3 +126,4 @@ export type ASTUnion =
     | ProgramAST
     | FunctionParameterAST
     | ConditionalASTs
+    | FunctionCallAST
