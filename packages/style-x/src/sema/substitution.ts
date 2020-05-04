@@ -46,7 +46,6 @@ export const substitution = (programAst: ProgramAST, memo: { [key: string]: Proj
 
         return accum
     }, {} as KVExprObject)
-    console.log(imports)
 
     // substitute definitions, actually should belong in semantic analysis
     const definitions = substituteKeyValueExpressions(ast.definitions, [imports])

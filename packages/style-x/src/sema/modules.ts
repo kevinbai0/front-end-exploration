@@ -5,6 +5,7 @@ import { listDir, isDirectory } from "../utils/fs"
 export type File = {
     moduleName: string
     name: string
+    dir: string
     path: string
 }
 export type FolderTree = {
@@ -55,6 +56,7 @@ export const createFolderTree = async (pathName: string, memo: { [key: string]: 
 const createFile = (dir: string, name: string): File => {
     return {
         name,
+        dir,
         moduleName: name.replace(".stylex", ""),
         path: path.join(dir, name)
     }

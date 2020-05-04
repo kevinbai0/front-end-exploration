@@ -19,3 +19,20 @@ export const isDirectory = (dir: string) => {
         })
     })
 }
+
+export const dirExists = (dir: string) => {
+    return new Promise<boolean>(resolve => {
+        fs.exists(dir, exists => {
+            resolve(exists)
+        })
+    })
+}
+
+export const createDir = (dir: string) => {
+    return new Promise((resolve, reject) => {
+        fs.mkdir(dir, err => {
+            if (err) reject(err)
+            resolve()
+        })
+    })
+}
