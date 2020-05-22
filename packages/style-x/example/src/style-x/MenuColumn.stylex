@@ -2,7 +2,7 @@
 
 let dateStr = `Mar 02, 2020`
 let timeStr = `10:40 am`
-let imgSrc = ``
+let imageSrc = ``
 let categories = [
     {
         articleName = `Hello world`
