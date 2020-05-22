@@ -1,9 +1,10 @@
 import { VariableAST, KeyValueExpressionAST, ArrayAST, ValueAST } from "../lang/definitions"
 import { valueAstToObject, writeValue } from "./value"
 
-type ComponentType = "Box" | "Text" | "Img"
-
-export const writeComponent = (variableAst: VariableAST, mappedDefinitions: Record<string, ValueAST>): string | undefined => {
+export const writeComponent = (
+    variableAst: VariableAST,
+    mappedDefinitions: Record<string, ValueAST>
+): string | undefined => {
     if (!variableAst.value!.fnCall) return
     const identifier = variableAst.value!.identifiers.join(".")
     const params = variableAst
@@ -23,23 +24,36 @@ export const writeComponent = (variableAst: VariableAST, mappedDefinitions: Reco
 
     const tagDefinition = `<${identifier} ${withoutChildren
         .map(param => {
-            return `${param?.identifier}={${writeValue(valueAstToObject(param!.value, mappedDefinitions))}}`
+            return `${param?.identifier}={${writeValue(
+                valueAstToObject(param!.value, { mappedDefinitions })
+            )}}`
         })
         .join(" ")}`
     if (!children) return `${tagDefinition} />`
 
     if (children.value.value!.id == "variable_literal") {
-        return `${tagDefinition}>\n${writeComponent(children.value!.value! as VariableAST, mappedDefinitions)}</${identifier}>`
+        return `${tagDefinition}>\n${writeComponent(
+            children.value!.value! as VariableAST,
+            mappedDefinitions
+        )}</${identifier}>`
     }
     if (children.value.value!.id == "array_literal") {
         return `${tagDefinition}>\n${(children.value!.value! as ArrayAST)
             .value!.map(value => {
                 if (value.value!.id != "variable_literal")
-                    throw new Error(`Expected components but got ${children.value.value!.id} on line ${children.value.lineNumber}:${children.value.position}`)
+                    throw new Error(
+                        `Expected components but got ${children.value.value!.id} on line ${
+                            children.value.lineNumber
+                        }:${children.value.position}`
+                    )
 
                 return writeComponent(value.value as VariableAST, mappedDefinitions)
             })
             .join("\n")}\n</${identifier}>`
     }
-    throw new Error(`Expected components but got ${children.value.value!.id} on line ${children.value.lineNumber}:${children.value.position}`)
+    throw new Error(
+        `Expected components but got ${children.value.value!.id} on line ${
+            children.value.lineNumber
+        }:${children.value.position}`
+    )
 }

@@ -25,6 +25,7 @@
         "@types/jest": "^25.1.4",
         "@types/node": "^13.9.2",
         "@types/react": "^16.9.34",
+        "@types/styled-components": "^5.1.0",
         "@typescript-eslint/eslint-plugin": "^2.13.0",
         "@typescript-eslint/parser": "^2.13.0",
         "babel-loader": "^8.0.6",
@@ -35,6 +36,7 @@
         "jest": "^25.1.0",
         "prettier": "1.19.1",
         "react": "^16.13.1",
+        "styled-components": "^5.1.0",
         "typescript": "^3.8.3",
         "webpack": "^4.41.2",
         "webpack-cli": "^3.3.10",
@@ -46,8 +48,5 @@
     "bugs": {
         "url": "https://github.com/kevinbai0/node-ts-starter/issues"
     },
-    "homepage": "https://github.com/kevinbai0/node-ts-starter#readme",
-    "dependencies": {
-        "design-system": "^0.1.2"
-    }
+    "homepage": "https://github.com/kevinbai0/node-ts-starter#readme"
 }

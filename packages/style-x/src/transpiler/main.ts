@@ -7,6 +7,12 @@ import { extractTypeFromValue } from "./type"
 import { ValueAST, VariableAST } from "../lang/definitions"
 import { writeComponent } from "./components"
 
+export const moduleMethods = {
+    row: true,
+    col: true,
+    fill: true
+}
+
 const toOutDir = (dirInProject: string, projectDir: string, outDir: string) => {
     return path.join(outDir, path.relative(projectDir, dirInProject))
 }
@@ -31,7 +37,12 @@ export const transpileProject = async (dir: string) => {
     transpileFile(project, projectDir, outDir, memo)
 }
 
-const transpileFile = async (execFile: ProjectOutput, projectDir: string, outDir: string, memo: { [key: string]: ProjectOutput }) => {
+const transpileFile = async (
+    execFile: ProjectOutput,
+    projectDir: string,
+    outDir: string,
+    memo: { [key: string]: ProjectOutput }
+) => {
     const fileOutDir = toOutDir(execFile.file.dir, projectDir, outDir)
 
     // create output file directory if doesn't exist
@@ -78,7 +89,8 @@ const transpileFile = async (execFile: ProjectOutput, projectDir: string, outDir
     })
 
     imports.forEach(imp => {
-        if (typeof imp.modules == "string") writeStream.write(`import ${imp.modules} from "${imp.path}"\n`)
+        if (typeof imp.modules == "string")
+            writeStream.write(`import ${imp.modules} from "${imp.path}"\n`)
         else writeStream.write(`import { ${imp.modules.join(", ")} } from "${imp.path}"\n`)
     })
 
@@ -88,7 +100,7 @@ const transpileFile = async (execFile: ProjectOutput, projectDir: string, outDir
         .filter(expAst => !expAst.overridable)
         .forEach(expAst => {
             const variableName = expAst.identifier
-            const value = valueAstToObject(expAst.value!)
+            const value = valueAstToObject(expAst.value!, { moduleMethods })
 
             writeStream.write(`const ${variableName} = ${writeValue(value)};\n`)
         })
@@ -97,9 +109,8 @@ const transpileFile = async (execFile: ProjectOutput, projectDir: string, outDir
 
     // transpile exports
     execFile.ast.exports.forEach(expAst => {
-        //writeStream.write(`export const ${expAst.identifier} = ${expAst.value}`)
         const variableName = expAst.identifier
-        const value = valueAstToObject(expAst.value!)
+        const value = valueAstToObject(expAst.value!, { moduleMethods })
 
         writeStream.write(`export const ${variableName} = ${writeValue(value)};\n`)
     })
@@ -123,12 +134,26 @@ const transpileFile = async (execFile: ProjectOutput, projectDir: string, outDir
         const componentName = execFile.file.moduleName
         const spreadProps = props.map(value => value.identifier).join(", ")
         const fallback = `${props
-            .map(prop => `const $${prop.identifier} = ${prop.identifier} || ${writeValue(valueAstToObject(mappedDefinitions[prop.identifier]))}`)
+            .map(
+                prop =>
+                    `const $${prop.identifier} = ${prop.identifier} || ${writeValue(
+                        valueAstToObject(mappedDefinitions[prop.identifier], {
+                            moduleMethods
+                        })
+                    )}`
+            )
             .join(";")}`
 
-        const component = `return ${writeComponent(execFile.ast.component!.value!.value! as VariableAST, mappedOverridables)}`
+        const component = `return ${writeComponent(
+            execFile.ast.component!.value!.value! as VariableAST,
+            mappedOverridables
+        )}`
 
-        writeStream.write(`const ${componentName}: React.FC<Props> = ({${spreadProps}}) => {\n${fallback}${fallback.length ? ";" : ""}${component}\n}\n`)
+        writeStream.write(
+            `const ${componentName}: React.FC<Props> = ({${spreadProps}}) => {\n${fallback}${
+                fallback.length ? ";" : ""
+            }${component}\n}\n`
+        )
         writeStream.write(`\nexport default ${componentName}`)
     }
 
