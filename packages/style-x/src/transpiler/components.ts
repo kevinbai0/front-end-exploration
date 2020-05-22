@@ -1,19 +1,7 @@
-import { ObjectValue, stringifyValue } from "./values"
 import { VariableAST, KeyValueExpressionAST, ArrayAST, ValueAST } from "../lang/definitions"
 import { valueAstToObject, writeValue } from "./value"
 
 type ComponentType = "Box" | "Text" | "Img"
-
-export const createComponent = (type: ComponentType, properties: ObjectValue) => {
-    let componentStr = `<${type}`
-    const { children, ...props } = properties
-    Object.keys(props).forEach(key => {
-        componentStr += `${key}={${stringifyValue(props[key])}}`
-    })
-    componentStr += "/>"
-
-    return componentStr
-}
 
 export const writeComponent = (variableAst: VariableAST, mappedDefinitions: Record<string, ValueAST>): string | undefined => {
     if (!variableAst.value!.fnCall) return

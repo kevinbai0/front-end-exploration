@@ -1,9 +1,8 @@
-import fs, { write } from "fs"
+import fs from "fs"
 import path from "path"
 import { performSemanticAnalysis, ProjectOutput } from "../sema/sema"
 import { createDir, dirExists } from "../utils/fs"
 import { valueAstToObject, writeValue } from "./value"
-import { Value } from "./values"
 import { extractTypeFromValue } from "./type"
 import { ValueAST, VariableAST } from "../lang/definitions"
 import { writeComponent } from "./components"
@@ -50,6 +49,16 @@ const transpileFile = async (execFile: ProjectOutput, projectDir: string, outDir
         }),
         {} as Record<string, ValueAST>
     )
+
+    const mappedOverridables = execFile.ast.definitions
+        .filter(val => val.overridable)
+        .reduce(
+            (accum, definition) => ({
+                ...accum,
+                [definition.identifier]: definition.value!
+            }),
+            {} as Record<string, ValueAST>
+        )
 
     // import react if needed
     if (execFile.ast.component) writeStream.write(`import React from "react"\n`)
@@ -108,9 +117,7 @@ const transpileFile = async (execFile: ProjectOutput, projectDir: string, outDir
             .filter(val => val.type)
 
         writeStream.write(props.map(value => `${value.identifier}?: ${value.type!}`).join("\n"))
-        writeStream.write("\n}")
-
-        writeStream.write("\n")
+        writeStream.write("\n}\n\n")
 
         // write component
         const componentName = execFile.file.moduleName
@@ -119,7 +126,7 @@ const transpileFile = async (execFile: ProjectOutput, projectDir: string, outDir
             .map(prop => `const $${prop.identifier} = ${prop.identifier} || ${writeValue(valueAstToObject(mappedDefinitions[prop.identifier]))}`)
             .join(";")}`
 
-        const component = `return ${writeComponent(execFile.ast.component!.value!.value! as VariableAST, mappedDefinitions)}`
+        const component = `return ${writeComponent(execFile.ast.component!.value!.value! as VariableAST, mappedOverridables)}`
 
         writeStream.write(`const ${componentName}: React.FC<Props> = ({${spreadProps}}) => {\n${fallback}${fallback.length ? ";" : ""}${component}\n}\n`)
         writeStream.write(`\nexport default ${componentName}`)
@@ -132,24 +139,3 @@ const transpileFile = async (execFile: ProjectOutput, projectDir: string, outDir
         transpileFile(folder, projectDir, outDir, memo)
     })
 }
-
-// boilerplate for later
-
-/*const writeStream = fs.createWriteStream(projectDir + "/dist/")
-
-    const definitions = expressionArrayToObject(programAst.definitions)
-    writeDefinitions(writeStream, definitions)
-    if (programAst.component?.value?.value?.id == "variable_literal") {
-        const varAst = programAst.component.value.value as VariableAST
-        console.log(varAst.value?.fnCall?.value?.map(val => val.value!).map(val => val.value) || [])
-        const exprs = expressionArrayToObject(varAst.value?.fnCall?.value?.map(val => val.value!) || [])
-
-        writeStream.write(createComponent("Box", exprs))
-    }
-    writeStream.end()
-
-const writeDefinitions = (writeStream: WriteStream, definitions: ObjectValue) => {
-    writeStream.write(`import React from "react"\n\n`)
-    writeStream.write(`const defaultValues = ${JSON.stringify(definitions).replace(/"/g, "")}\n`)
-}
-*/

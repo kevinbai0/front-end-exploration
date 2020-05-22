@@ -2,8 +2,6 @@ import { ThemeObject, DNA, Dimension, ThemeExtension } from "../theme/types";
 import { splitStyle } from "./helpers";
 import { InjectProperties } from "./index";
 
-
-
 export const matchDimension = (_: DNA<ThemeExtension> & ThemeObject<ThemeExtension>, prop: string | number | (number | string)[]) => {
     if (typeof(prop) == "number") return [prop + "px"];
     if (typeof(prop) == "string") return [prop];
