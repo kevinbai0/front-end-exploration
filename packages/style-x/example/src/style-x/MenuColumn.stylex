@@ -1,9 +1,9 @@
 // version 0.0.1
 
-let dateStr = `Mar 02, 2020`
-let timeStr = `10:40 am`
-let imageSrc = ``
-let categories = [
+@override let dateStr = `Mar 02, 2020`
+@override let timeStr = `10:40 am`
+@override let imageSrc = ``
+@override let categories = [
     {
         articleName = `Hello world`
         author = `Kevin Bai`

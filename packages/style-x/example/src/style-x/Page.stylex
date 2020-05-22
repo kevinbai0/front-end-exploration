@@ -13,8 +13,6 @@ import MenuColumn
     name = `Kevin`
     imgSrc = ``
 }
-@override let categories = [`Dogs`, `Cats`]
-
 @override let articleSelected = fun(article = defaultArticle)
 
 @component
@@ -22,5 +20,5 @@ Box(
     layout = row,
     size = fill
 )(children = [
-    MenuColumn(dateStr = dateStr, categories = categories)
+    MenuColumn(dateStr = dateStr)
 ])
