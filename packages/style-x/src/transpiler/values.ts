@@ -1,4 +1,10 @@
-import { NumberAST, ValueAST, ObjectAST, ExpressionAST, KeyValueExpressionAST } from "../lang/definitions"
+import {
+    NumberAST,
+    ValueAST,
+    ObjectAST,
+    ExpressionAST,
+    KeyValueExpressionAST
+} from "../lang/definitions"
 
 export type ObjectValue = { [key: string]: Value }
 export type Value = string | number | boolean | Value[] | ObjectValue | Function | Range

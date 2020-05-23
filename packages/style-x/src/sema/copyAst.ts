@@ -39,10 +39,17 @@ export const copyImportAst = (ast: ImportExpressionAST): ImportExpressionAST => 
 
 export const copyExpressionAst = (ast: ExpressionAST): ExpressionAST => ({
     ...ast,
-    ...(ast.value && { value: ast.value.id == "expression_conditional" ? copyConditionalExpressionAst(ast.value) : copyKeyValueExpressionAST(ast.value) })
+    ...(ast.value && {
+        value:
+            ast.value.id == "expression_conditional"
+                ? copyConditionalExpressionAst(ast.value)
+                : copyKeyValueExpressionAST(ast.value)
+    })
 })
 
-export const copyConditionalExpressionAst = (ast: ConditionalExpressionAST): ConditionalExpressionAST => ({
+export const copyConditionalExpressionAst = (
+    ast: ConditionalExpressionAST
+): ConditionalExpressionAST => ({
     ...ast,
     ...(ast.condition && { condition: copyTupleAst(ast.condition) }),
     ...(ast.value && { value: copyObjectAst(ast.value) })
@@ -55,7 +62,11 @@ export const copyObjectAst = (ast: ObjectAST): ObjectAST => ({
 
 export const copyTupleAst = (ast: TupleAST): TupleAST => ({
     ...ast,
-    ...(ast.value && { value: ast.value.map(val => (val.id == "key_value" ? copyKeyValueExpressionAST(val) : copyValueAst(val))) })
+    ...(ast.value && {
+        value: ast.value.map(val =>
+            val.id == "key_value" ? copyKeyValueExpressionAST(val) : copyValueAst(val)
+        )
+    })
 })
 
 export const copyKeyValueExpressionAST = (ast: KeyValueExpressionAST): KeyValueExpressionAST => ({

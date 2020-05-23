@@ -25,7 +25,11 @@ export type ProjectOutput = {
 
 export type KVExprObject = { [key: string]: KeyValueExpressionAST }
 
-export const performSemanticAnalysis = async (entryFile: string, projectDir: string, outDir: string) => {
+export const performSemanticAnalysis = async (
+    entryFile: string,
+    projectDir: string,
+    outDir: string
+) => {
     // load all folders into a tree
     const projectTree = await createFolderTree(projectDir)
 
@@ -37,7 +41,13 @@ export const performSemanticAnalysis = async (entryFile: string, projectDir: str
     const entryModule = searchModule(projectTree, entryName)
     if (!entryModule) throw new Error(`Couldn't find module "${entryName}" in project.`)
 
-    return await analyseFile(entryModule, path.relative(projectDir, entryFile), projectDir, outDir, projectTree)
+    return await analyseFile(
+        entryModule,
+        path.relative(projectDir, entryFile),
+        projectDir,
+        outDir,
+        projectTree
+    )
 }
 
 const analyseFile = async (
@@ -71,7 +81,14 @@ const analyseFile = async (
             const module = searchModule(projectTree, moduleName)
             if (!module) throw new Error(`Couldn't find module "${moduleName}" in project.`)
 
-            const transpiled = await analyseFile(module, path.relative(rootDir, module.path), rootDir, outDir, projectTree, memo)
+            const transpiled = await analyseFile(
+                module,
+                path.relative(rootDir, module.path),
+                rootDir,
+                outDir,
+                projectTree,
+                memo
+            )
             memo[moduleName] = transpiled.project
             return {
                 ...proj,

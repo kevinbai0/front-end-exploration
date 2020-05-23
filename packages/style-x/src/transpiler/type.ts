@@ -1,4 +1,11 @@
-import { ValueAST, ObjectAST, KeyValueExpressionAST, ArrayAST, TupleAST, VariableAST } from "../lang/definitions"
+import {
+    ValueAST,
+    ObjectAST,
+    KeyValueExpressionAST,
+    ArrayAST,
+    TupleAST,
+    VariableAST
+} from "../lang/definitions"
 
 export const extractTypeFromValue = (value: ValueAST): string | undefined => {
     switch (value.value!.id) {

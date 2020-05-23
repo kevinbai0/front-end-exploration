@@ -21,7 +21,11 @@ export type ParseType =
     | "parse_function_parameter"
     | "parse_conditional_expression"
 
-export type HandleTokenMethod<T extends AST> = (token: TokenType, currAst: T, lastToken?: TokenType) => true
+export type HandleTokenMethod<T extends AST> = (
+    token: TokenType,
+    currAst: T,
+    lastToken?: TokenType
+) => true
 
 export class Parser<T extends AST> {
     readonly id: ParseType
@@ -45,7 +49,10 @@ export class Parser<T extends AST> {
         this.ast = ast
         return true
     }
-    protected setDelegate = <K extends AST>(parser: Parser<K>, completionHandler: (ast: K, refeed?: TokenType) => void): true => {
+    protected setDelegate = <K extends AST>(
+        parser: Parser<K>,
+        completionHandler: (ast: K, refeed?: TokenType) => void
+    ): true => {
         this._delegateParser = parser
         this._delegateFinishedHandler = completionHandler
         this._delegateParser.onEnd = refeed => {
@@ -68,7 +75,11 @@ export class Parser<T extends AST> {
 
     protected endParser(options?: { refeed?: TokenType }): true {
         if (this._delegateParser?.complete === false) {
-            console.error(new Error(`Parser "${this.id}" ended but delegate parser "${this._delegateParser.id}" is still parsing`))
+            console.error(
+                new Error(
+                    `Parser "${this.id}" ended but delegate parser "${this._delegateParser.id}" is still parsing`
+                )
+            )
         }
         this.complete = true
 

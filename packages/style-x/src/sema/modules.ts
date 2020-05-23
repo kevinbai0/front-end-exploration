@@ -20,7 +20,10 @@ export const searchModule = (tree: FolderTree, moduleName: string): File | undef
     return tree.folders.map(folder => searchModule(folder, moduleName)).find(file => file)
 }
 
-export const createFolderTree = async (pathName: string, memo: { [key: string]: true } = {}): Promise<FolderTree> => {
+export const createFolderTree = async (
+    pathName: string,
+    memo: { [key: string]: true } = {}
+): Promise<FolderTree> => {
     const files = await listDir(pathName)
     const tree: FolderTree = {
         files: [],
@@ -40,7 +43,10 @@ export const createFolderTree = async (pathName: string, memo: { [key: string]: 
                 }
             if (file.indexOf(".stylex") == file.length - ".stylex".length) {
                 const newFile = createFile(pathName, file)
-                if (memo[newFile.moduleName]) throw new Error(`More than one module with name "${newFile.moduleName}" was found`)
+                if (memo[newFile.moduleName])
+                    throw new Error(
+                        `More than one module with name "${newFile.moduleName}" was found`
+                    )
                 memo[newFile.moduleName] = true
                 return {
                     ...currTree,

@@ -1,6 +1,11 @@
 import { PartialToken, TokenTypes, TokenType } from "./lexerDefinitions"
 
-export const tokenizeCharacter = (type: TokenTypes, value: string, lineNumber: number, position: number): PartialToken => ({
+export const tokenizeCharacter = (
+    type: TokenTypes,
+    value: string,
+    lineNumber: number,
+    position: number
+): PartialToken => ({
     token: {
         type,
         lineNumber,
@@ -12,7 +17,12 @@ export const tokenizeCharacter = (type: TokenTypes, value: string, lineNumber: n
     unget: false
 })
 
-export const tokenizeIncompleteCharacter = (type: TokenTypes, value: string, lineNumber: number, position: number): PartialToken => ({
+export const tokenizeIncompleteCharacter = (
+    type: TokenTypes,
+    value: string,
+    lineNumber: number,
+    position: number
+): PartialToken => ({
     token: {
         type,
         lineNumber,
@@ -24,7 +34,12 @@ export const tokenizeIncompleteCharacter = (type: TokenTypes, value: string, lin
     unget: false
 })
 
-export const retokenizeToken = (type: TokenTypes, token: TokenType, newValue: string, options: { complete: boolean; unget?: boolean }): PartialToken => ({
+export const retokenizeToken = (
+    type: TokenTypes,
+    token: TokenType,
+    newValue: string,
+    options: { complete: boolean; unget?: boolean }
+): PartialToken => ({
     token: {
         ...token,
         type,

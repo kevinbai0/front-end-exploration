@@ -20,7 +20,10 @@ export class ImportExpressionParser extends Parser<ImportExpressionAST> {
     isDestructured = false
     isDestructuring = false
 
-    handleToken: HandleTokenMethod<ImportExpressionAST> = (token: TokenType, ast: ImportExpressionAST) => {
+    handleToken: HandleTokenMethod<ImportExpressionAST> = (
+        token: TokenType,
+        ast: ImportExpressionAST
+    ) => {
         if (token.value == "}" && !ast.fromModule.value && ast.value.length != 0) {
             this.isDestructuring = false
             return true
@@ -47,8 +50,15 @@ export class ImportExpressionParser extends Parser<ImportExpressionAST> {
                 lineNumber: token.lineNumber,
                 position: token.position
             })
-        } else if ((token.type == "identifier" || token.type == "marker") && token.value != "from") {
-            if (token.lineNumber != ast.lineNumber && ast.value.length == 1 && !this.isDestructured) {
+        } else if (
+            (token.type == "identifier" || token.type == "marker") &&
+            token.value != "from"
+        ) {
+            if (
+                token.lineNumber != ast.lineNumber &&
+                ast.value.length == 1 &&
+                !this.isDestructured
+            ) {
                 this.setAst({
                     ...ast,
                     fromModule: ast.value[0]
@@ -86,7 +96,8 @@ export class ModuleParser extends Parser<ModuleAST> {
             })
         }
         if (ast.value && token.type == "break") return this.endParser({ refeed: token })
-        if (ast.value && token.type == "curly_brace" && token.value == "}") return this.endParser({ refeed: token })
+        if (ast.value && token.type == "curly_brace" && token.value == "}")
+            return this.endParser({ refeed: token })
         throw unexpectedToken(token, this.id)
     }
 }

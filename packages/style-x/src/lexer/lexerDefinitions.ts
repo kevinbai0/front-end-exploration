@@ -54,8 +54,17 @@ export type PartialToken = {
 
 /** Define parsers */
 
-export type TokenizeValue = (char: string, lineNumber: number, position: number) => PartialToken | null
-export type TokenizeNextValue = (char: string, token: TokenType, lineNumber: number, position: number) => PartialToken | null
+export type TokenizeValue = (
+    char: string,
+    lineNumber: number,
+    position: number
+) => PartialToken | null
+export type TokenizeNextValue = (
+    char: string,
+    token: TokenType,
+    lineNumber: number,
+    position: number
+) => PartialToken | null
 
 export interface SubLexer {
     type: "primitive" | "stateful"

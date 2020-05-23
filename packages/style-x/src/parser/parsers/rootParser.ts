@@ -1,11 +1,13 @@
 import { Parser, ParseType, HandleTokenMethod } from "../parserDefinitions"
 import { TokenType } from "../../lexer/lexerDefinitions"
 import { ImportExpressionParser } from "./importParsers"
-import { ProgramAST, ExpressionAST, KeyValueExpressionAST } from "../../lang/definitions"
-import { ExpressionParser, ValueParser, KeyValueExpressionParser } from "./valueParsers"
+import { ProgramAST, KeyValueExpressionAST } from "../../lang/definitions"
+import { ValueParser, KeyValueExpressionParser } from "./valueParsers"
 
 export function unexpectedToken(token: TokenType, parser: ParseType) {
-    return new Error(`Unexpected token "${token.value}" on line ${token.lineNumber}:${token.position} in ${parser}`)
+    return new Error(
+        `Unexpected token "${token.value}" on line ${token.lineNumber}:${token.position} in ${parser}`
+    )
 }
 
 export class RootParser extends Parser<ProgramAST> {
@@ -42,12 +44,15 @@ export class RootParser extends Parser<ProgramAST> {
                     })
                 })
             case "let":
-                return this.setDelegate(new KeyValueExpressionParser({ overridable: false }), exprAst => {
-                    this.setAst({
-                        ...ast,
-                        definitions: [...ast.definitions, exprAst]
-                    })
-                })
+                return this.setDelegate(
+                    new KeyValueExpressionParser({ overridable: false }),
+                    exprAst => {
+                        this.setAst({
+                            ...ast,
+                            definitions: [...ast.definitions, exprAst]
+                        })
+                    }
+                )
             case "@component":
                 return this.setDelegate(new ValueParser(), newAst => {
                     this.setAst({
@@ -75,10 +80,13 @@ class LetStatementParser extends Parser<KeyValueExpressionAST> {
 
     handleToken: HandleTokenMethod<KeyValueExpressionAST> = (token, ast) => {
         if (token.value == "let" && !ast.value) {
-            return this.setDelegate(new KeyValueExpressionParser({ overridable: true }), (exprAst, refeed) => {
-                this.setAst(exprAst)
-                this.endParser({ refeed })
-            })
+            return this.setDelegate(
+                new KeyValueExpressionParser({ overridable: true }),
+                (exprAst, refeed) => {
+                    this.setAst(exprAst)
+                    this.endParser({ refeed })
+                }
+            )
         }
         throw unexpectedToken(token, this.id)
     }
