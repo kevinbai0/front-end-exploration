@@ -1,13 +1,11 @@
 import { css } from "styled-components"
 
-type AlignmentType = "start" | "center" | "end" | "space_between"
-
 export namespace StyleX {
     export interface Props {
-        layout: LayoutProps
-        size: SizeProps
-        maxSize: SizeProps
-        minSize: SizeProps
+        layout?: LayoutProps
+        size?: SizeProps
+        maxSize?: SizeProps
+        minSize?: SizeProps
     }
     export type SizeProps = [number | string] | [number | string, number | string]
     export interface LayoutProps {
@@ -19,15 +17,17 @@ export namespace StyleX {
         condition: T
         values: [Range, (range: Range) => void]
     }
+    export type AlignmentType = "start" | "center" | "end" | "space_between"
 }
 
-export const constructLayout = (props: Partial<StyleX.LayoutProps>) => {
-    const layout = {
-        type: props.type || "row",
-        align: props.align || "start",
-        justify: props.justify || "start"
-    }
+export const createLayout = (props: Partial<StyleX.LayoutProps>) => ({
+    type: props.type || "row",
+    align: props.align || "start",
+    justify: props.justify || "start"
+})
 
+export const constructLayout = (props: Partial<StyleX.LayoutProps>) => {
+    const layout = createLayout(props)
     const layoutString = (() => {
         switch (layout.type) {
             case "row":

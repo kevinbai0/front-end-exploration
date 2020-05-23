@@ -9,19 +9,27 @@ import {
     VariableAST,
     FunctionParameterAST,
     RangeAST,
-    KeyValueExpressionAST
+    KeyValueExpressionAST,
+    ConditionalExpressionAST
 } from "../lang/definitions"
 import { toNumber } from "./values"
+import { moduleMethods } from "./main"
 
 type PrimitiveValue = boolean | string | number | number[] | boolean[] | string[]
 
 type PrimitiveMap = Record<string, PrimitiveValue>
 type WithMappedPrimitives = PrimitiveMap | Record<string, PrimitiveMap> | PrimitiveMap[]
-type Value = PrimitiveMap | WithMappedPrimitives | Record<string, WithMappedPrimitives> | PrimitiveValue | WithMappedPrimitives[] | Value[]
+type Value =
+    | PrimitiveMap
+    | WithMappedPrimitives
+    | Record<string, WithMappedPrimitives>
+    | PrimitiveValue
+    | WithMappedPrimitives[]
+    | Value[]
 
 export type Options = {
     mappedDefinitions?: Record<string, ValueAST>
-    moduleMethods?: Record<string, boolean>
+    moduleMethods?: Record<string, "string" | "method">
 }
 
 export const valueAstToObject = (value: ValueAST, options?: Options): Value => {
@@ -46,7 +54,7 @@ export const valueAstToObject = (value: ValueAST, options?: Options): Value => {
 }
 
 export const objectAstToObject = (objectAst: ObjectAST, options?: Options): Value => {
-    return objectAst.value!.reduce((accum, exprAst) => {
+    return objectAst.value!.reduce((accum, exprAst, i) => {
         if (exprAst.value!.id == "key_value") {
             const keyVal = exprAst.value! as KeyValueExpressionAST
             return {
@@ -55,16 +63,22 @@ export const objectAstToObject = (objectAst: ObjectAST, options?: Options): Valu
                 [keyVal.identifier]: valueAstToObject(keyVal.value!, options)
             }
         }
-        return accum
+        const condAst = exprAst.value! as ConditionalExpressionAST
+
+        const tupleConds = tupleAstToObject(condAst.condition!, options)
+        const value = objectAstToObject(condAst.value!, options)
+
+        return {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ...(accum as any),
+            [`$_cond${i}`]: {
+                cond: tupleConds,
+                value
+            }
+        }
     }, {} as Value)
 }
-export const arrayAstToObject = (
-    arrayAst: ArrayAST,
-    options?: {
-        mappedDefinitions?: Record<string, ValueAST>
-        moduleMethods?: Record<string, boolean>
-    }
-): Value => {
+export const arrayAstToObject = (arrayAst: ArrayAST, options?: Options): Value => {
     return arrayAst.value!.map(valAst => valueAstToObject(valAst, options))
 }
 export const tupleAstToObject = (tupleAst: TupleAST, options?: Options): Value => {
@@ -75,7 +89,7 @@ export const tupleAstToObject = (tupleAst: TupleAST, options?: Options): Value =
 }
 
 export const rangeAstToObject = (rangeAst: RangeAST): Value => {
-    return {}
+    return `range({from: ${rangeAst.value!.from?.value!}, to: ${rangeAst.value!.to?.value!}})`
 }
 
 export const toIdentifier = (variable: VariableAST, options?: Options): string => {
@@ -90,13 +104,16 @@ export const toIdentifier = (variable: VariableAST, options?: Options): string =
         return `${identifier}(${writeValue(params)})`
     }
 
-    if (options?.moduleMethods && options?.moduleMethods[identifier]) return `${identifier}()`
+    if (options?.moduleMethods && options?.moduleMethods[identifier]) {
+        if (options.moduleMethods[identifier] == "method") return `${identifier}()`
+        return `'${identifier}'`
+    }
 
     return identifier
 }
 
 export const fnParametersToValue = (fnParams: FunctionParameterAST[], options?: Options): Value => {
-    return fnParams!.reduce((accum, param) => {
+    return fnParams!.reduce((accum, param, i) => {
         if (param.value!.value!.id == "key_value") {
             const keyVal = param.value!.value! as KeyValueExpressionAST
             return {
@@ -105,7 +122,19 @@ export const fnParametersToValue = (fnParams: FunctionParameterAST[], options?: 
                 [keyVal.identifier]: valueAstToObject(keyVal.value!, options)
             }
         }
-        return accum
+        const condAst = param.value!.value! as ConditionalExpressionAST
+
+        const tupleConds = tupleAstToObject(condAst.condition!, options)
+        const value = objectAstToObject(condAst.value!, options)
+
+        return {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ...(accum as any),
+            [`$_cond${i}`]: {
+                cond: tupleConds,
+                value
+            }
+        }
     }, {} as Value)
 }
 

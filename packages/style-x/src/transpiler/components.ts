@@ -1,5 +1,6 @@
 import { VariableAST, KeyValueExpressionAST, ArrayAST, ValueAST } from "../lang/definitions"
 import { valueAstToObject, writeValue } from "./value"
+import { moduleMethods } from "./main"
 
 export const writeComponent = (
     variableAst: VariableAST,
@@ -25,7 +26,7 @@ export const writeComponent = (
     const tagDefinition = `<${identifier} ${withoutChildren
         .map(param => {
             return `${param?.identifier}={${writeValue(
-                valueAstToObject(param!.value, { mappedDefinitions })
+                valueAstToObject(param!.value, { mappedDefinitions, moduleMethods })
             )}}`
         })
         .join(" ")}`

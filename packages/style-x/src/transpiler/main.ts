@@ -7,10 +7,13 @@ import { extractTypeFromValue } from "./type"
 import { ValueAST, VariableAST } from "../lang/definitions"
 import { writeComponent } from "./components"
 
-export const moduleMethods = {
-    row: true,
-    col: true,
-    fill: true
+export const moduleMethods: Record<string, "string" | "method"> = {
+    row: "method",
+    col: "method",
+    fill: "string",
+    start: "string",
+    center: "string",
+    space_between: "string"
 }
 
 const toOutDir = (dirInProject: string, projectDir: string, outDir: string) => {
@@ -116,6 +119,7 @@ const transpileFile = async (
     })
 
     if (execFile.ast.component) {
+        // write props
         writeStream.write(`interface Props {\n`)
         const props = execFile.ast.definitions
             .filter(def => def.overridable)

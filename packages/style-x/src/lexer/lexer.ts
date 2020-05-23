@@ -69,7 +69,16 @@ export default class Lexer extends Transform {
             return
         }
 
-        this._handlePartialToken(this.state.parser!.tokenizeNext!(char, this.state.token, this.state.lineNumber, this.state.position), char, charCode)
+        this._handlePartialToken(
+            this.state.parser!.tokenizeNext!(
+                char,
+                this.state.token,
+                this.state.lineNumber,
+                this.state.position
+            ),
+            char,
+            charCode
+        )
     }
 
     _flush() {
@@ -84,7 +93,10 @@ export default class Lexer extends Transform {
 
     private _beginTokenization = (char: string): PartialToken | null => {
         const match = lexers.find(val => char.match(val.exp))
-        if (!match?.id) throw new Error(`Unexpected token "${char}" with type "${match?.id}" on line ${this.state.lineNumber}:${this.state.position}`)
+        if (!match?.id)
+            throw new Error(
+                `Unexpected token "${char}" with type "${match?.id}" on line ${this.state.lineNumber}:${this.state.position}`
+            )
 
         this.state.parser = match
         return match?.tokenizeFirst(char, this.state.lineNumber, this.state.position)

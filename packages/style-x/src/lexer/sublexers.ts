@@ -76,7 +76,7 @@ const commentLexer = createSubLexer("parseComment", /\//s, {
 
 const identifierLexer = createSubLexer("parseIdentifier", /[a-zA-Z_]/s, {
     tokenizeFirst: (char, ln, pos) => tokenizeIncompleteCharacter("identifier", char, ln, pos),
-    tokenizeNext: (char, token, ln, pos) => {
+    tokenizeNext: (char, token) => {
         const alphanum = char.match(/[a-zA-Z_]/s)
         if (!alphanum) {
             if (token.value == "inf")
