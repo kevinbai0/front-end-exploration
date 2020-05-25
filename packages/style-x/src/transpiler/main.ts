@@ -6,6 +6,7 @@ import { valueAstToObject, writeValue } from "./value"
 import { extractTypeFromValue } from "./type"
 import { ValueAST, VariableAST } from "../lang/definitions"
 import { writeComponent } from "./components"
+import { useLayoutEngine } from "../layeng/main"
 
 export const moduleMethods: Record<string, "string" | "method"> = {
     row: "method",
@@ -36,6 +37,9 @@ export const transpileProject = async (dir: string) => {
     // if root outdir doesn't exist let's make it
     const exists = await dirExists(path.join(outDir, "src"))
     if (!exists) await createDir(path.join(outDir, "src"))
+
+    // layout engine
+    const layout = useLayoutEngine(project)
     // make entry
     transpileFile(project, projectDir, outDir, memo)
 }

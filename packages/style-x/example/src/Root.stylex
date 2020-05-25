@@ -1,0 +1,4 @@
+import Page
+
+@component
+Page()
