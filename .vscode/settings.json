@@ -1,3 +1,3 @@
 {
-    "git.ignoreLimitWarning": true
+    "deno.enable": false
 }
