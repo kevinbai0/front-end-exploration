@@ -12,19 +12,17 @@ const colors = {
   white: '#FFFFFF',
   black: '#333333',
   light: '#FAFAFA',
+  soft: '#DFDFDF',
   'grey.0': '#F4F4F4',
   'grey.1': '#CCCCCC',
-  'grey.2': '#888888',
-  lightOrange: '#FFA982',
-  orange: '#FA824C',
-  darkOrange: '#E0632B',
-  purple: '#283DB0',
-  lightRed: '#FF779B',
-  red: '#FF1654',
-  darkRed: '#C8244F',
-  lightGreen: '#9CD75E',
-  green: '#97DB4F',
-  darkGreen: '##649A2C',
+  'grey.2': '#AAAAAA',
+  'grey.3': '#888888',
+  orange: '#E0632B',
+  red: '#C52F1A',
+  green: '#649A2C',
+  moneyGreen: '#74BB29',
+  purple: '#774CE0',
+  blue: '#283DB0',
   transparent: 'transparent',
 };
 
@@ -103,8 +101,9 @@ const fonts = {
 };
 
 const shadows = {
+  light: `0 0 30px rgba(0,0,0,0.07);`,
   default: `0 2px 10px rgba(0,0,0,0.2);`,
-  active: `0 2px 30px rgba(0,0,0,0.3);`,
+  active: `0 2px 20px rgba(0,0,0,0.3);`,
 };
 
 const space = {
@@ -118,6 +117,7 @@ const space = {
 
 const borderRadius = {
   none: 0,
+  minimal: 5,
   small: 10,
   default: 14,
   big: 25,
@@ -215,7 +215,7 @@ const extendTheme = <T extends Partial<Theme<ThemeExtension>>>(
     },
     shadows: {
       ...defaultTheme.shadows,
-      ...themeOptions.fontFamily,
+      ...themeOptions.shadows,
     },
     layout: {
       ...defaultTheme.layout,

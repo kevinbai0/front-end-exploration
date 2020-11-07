@@ -44,6 +44,7 @@ export interface Layout<T = ThemeExtension> extends PrimitiveInjection {
   gap?: number | number[] | ThemeSpace<T> | string | string[];
   align?: LayoutItems;
   justify?: LayoutItems;
+  flex?: number;
 }
 
 export interface Position extends PrimitiveInjection {
@@ -77,6 +78,7 @@ export type LayoutContent =
   | 'space-evenly'
   | 'flex-start'
   | 'flex-end';
+
 export type LayoutItems =
   | 'center'
   | 'start'
@@ -91,7 +93,7 @@ export type DNA<T = Theme> = Spacing<T> &
   Layout<T> &
   Dimension &
   Position;
-export type DNATypes<T> = Spacing<T> | Style<T> | Font<T>;
+export type DNATypes<T = ThemeExtension> = Spacing<T> | Style<T> | Font<T>;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ThemeExtension {}
@@ -99,16 +101,18 @@ export interface ThemeExtension {}
 export type Theme<T = ThemeExtension> = InitialTheme & T;
 
 export type ThemeColor<T = ThemeExtension> = keyof Theme<T>['colors'];
-export type ThemeSpace<T> = keyof Theme<T>['space'];
-export type ThemeFont<T> = keyof Theme<T>['fonts'];
-export type ThemeFontFamily<T> = keyof Theme<T>['fontFamily'];
-export type ThemeFontSize<T> = keyof Theme<T>['fontSizes'];
-export type ThemeBorderRadius<T> = keyof Theme<T>['borderRadius'];
-export type ThemeBorder<T> = keyof Theme<T>['borders'];
-export type ThemeLayout<T> = keyof Theme<T>['layout'];
-export type ThemeShadow<T> = keyof Theme<T>['shadows'];
+export type ThemeSpace<T = ThemeExtension> = keyof Theme<T>['space'];
+export type ThemeFont<T = ThemeExtension> = keyof Theme<T>['fonts'];
+export type ThemeFontFamily<T = ThemeExtension> = keyof Theme<T>['fontFamily'];
+export type ThemeFontSize<T = ThemeExtension> = keyof Theme<T>['fontSizes'];
+export type ThemeBorderRadius<T = ThemeExtension> = keyof Theme<
+  T
+>['borderRadius'];
+export type ThemeBorder<T = ThemeExtension> = keyof Theme<T>['borders'];
+export type ThemeLayout<T = ThemeExtension> = keyof Theme<T>['layout'];
+export type ThemeShadow<T = ThemeExtension> = keyof Theme<T>['shadows'];
 
-export type ThemeProperties<T> =
+export type ThemeProperties<T = ThemeExtension> =
   | ThemeColor<T>
   | ThemeSpace<T>
   | ThemeFont<T>
