@@ -79,7 +79,6 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
 
                     return { initialPoint: mousePos, offset, initialEditState: getEditState(), selectedElementsInitialState: {} }
             }
-            
         })
         .onUpdate(({e, state}) => {
             const readonlyState = getEditState()
@@ -106,7 +105,7 @@ export default function(mouseMapper: MutableRefObject<MouseMapper>) {
                             })
                         })
                         return
-                    default: 
+                    default:
                         if (state.initialEditState.mode.type == "select" && state.initialEditState.mode.value == "selected") {
                             // TODO: update the state by getting initial positions for items to be translated
                             updateEditState({

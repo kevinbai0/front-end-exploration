@@ -1,9 +1,6 @@
 import React, { useRef } from "react";
 import { Box, styled } from "../../design-system"
 import { DNA, ThemeExtension } from "../../design-system/src/theme/types";
-import useInteractive from "../../hooks/useInteractive";
-import { MutableRefObject } from "react";
-import { getPos } from "../../helpers";
 import { RenderableComponentProps, StyleSetterRef } from "./ComponentTreeRenderer"
 import { useEffect } from "react";
 

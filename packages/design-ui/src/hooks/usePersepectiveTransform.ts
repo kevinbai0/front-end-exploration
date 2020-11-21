@@ -17,10 +17,10 @@ export default function(ref: MutableRefObject<HTMLDivElement>, canvasRef: Mutabl
         anchor: {x: 0, y: 0, scale: 1},
         calculate: function({x,y}) {
             return { x: (x - this.anchor.x) / this.anchor.scale, y: (y - this.anchor.y) / this.anchor.scale}
-        }})
+        }
+    })
 
     const canvasDim = useRef<LayoutDim>({x: 0, y: 0, width: 0, height: 0})
-
 
     useEffect(() => {
         // debounce resize since the only thing we need to recalculate, which won't affect user experience if not done in real time
@@ -41,7 +41,7 @@ export default function(ref: MutableRefObject<HTMLDivElement>, canvasRef: Mutabl
                 }
             }, 500)
         }
-        window.addEventListener("resize", resizeListener)
+        window.addEventListener('resize', resizeListener);
 
         return () => window.removeEventListener("resize", resizeListener)
     })
@@ -91,8 +91,6 @@ export default function(ref: MutableRefObject<HTMLDivElement>, canvasRef: Mutabl
 
         return () => ref.current?.removeEventListener("mousewheel", scroll)
     })
-
-
 
     return { mouseMapper }
 }
