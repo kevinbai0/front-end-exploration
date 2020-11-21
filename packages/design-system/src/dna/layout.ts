@@ -104,5 +104,6 @@ export const injectLayout: InjectProperties<Layout<ThemeExtension>> = (
       props,
       defaultProps
     ),
+    splitStyle('flex', ['flex'], matchLayoutAlignment, props, defaultProps),
   ];
 };
