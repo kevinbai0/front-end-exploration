@@ -1,6 +1,6 @@
 import { Theme, ThemeExtension } from './types';
 
-const breakpoints = [0, 576, 768, 992, 1200];
+const breakpoints = [0, 768, 1024, 1440];
 
 const colors = {
   theme: '#004CA4',
@@ -27,7 +27,7 @@ const colors = {
 };
 
 const fontFamily = {
-  mainFont: 'Poppins',
+  mainFont: 'Lato',
 };
 
 const fontSizes = {

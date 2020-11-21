@@ -87,8 +87,6 @@ const injectStyles = (
     .join('');
 };
 
-const platform = 'react-native';
-
 export const injectDNA = (
   props: DNA<ThemeExtension> & ThemeObject<ThemeExtension>,
   defaultProps?: Partial<DNA<ThemeExtension>>
@@ -97,7 +95,7 @@ export const injectDNA = (
         ${injectStyles(
           props,
           defaultProps || {},
-          platform ?? 'react',
+          'react',
           injectSpace,
           injectStyle,
           injectFonts,

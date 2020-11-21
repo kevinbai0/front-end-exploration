@@ -1,26 +1,49 @@
-import Body from "./src/components/react/atoms/Body";
-import Card from "./src/components/react/atoms/Card";
-import Header from "./src/components/react/atoms/Header";
-import Header2 from "./src/components/react/atoms/Header2";
-import Input from "./src/components/react/atoms/Input";
-import Box from "./src/components/react/atoms/Box";
 import { createTheme } from "./src/theme/index";
 import styled, { ThemeProvider, ThemeContext } from "styled-components";
-import Button from "./src/components/react/atoms/Button";
+import { extractDNAProps } from "./src/helpers/extractDna";
+import { withDNAProps } from "./src/helpers/withDNAProps";
+import { 
+  DNA,
+  Theme,
+  ThemeColor,
+  ThemeBorder,
+  ThemeBorderRadius,
+  ThemeExtension,
+  ThemeFont,
+  ThemeFontFamily,
+  ThemeFontSize,
+  ThemeLayout,
+  ThemeObject,
+  ThemeProperties,
+  ThemeShadow,
+  ThemeSpace,
+  LayoutContent,
+  LayoutItems,
+  FontWeight
+} from './src/theme/types'
 
 export {
-    Body,
-    Card,
-    Header,
-    Header2,
-    Button,
-    Input,
-    Box,
-    createTheme,
-    styled,
-    ThemeProvider,
-    ThemeContext
+  createTheme,
+  styled,
+  ThemeProvider,
+  ThemeContext,
+  extractDNAProps,
+  withDNAProps,
+  DNA,
+  Theme,
+  ThemeColor,
+  ThemeBorder,
+  ThemeBorderRadius,
+  ThemeExtension,
+  ThemeFont,
+  ThemeFontFamily,
+  ThemeFontSize,
+  ThemeLayout,
+  ThemeObject,
+  ThemeProperties,
+  ThemeShadow,
+  ThemeSpace,
+  LayoutContent,
+  LayoutItems,
+  FontWeight
 }
-
-
-
