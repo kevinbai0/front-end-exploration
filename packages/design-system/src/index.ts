@@ -1,7 +1,8 @@
-import { createTheme } from "./src/theme/index";
+import { createTheme } from "./theme/index";
 import styled, { ThemeProvider, ThemeContext } from "styled-components";
-import { extractDNAProps } from "./src/helpers/extractDna";
-import { withDNAProps } from "./src/helpers/withDNAProps";
+import { extractDNAProps } from "./helpers/extractDna";
+import { withDNAProps } from "./helpers/withDNAProps";
+import { injectDNA } from "./dna/index";
 import { 
   DNA,
   Theme,
@@ -20,7 +21,7 @@ import {
   LayoutContent,
   LayoutItems,
   FontWeight
-} from './src/theme/types'
+} from './theme/types'
 
 export {
   createTheme,
@@ -45,5 +46,7 @@ export {
   ThemeSpace,
   LayoutContent,
   LayoutItems,
-  FontWeight
+  FontWeight,
+  injectDNA
 }
+

@@ -20,13 +20,23 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.m?(ts|js)$/,
+                test: /\.m?(ts|js|tsx)$/,
                 exclude: /(node_modules|bower_components|examples)/,
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ["@babel/preset-env"]
+                        "presets": [
+                          "@babel/preset-typescript",
+                          "@babel/preset-env",
+                          "@babel/preset-react"
+                        ],
+                        "plugins": [
+                          "@babel/proposal-class-properties",
+                          "@babel/proposal-object-rest-spread",
+                          "@babel/plugin-proposal-numeric-separator"
+                        ]
                     }
+                    
                 }
             }
         ]
