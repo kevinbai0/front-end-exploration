@@ -1,42 +1,32 @@
-import { Colors } from './colors';
-import {
-  ThemeFontWeight,
-  ThemeFontFamily,
-  ThemeFontSizeClass,
-  ThemeFont,
-  ThemeFontDefinition,
-} from './fonts';
-import { AppBps } from './media';
-import { SpaceMultiplier } from './spacing';
+import { ThemeColors } from './colors';
+import { ThemeFont, ThemeFontDefinition, ThemeFontAttributes } from './fonts';
+import { ThemeMedia } from './media';
+import { ThemeSpacing } from './spacing';
 
 export interface IFactory<
-  Bps extends AppBps,
-  C extends Colors,
-  Families extends ThemeFontFamily<Bps>,
-  FontWeights extends ThemeFontWeight<Bps>,
-  SizeClasses extends ThemeFontSizeClass<Bps>,
-  Fonts extends ThemeFont<Bps, Families, FontWeights, SizeClasses>,
-  Space extends Record<string, SpaceMultiplier>
+  Media extends ThemeMedia,
+  Colors extends ThemeColors,
+  FontAttributes extends ThemeFontAttributes<Media>,
+  Fonts extends ThemeFont<Media, FontAttributes>,
+  Space extends ThemeSpacing
 > {
-  breakpoints: Bps;
-  fonts: ThemeFontDefinition<Bps, Families, FontWeights, SizeClasses, Fonts>;
-  colors: C;
+  media: Media;
+  fonts: ThemeFontDefinition<Media, FontAttributes, Fonts>;
+  colors: Colors;
   spacing: Space;
 }
 
 export const createFactory = <
-  Bps extends AppBps,
-  C extends Colors,
-  Families extends ThemeFontFamily<Bps>,
-  FontWeights extends ThemeFontWeight<Bps>,
-  SizeClasses extends ThemeFontSizeClass<Bps>,
-  Fonts extends ThemeFont<Bps, Families, FontWeights, SizeClasses>,
-  Space extends Record<string, SpaceMultiplier>
+  Media extends ThemeMedia,
+  Colors extends ThemeColors,
+  FontAttributes extends ThemeFontAttributes<Media>,
+  Fonts extends ThemeFont<Media, FontAttributes>,
+  Space extends ThemeSpacing
 >(options: {
-  breakpoints: Bps;
-  fonts: ThemeFontDefinition<Bps, Families, FontWeights, SizeClasses, Fonts>;
-  colors: C;
+  media: Media;
+  fonts: ThemeFontDefinition<Media, FontAttributes, Fonts>;
+  colors: Colors;
   spacing: Space;
-}) => {
+}): IFactory<Media, Colors, FontAttributes, Fonts, Space> => {
   return options;
 };

@@ -1,4 +1,5 @@
-import { AppBps, MediableProperty } from './media';
+import { StringKey } from '../types';
+import { ThemeMedia, MediableProperty } from './media';
 import { Size } from './types';
 
 export type FontWeightPrimitive =
@@ -12,78 +13,73 @@ export type FontWeightPrimitive =
   | 800
   | 900;
 
-export type FontSizeClass<Bps extends AppBps> = [
-  size: MediableProperty<Size, Bps>,
-  lineHeight: MediableProperty<Size, Bps>,
-  letterSpacing: MediableProperty<Size, Bps>
+export type FontSizeClass<Media extends ThemeMedia> = [
+  size: MediableProperty<Size, Media>,
+  lineHeight: MediableProperty<Size, Media>,
+  letterSpacing: MediableProperty<Size, Media>
 ];
 
 export interface IFont<
-  Bps extends AppBps,
-  T extends string,
-  Weight extends string,
-  SizeClasses extends String
+  Media extends ThemeMedia,
+  Attributes extends ThemeFontAttributes<Media>
 > {
-  family: MediableProperty<T, Bps>;
-  weight: MediableProperty<Weight, Bps>;
-  sizeClass: MediableProperty<SizeClasses, Bps>;
+  family: MediableProperty<StringKey<keyof Attributes['families']>, Media>;
+  weight: MediableProperty<StringKey<keyof Attributes['weights']>, Media>;
+  sizeClass: MediableProperty<
+    StringKey<keyof Attributes['sizeClasses']>,
+    Media
+  >;
 }
 
-type StringKey<T> = T extends string ? T : never;
+export type ThemeFontAttributes<Media extends ThemeMedia> = {
+  families: ThemeFontFamily<Media>;
+  weights: ThemeFontWeight<Media>;
+  sizeClasses: ThemeFontSizeClass<Media>;
+};
 
-export type ThemeFontFamily<Bps extends AppBps> = Record<
+export type ThemeFontFamily<Media extends ThemeMedia> = Record<
   string,
-  MediableProperty<string, Bps>
+  MediableProperty<string, Media>
 >;
-export type ThemeFontWeight<Bps extends AppBps> = Record<
+export type ThemeFontWeight<Media extends ThemeMedia> = Record<
   string,
-  MediableProperty<FontWeightPrimitive, Bps>
+  MediableProperty<FontWeightPrimitive, Media>
 >;
-export type ThemeFontSizeClass<Bps extends AppBps> = Record<
+export type ThemeFontSizeClass<Media extends ThemeMedia> = Record<
   string,
-  MediableProperty<FontSizeClass<Bps>, Bps>
+  MediableProperty<FontSizeClass<Media>, Media>
 >;
 export type ThemeFont<
-  Bps extends AppBps,
-  Families extends ThemeFontFamily<Bps>,
-  FontWeights extends ThemeFontWeight<Bps>,
-  SizeClasses extends ThemeFontSizeClass<Bps>
-> = Record<
-  string,
-  IFont<
-    Bps,
-    StringKey<keyof Families>,
-    StringKey<keyof FontWeights>,
-    StringKey<keyof SizeClasses>
-  >
->;
+  Media extends ThemeMedia,
+  FontAttributes extends ThemeFontAttributes<Media>
+> = Record<string, IFont<Media, FontAttributes>>;
 
 export type ThemeFontDefinition<
-  Bps extends AppBps,
-  Families extends ThemeFontFamily<Bps>,
-  FontWeights extends ThemeFontWeight<Bps>,
-  SizeClasses extends ThemeFontSizeClass<Bps>,
-  Fonts extends ThemeFont<Bps, Families, FontWeights, SizeClasses>
+  Media extends ThemeMedia,
+  FontAttributes extends ThemeFontAttributes<Media>,
+  Fonts extends ThemeFont<Media, FontAttributes>
 > = {
-  base: {
-    families: Families;
-    weights: FontWeights;
-    sizeClasses: SizeClasses;
-  };
+  base: Pick<
+    FontAttributes & {
+      fonts: Fonts;
+    },
+    Exclude<keyof FontAttributes, 'fonts'>
+  >;
   fonts: Fonts;
 };
 
-export const generateFonts = <Bps extends AppBps>() => <
-  Families extends ThemeFontFamily<Bps>,
-  FontWeights extends ThemeFontWeight<Bps>,
-  SizeClasses extends ThemeFontSizeClass<Bps>,
-  Fonts extends ThemeFont<Bps, Families, FontWeights, SizeClasses>
->(options: {
-  families: Families;
-  weights: FontWeights;
-  sizeClasses: SizeClasses;
-  fonts: Fonts;
-}): ThemeFontDefinition<Bps, Families, FontWeights, SizeClasses, Fonts> => {
+export const generateFonts = <Media extends ThemeMedia>() => <
+  FontAttributes extends {
+    families: ThemeFontFamily<Media>;
+    weights: ThemeFontWeight<Media>;
+    sizeClasses: ThemeFontSizeClass<Media>;
+  },
+  Fonts extends ThemeFont<Media, FontAttributes>
+>(
+  options: FontAttributes & {
+    fonts: Fonts;
+  }
+): ThemeFontDefinition<Media, FontAttributes, Fonts> => {
   const { fonts, ...rest } = options;
   return {
     base: rest,
@@ -92,10 +88,12 @@ export const generateFonts = <Bps extends AppBps>() => <
 };
 
 export type FontKeys<
-  Bps extends AppBps,
-  Families extends ThemeFontFamily<Bps>,
-  FontWeights extends ThemeFontWeight<Bps>,
-  SizeClasses extends ThemeFontSizeClass<Bps>,
-  Fonts extends ThemeFont<Bps, Families, FontWeights, SizeClasses>,
-  D extends ThemeFontDefinition<Bps, Families, FontWeights, SizeClasses, Fonts>
+  Media extends ThemeMedia,
+  FontAttributes extends {
+    families: ThemeFontFamily<Media>;
+    weights: ThemeFontWeight<Media>;
+    sizeClasses: ThemeFontSizeClass<Media>;
+  },
+  Fonts extends ThemeFont<Media, FontAttributes>,
+  D extends ThemeFontDefinition<Media, FontAttributes, Fonts>
 > = keyof D['fonts'];

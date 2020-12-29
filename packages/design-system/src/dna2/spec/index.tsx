@@ -1,23 +1,27 @@
 import { applyGenerator } from '../build';
+import { toCSS } from '../build/css';
 import { colorArray, generateColors } from './colors';
 import { createFactory } from './factory';
 import { generateFonts } from './fonts';
-import { generateMedia } from './media';
+import { createSelectors, generateMedia } from './media';
 import { generateSpacing } from './spacing';
 
-const { media, breakpoints } = generateMedia({
-  tablet: '768px',
-  desktop: '1024px',
-  xLarge: '1440px',
+const { media, mediaFn } = generateMedia({
+  breakpoints: {
+    tablet: '768px',
+    desktop: '1024px',
+    xLarge: '1440px',
+  },
+  selectors: createSelectors('$focus', '$hover', '$active'),
 });
 
 const colors = generateColors({
   white: '#ffffff',
   black: '#131313',
-  greys: colorArray(['#eeeeee', '#cccccc', '#aaaaaa', '#888888']),
+  greys: colorArray('#eeeeee', '#cccccc', '#aaaaaa', '#888888'),
 });
 
-const fonts = generateFonts<typeof breakpoints>()({
+const fonts = generateFonts<typeof media>()({
   families: {
     main: 'Calibri',
   },
@@ -59,7 +63,8 @@ const fonts = generateFonts<typeof breakpoints>()({
     },
   },
 });
-const spacing = generateSpacing<typeof breakpoints>()({
+
+const spacing = generateSpacing<typeof media>()({
   baseMultiplier: (media) => media('8px'),
   aliases: {
     gap: '1x',
@@ -69,20 +74,23 @@ const spacing = generateSpacing<typeof breakpoints>()({
 });
 
 const factory = createFactory({
-  breakpoints,
+  media,
   fonts,
   colors,
   spacing: spacing.aliases,
 });
 
-const applier = applyGenerator(media, breakpoints, factory);
+const applier = applyGenerator(mediaFn, factory);
 
 const res = applier({
   bg: (media) => media('greys.1').tablet('black'),
   fg: 'greys.3',
   m: '2x',
-  my: (media) => media('3x').tablet('2x'),
-  font: (media) => media('h2').tablet('h1'),
+  my: (media) => media('3x').tablet('2x').$focus('1x'),
+  font: (media) => media('h3').$hover('h2').tablet('h2').$hover('h1'),
+  $focus: {
+    fg: (media) => media('black').tablet('white'),
+  },
 });
 
-console.log(res);
+console.log(toCSS(res, media));

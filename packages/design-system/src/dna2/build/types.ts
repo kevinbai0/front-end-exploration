@@ -1,17 +1,16 @@
-import { Color, ColorKeys } from '../spec/colors';
+import { ColorKeys, ThemeColors } from '../spec/colors';
+import { IFactory } from '../spec/factory';
 import {
   FontKeys,
   ThemeFontDefinition,
-  ThemeFontFamily,
-  ThemeFontSizeClass,
-  ThemeFontWeight,
   ThemeFont,
+  ThemeFontAttributes,
 } from '../spec/fonts';
-import { AppBps, MediableProperty } from '../spec/media';
-import { SpaceKeys, SpaceMultiplier } from '../spec/spacing';
+import { ThemeMedia, MediableProperty } from '../spec/media';
+import { SpaceKeys, ThemeSpacing, SpaceMultiplier } from '../spec/spacing';
 
-export type ColorPropNames = 'fg' | 'bg';
-export type SpacePropNames =
+type ColorPropNames = 'fg' | 'bg';
+type SpacePropNames =
   | 'm'
   | 'p'
   | 'mx'
@@ -26,32 +25,60 @@ export type SpacePropNames =
   | 'pt'
   | 'pr'
   | 'pl';
-export type FontPropNames = 'font';
+type FontPropNames = 'font';
+type SelectorPropNames<Media extends ThemeMedia> = Media['selectors'][number];
 
-export type ColorProps<C extends Record<string, Color>, Bps extends AppBps> = {
-  [key in ColorPropNames]?: MediableProperty<ColorKeys<C>, Bps>;
+export type DnaPropNames<Media extends ThemeMedia> =
+  | ColorPropNames
+  | SpacePropNames
+  | FontPropNames
+  | SelectorPropNames<Media>;
+
+export type SelectorProps<
+  Media extends ThemeMedia,
+  Colors extends ThemeColors,
+  FontAttributes extends ThemeFontAttributes<Media>,
+  Fonts extends ThemeFont<Media, FontAttributes>,
+  Space extends ThemeSpacing,
+  Fact extends IFactory<Media, Colors, FontAttributes, Fonts, Space>
+> = {
+  [key in SelectorPropNames<Media>]?: Omit<
+    DNAProps<Media, Colors, FontAttributes, Fonts, Space, Fact>,
+    key
+  >;
 };
 
-export type SpaceProps<
-  T extends Record<string, SpaceMultiplier>,
-  Bps extends AppBps
-> = {
+export type ColorProps<Colors extends ThemeColors, Media extends ThemeMedia> = {
+  [key in ColorPropNames]?: MediableProperty<ColorKeys<Colors>, Media>;
+};
+
+export type SpaceProps<T extends ThemeSpacing, Media extends ThemeMedia> = {
   [key in SpacePropNames]?: MediableProperty<
     SpaceKeys<T> | SpaceMultiplier,
-    Bps
+    Media
   >;
 };
 
 export type FontProps<
-  Bps extends AppBps,
-  Families extends ThemeFontFamily<Bps>,
-  FontWeights extends ThemeFontWeight<Bps>,
-  SizeClasses extends ThemeFontSizeClass<Bps>,
-  Fonts extends ThemeFont<Bps, Families, FontWeights, SizeClasses>,
-  D extends ThemeFontDefinition<Bps, Families, FontWeights, SizeClasses, Fonts>
+  Media extends ThemeMedia,
+  FontAttributes extends ThemeFontAttributes<Media>,
+  Fonts extends ThemeFont<Media, FontAttributes>,
+  D extends ThemeFontDefinition<Media, FontAttributes, Fonts>
 > = {
   [key in FontPropNames]?: MediableProperty<
-    FontKeys<Bps, Families, FontWeights, SizeClasses, Fonts, D>,
-    Bps
+    FontKeys<Media, FontAttributes, Fonts, D>,
+    Media
   >;
 };
+
+export type DNAProps<
+  Media extends ThemeMedia,
+  Colors extends ThemeColors,
+  FontAttributes extends ThemeFontAttributes<Media>,
+  Fonts extends ThemeFont<Media, FontAttributes>,
+  Space extends ThemeSpacing,
+  Fact extends IFactory<Media, Colors, FontAttributes, Fonts, Space>
+> = ColorProps<Fact['colors'], Media> &
+  SpaceProps<Fact['spacing'], Media> &
+  FontProps<Media, FontAttributes, Fonts, Fact['fonts']> &
+  SelectorProps<Media, Colors, FontAttributes, Fonts, Space, Fact>;
