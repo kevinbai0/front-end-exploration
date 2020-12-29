@@ -6,13 +6,15 @@ type ViewportWidth = 'vw';
 type ViewportHeight = 'vh';
 type ViewportDim = 'vs';
 
-type CSSExtension = 
+type CSSExtension =
   | Pixel
   | Percent
   | Em
   | Rem
   | ViewportWidth
   | ViewportHeight
-  | ViewportDim
+  | ViewportDim;
 
 export type CSSValue<T extends CSSExtension> = `${number}${T}`;
+export type Size = CSSValue<Pixel | Em | ViewportWidth | Rem>;
+export type LineHeight = Size | `${number}`;

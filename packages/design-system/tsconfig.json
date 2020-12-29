@@ -3,7 +3,7 @@
         "target": "esnext",
         "module": "commonjs",
         "jsx": "react-jsx",
-        "declaration": true,
+        "composite": true,
         "emitDeclarationOnly": true,
         "declarationMap": true,
         "outDir": "./dist",

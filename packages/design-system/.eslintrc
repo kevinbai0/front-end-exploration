@@ -1,0 +1,6 @@
+{
+  "extends": "./node_modules/@tabtabapp/lint-rules/react/.eslintrc",
+  "rules": {
+    "react/display-name": 0
+  }
+}
