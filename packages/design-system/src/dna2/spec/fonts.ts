@@ -89,11 +89,9 @@ export const generateFonts = <Media extends ThemeMedia>() => <
 
 export type FontKeys<
   Media extends ThemeMedia,
-  FontAttributes extends {
-    families: ThemeFontFamily<Media>;
-    weights: ThemeFontWeight<Media>;
-    sizeClasses: ThemeFontSizeClass<Media>;
-  },
-  Fonts extends ThemeFont<Media, FontAttributes>,
-  D extends ThemeFontDefinition<Media, FontAttributes, Fonts>
-> = keyof D['fonts'];
+  FontDefinition extends ThemeFontDefinition<
+    Media,
+    ThemeFontAttributes<Media>,
+    ThemeFont<Media, ThemeFontAttributes<Media>>
+  >
+> = keyof FontDefinition['fonts'];

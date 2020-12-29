@@ -3,6 +3,14 @@ import { ThemeFont, ThemeFontDefinition, ThemeFontAttributes } from './fonts';
 import { ThemeMedia } from './media';
 import { ThemeSpacing } from './spacing';
 
+export type BaseFactory = IFactory<
+  ThemeMedia,
+  ThemeColors,
+  ThemeFontAttributes<ThemeMedia>,
+  ThemeFont<ThemeMedia, ThemeFontAttributes<ThemeMedia>>,
+  ThemeSpacing
+>;
+
 export interface IFactory<
   Media extends ThemeMedia,
   Colors extends ThemeColors,

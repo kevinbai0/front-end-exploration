@@ -1,48 +1,42 @@
-import { ThemeColors } from '../spec/colors';
-import { IFactory } from '../spec/factory';
-import { ThemeFont, ThemeFontAttributes } from '../spec/fonts';
-import { ThemeMedia, MediaProperty, MediaIterable } from '../spec/media';
-import { ThemeSpacing } from '../spec/spacing';
-import { DnaPropNames, DNAProps } from './types';
+import { BaseFactory } from '../spec/factory';
+import { MediaProperty } from '../spec/media';
+import { StringKey } from '../types';
+import { DnaPropNames, ThemeDnaProps } from './types';
 
-type Value<Media extends ThemeMedia> = [
-  MediaIterable<Media>,
-  string | StyleTree<Media>
+type Value<Fact extends BaseFactory, Key extends DnaPropNames<Fact>> = [
+  StringKey<keyof Fact['media']['breakpoints']>,
+  ThemeDnaProps<Fact>[Key] | StyleTree<Fact>
 ];
 
-export type StyleTree<Media extends ThemeMedia> = {
-  [key in DnaPropNames<Media>]?: [
-    ['_base', string | StyleTree<Media>],
-    ...Value<Media>[]
-  ];
+export type StyleTreeValueTuple<
+  Fact extends BaseFactory,
+  Key extends DnaPropNames<Fact>
+> = [
+  ['_base', ThemeDnaProps<Fact>[Key] | StyleTree<Fact>],
+  ...Value<Fact, Key>[]
+];
+
+export type StyleTree<Fact extends BaseFactory> = {
+  [Key in DnaPropNames<Fact>]?: StyleTreeValueTuple<Fact, Key>;
 };
 
-export const applyGenerator = <
-  Media extends ThemeMedia,
-  Colors extends ThemeColors,
-  FontAttributes extends ThemeFontAttributes<Media>,
-  Fonts extends ThemeFont<Media, FontAttributes>,
-  Space extends ThemeSpacing,
-  Fact extends IFactory<Media, Colors, FontAttributes, Fonts, Space>
->(
-  mediaFn: <T>(val: T) => MediaProperty<T, Media>,
+export const applyGenerator = <Fact extends BaseFactory>(
+  mediaFn: <T>(val: T) => MediaProperty<T, Fact['media']>,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   factory: Fact
 ) => {
-  const applier = (
-    props: DNAProps<Media, Colors, FontAttributes, Fonts, Space, Fact>
-  ): StyleTree<Media> => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const blindProps = props as any;
-    return Object.keys(blindProps).reduce<StyleTree<Media>>((acc, key) => {
-      const value = blindProps[key];
+  const applier = (props: ThemeDnaProps<Fact>): StyleTree<Fact> => {
+    return Object.keys(props).reduce<StyleTree<Fact>>((acc, key) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const value = (props as any)[key];
+
       if (typeof value === 'function') {
         const res = value(mediaFn)();
-        (acc as any)[key] = res;
+        acc[key as DnaPropNames<Fact>] = res;
       } else if (typeof value === 'object') {
-        (acc as any)[key] = [['_base', applier(value)]];
+        acc[key as DnaPropNames<Fact>] = [['_base', applier(value)]];
       } else {
-        (acc as any)[key] = [['_base', value]];
+        acc[key as DnaPropNames<Fact>] = [['_base', value]];
       }
       return acc;
     }, {});

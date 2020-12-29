@@ -1,13 +1,8 @@
-import { ColorKeys, ThemeColors } from '../spec/colors';
-import { IFactory } from '../spec/factory';
-import {
-  FontKeys,
-  ThemeFontDefinition,
-  ThemeFont,
-  ThemeFontAttributes,
-} from '../spec/fonts';
+import { ColorKeys } from '../spec/colors';
+import { BaseFactory } from '../spec/factory';
+import { FontKeys } from '../spec/fonts';
 import { ThemeMedia, MediableProperty } from '../spec/media';
-import { SpaceKeys, ThemeSpacing, SpaceMultiplier } from '../spec/spacing';
+import { SpaceKeys, SpaceMultiplier } from '../spec/spacing';
 
 type ColorPropNames = 'fg' | 'bg';
 type SpacePropNames =
@@ -26,59 +21,42 @@ type SpacePropNames =
   | 'pr'
   | 'pl';
 type FontPropNames = 'font';
-type SelectorPropNames<Media extends ThemeMedia> = Media['selectors'][number];
+export type SelectorPropNames<
+  Fact extends BaseFactory
+> = Fact['media']['selectors'][number];
 
-export type DnaPropNames<Media extends ThemeMedia> =
+export type DnaPropNames<Fact extends BaseFactory> =
   | ColorPropNames
   | SpacePropNames
   | FontPropNames
-  | SelectorPropNames<Media>;
+  | SelectorPropNames<Fact>;
 
-export type SelectorProps<
-  Media extends ThemeMedia,
-  Colors extends ThemeColors,
-  FontAttributes extends ThemeFontAttributes<Media>,
-  Fonts extends ThemeFont<Media, FontAttributes>,
-  Space extends ThemeSpacing,
-  Fact extends IFactory<Media, Colors, FontAttributes, Fonts, Space>
-> = {
-  [key in SelectorPropNames<Media>]?: Omit<
-    DNAProps<Media, Colors, FontAttributes, Fonts, Space, Fact>,
-    key
+export type SelectorProps<Fact extends BaseFactory> = {
+  [key in SelectorPropNames<Fact>]?: Omit<ThemeDnaProps<Fact>, key>;
+};
+
+export type ColorProps<Fact extends BaseFactory> = {
+  [key in ColorPropNames]?: MediableProperty<
+    ColorKeys<Fact['colors']>,
+    Fact['media']
   >;
 };
 
-export type ColorProps<Colors extends ThemeColors, Media extends ThemeMedia> = {
-  [key in ColorPropNames]?: MediableProperty<ColorKeys<Colors>, Media>;
-};
-
-export type SpaceProps<T extends ThemeSpacing, Media extends ThemeMedia> = {
+export type SpaceProps<Fact extends BaseFactory> = {
   [key in SpacePropNames]?: MediableProperty<
-    SpaceKeys<T> | SpaceMultiplier,
-    Media
+    SpaceKeys<Fact['spacing']> | SpaceMultiplier,
+    Fact['media']
   >;
 };
 
-export type FontProps<
-  Media extends ThemeMedia,
-  FontAttributes extends ThemeFontAttributes<Media>,
-  Fonts extends ThemeFont<Media, FontAttributes>,
-  D extends ThemeFontDefinition<Media, FontAttributes, Fonts>
-> = {
+export type FontProps<Fact extends BaseFactory> = {
   [key in FontPropNames]?: MediableProperty<
-    FontKeys<Media, FontAttributes, Fonts, D>,
-    Media
+    FontKeys<ThemeMedia, Fact['fonts']>,
+    ThemeMedia
   >;
 };
 
-export type DNAProps<
-  Media extends ThemeMedia,
-  Colors extends ThemeColors,
-  FontAttributes extends ThemeFontAttributes<Media>,
-  Fonts extends ThemeFont<Media, FontAttributes>,
-  Space extends ThemeSpacing,
-  Fact extends IFactory<Media, Colors, FontAttributes, Fonts, Space>
-> = ColorProps<Fact['colors'], Media> &
-  SpaceProps<Fact['spacing'], Media> &
-  FontProps<Media, FontAttributes, Fonts, Fact['fonts']> &
-  SelectorProps<Media, Colors, FontAttributes, Fonts, Space, Fact>;
+export type ThemeDnaProps<Fact extends BaseFactory> = ColorProps<Fact> &
+  SpaceProps<Fact> &
+  FontProps<Fact> &
+  SelectorProps<Fact>;

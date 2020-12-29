@@ -85,8 +85,8 @@ const applier = applyGenerator(mediaFn, factory);
 const res = applier({
   bg: (media) => media('greys.1').tablet('black'),
   fg: 'greys.3',
-  m: '2x',
-  my: (media) => media('3x').tablet('2x').$focus('1x'),
+  m: (media) => media('2x').$focus('3x'),
+  my: (media) => media('3x').tablet('2x').$hover('2x'),
   font: (media) => media('h3').$hover('h2').tablet('h2').$hover('h1'),
   $focus: {
     fg: (media) => media('black').tablet('white'),
