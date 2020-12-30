@@ -1,1 +1,5 @@
-"@tabtabapp/lint-rules/.prettierrc"
+{
+  "$schema": "./node_modules/@tabtabapp/lint-rules/.prettierrc.json",
+  "arrowParens": "avoid",
+  "singleQuote": true
+}

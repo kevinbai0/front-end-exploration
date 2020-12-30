@@ -1,5 +1,6 @@
 import { BaseFactory } from '../spec/factory';
 import { MediaIterable } from '../spec/media';
+import { StringKey } from '../types';
 import { DnaPropNames, SelectorPropNames, ThemeDnaProps } from './types';
 import { StyleTree, StyleTreeValueTuple } from './index';
 
@@ -7,7 +8,7 @@ type BasePropertyTree<Fact extends BaseFactory> = {
   [Key in DnaPropNames<Fact>]?: ThemeDnaProps<Fact>[Key];
 };
 
-type MediaTree<Fact extends BaseFactory> = {
+export type MediaTree<Fact extends BaseFactory> = {
   [Key in MediaIterable<Fact['media']> | '_base']?: BasePropertyTree<Fact>;
 };
 
@@ -24,54 +25,62 @@ const createBasePropertyTree = <
   return tree;
 };
 
-export const toCSS = <Fact extends BaseFactory>(
+export const normalizeTree = <Fact extends BaseFactory>(
   tree: StyleTree<Fact>,
   media: Fact['media']
-) => {
+): MediaTree<Fact> => {
   type CurrStyleTree = typeof tree;
   const newTree: MediaTree<Fact> = {};
 
   iterateTree(tree, (key, properties) => {
-    properties.forEach(([mediaType, value], index) => {
+    type Props = ThemeDnaProps<Fact>;
+    const [first, ...rest] = properties;
+    if (typeof first === 'string') {
+      addToTree(newTree, '_base', key, first as NonNullable<Props[typeof key]>);
+    } else {
+      const newRes = normalizeTree(first as CurrStyleTree, media);
+      Object.entries(newRes).forEach(([m, values]) => {
+        // slice the dollar symbol
+        addToTree(newTree, m, key.slice(1) as DnaPropNames<Fact>, values!);
+      });
+    }
+
+    let lastBreakpointValue:
+      | StringKey<keyof Fact['media']['breakpoints']>
+      | '_base' = '_base';
+    rest.forEach(([value, mediaType]) => {
       // if we find a .$selector tag, then it goes with the first breakpoints tag before that
-      if (media.selectors.find((selector) => selector === mediaType)) {
+      if (media.selectors.find(selector => selector === mediaType)) {
         // TODO: instead of prev index, look through all indices until found
-        const newMediaType = index === 0 ? '_base' : properties[index - 1][0];
-        const val = value as any;
+        const newMediaType = lastBreakpointValue;
         if (typeof value === 'string') {
           addToTree(
             newTree,
             newMediaType,
             mediaType as SelectorPropNames<Fact>,
-            createBasePropertyTree(key, val)
+            createBasePropertyTree(key, value as Props[typeof key])
           );
         } else {
-          const newValue = toCSS(value as CurrStyleTree, media);
+          const newValue = normalizeTree(value as CurrStyleTree, media);
           Object.entries(newValue).forEach(([m, values]) => {
-            addToTree(
-              newTree,
-              m as MediaIterable<Fact['media']>,
-              key as any,
-              values
-            );
+            addToTree(newTree, m as MediaIterable<Fact['media']>, key, values!);
           });
         }
         return;
       }
+      lastBreakpointValue = mediaType;
 
-      // decast value since there's too many union options
-      const decasted = value as any;
       if (typeof value === 'string') {
-        return addToTree(newTree, mediaType, key, decasted);
-      }
-      const newValue = toCSS(value as CurrStyleTree, media);
-      Object.entries(newValue).forEach(([m, values]) => {
-        addToTree(
+        return addToTree(
           newTree,
-          m as MediaIterable<Fact['media']>,
-          key as any,
-          values
+          mediaType,
+          key,
+          value as NonNullable<Props[typeof key]>
         );
+      }
+      const newValue = normalizeTree(value as CurrStyleTree, media);
+      Object.entries(newValue).forEach(([m, values]) => {
+        addToTree(newTree, m as MediaIterable<Fact['media']>, key, values!);
       });
     });
     return null;

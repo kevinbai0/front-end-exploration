@@ -1,5 +1,6 @@
 import { applyGenerator } from '../build';
-import { toCSS } from '../build/css';
+import { normalizeTree } from '../build/normalize';
+import { cssTransformer } from '../transforms/css';
 import { colorArray, generateColors } from './colors';
 import { createFactory } from './factory';
 import { generateFonts } from './fonts';
@@ -12,7 +13,7 @@ const { media, mediaFn } = generateMedia({
     desktop: '1024px',
     xLarge: '1440px',
   },
-  selectors: createSelectors('$focus', '$hover', '$active'),
+  selectors: createSelectors('focus', 'hover', 'active'),
 });
 
 const colors = generateColors({
@@ -64,12 +65,12 @@ const fonts = generateFonts<typeof media>()({
   },
 });
 
-const spacing = generateSpacing<typeof media>()({
-  baseMultiplier: (media) => media('8px'),
+const spacing = generateSpacing()({
+  baseMultiplier: '8px',
   aliases: {
     gap: '1x',
-    appMarginX: '5x',
-    cardPaddingX: '2x',
+    'app-margin-x': '5x',
+    'card-padding-x': '2x',
   },
 });
 
@@ -77,20 +78,27 @@ const factory = createFactory({
   media,
   fonts,
   colors,
-  spacing: spacing.aliases,
+  spacing,
 });
 
 const applier = applyGenerator(mediaFn, factory);
 
 const res = applier({
-  bg: (media) => media('greys.1').tablet('black'),
+  bg: 'black',
   fg: 'greys.3',
-  m: (media) => media('2x').$focus('3x'),
-  my: (media) => media('3x').tablet('2x').$hover('2x'),
-  font: (media) => media('h3').$hover('h2').tablet('h2').$hover('h1'),
-  $focus: {
-    fg: (media) => media('black').tablet('white'),
+  m: '2x',
+  my: $ => ['2x', $.tablet('3x')],
+  font: $ => ['h4', $.active('h2'), $.hover('h3'), $.tablet('h2')],
+  $active: {
+    bg: $ => ['black', $.desktop('greys.0')],
+  },
+  $hover: {
+    fg: 'greys.2',
   },
 });
 
-console.log(toCSS(res, media));
+console.log(JSON.stringify(res, undefined, 2));
+const normalizedTree = normalizeTree(res, media);
+console.log(normalizedTree);
+
+console.log(cssTransformer(factory, normalizedTree));
