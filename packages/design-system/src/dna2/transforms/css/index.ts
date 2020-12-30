@@ -1,22 +1,35 @@
 import { MediaTree } from '../../build/normalize';
 import { DnaPropNames } from '../../build/types';
 import { BaseFactory } from '../../spec/factory';
+import { MediaSelector, ThemeMedia } from '../../spec/media';
 import { StringKey } from '../../types';
+import { colorTransformer } from './color';
+import { fontTransformer } from './font';
 import { mediaTransformer } from './media';
+import { spaceTransformers } from './space';
 import { MediaTransformer, Transformer } from './types';
 
-export const cssTransformer = <Fact extends BaseFactory>(
+export const cssTransformer = <
+  Media extends ThemeMedia,
+  Fact extends BaseFactory<Media>
+>(
+  mediaFn: <T>() => MediaSelector<T, Media>,
   fact: Fact,
-  tree: MediaTree<Fact>,
+  tree: MediaTree<Media, Fact>,
   options?: {
-    media?: MediaTransformer<Fact>;
+    media?: MediaTransformer<Media, Fact>;
   }
 ) => {
-  type Prop = DnaPropNames<Fact>;
+  type Prop = DnaPropNames<Media, Fact>;
   const transformers: {
-    [key in Prop]?: Transformer<Fact, key>;
-  } = {};
-  const mediaTransform = options?.media ?? mediaTransformer<Fact>();
+    [key in Prop]?: Transformer<Media, Fact, any>;
+  } = {
+    bg: colorTransformer('bg', mediaFn),
+    fg: colorTransformer('fg', mediaFn),
+    ...spaceTransformers(mediaFn),
+    font: fontTransformer('font', mediaFn),
+  };
+  const mediaTransform = options?.media ?? mediaTransformer<Media, Fact>();
 
   return Object.keys(tree).reduce((acc, key) => {
     const strings = mediaTransform(
@@ -29,13 +42,16 @@ export const cssTransformer = <Fact extends BaseFactory>(
       if (!transformFn) {
         console.log(`Transformer for ${currKey} is not defined`);
       }
-
       const finalValue = transformFn
-        ? (transformFn as any)(newValue, fact)
+        ? (transformFn as Transformer<Media, Fact, any>)(newValue, fact)
         : undefined;
-      return acc + `${typeof finalValue === 'string' ? finalValue : ''}`;
+
+      if (finalValue) {
+        return acc + `${finalValue.start}${finalValue.end}\n`;
+      }
+      return acc;
     }, '');
 
-    return acc + strings.start + middle + strings.end;
+    return acc + strings.start + middle + strings.end + '\n';
   }, '');
 };

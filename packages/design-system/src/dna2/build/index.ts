@@ -1,41 +1,54 @@
 import { BaseFactory } from '../spec/factory';
-import { MediaSelector } from '../spec/media';
+import { MediaSelector, ThemeMedia } from '../spec/media';
 import { StringKey } from '../types';
 import { DnaPropNames, ThemeDnaProps } from './types';
 
-type Value<Fact extends BaseFactory, Key extends DnaPropNames<Fact>> = [
-  ThemeDnaProps<Fact>[Key] | StyleTree<Fact>,
-  StringKey<keyof Fact['media']['breakpoints']>
+type Value<
+  Media extends ThemeMedia,
+  Fact extends BaseFactory<Media>,
+  Key extends DnaPropNames<Media, Fact>
+> = [
+  ThemeDnaProps<Media, Fact>[Key] | StyleTree<Media, Fact>,
+  StringKey<keyof Fact['media']['breakpoints']> | '_base'
 ];
 
 export type StyleTreeValueTuple<
-  Fact extends BaseFactory,
-  Key extends DnaPropNames<Fact>
-> = [ThemeDnaProps<Fact>[Key] | StyleTree<Fact>, ...Value<Fact, Key>[]];
+  Media extends ThemeMedia,
+  Fact extends BaseFactory<Media>,
+  Key extends DnaPropNames<Media, Fact>
+> = Value<Media, Fact, Key>[];
 
-export type StyleTree<Fact extends BaseFactory> = {
-  [Key in DnaPropNames<Fact>]?: StyleTreeValueTuple<Fact, Key>;
+export type StyleTree<
+  Media extends ThemeMedia,
+  Fact extends BaseFactory<Media>
+> = {
+  [Key in DnaPropNames<Media, Fact>]?: StyleTreeValueTuple<Media, Fact, Key>;
 };
 
-export const applyGenerator = <Fact extends BaseFactory>(
-  mediaFn: <T>() => MediaSelector<T, Fact['media']>,
+export const applyGenerator = <
+  Media extends ThemeMedia,
+  Fact extends BaseFactory<Media>
+>(
+  mediaFn: <T>() => MediaSelector<T, Media>,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   factory: Fact
 ) => {
-  const applier = (props: ThemeDnaProps<Fact>): StyleTree<Fact> => {
-    return Object.keys(props).reduce<StyleTree<Fact>>((acc, key) => {
-      const value = props[key as DnaPropNames<Fact>];
+  const applier = (
+    props: ThemeDnaProps<Media, Fact>
+  ): StyleTree<Media, Fact> => {
+    return Object.keys(props).reduce<StyleTree<Media, Fact>>((acc, key) => {
+      const value = props[key as DnaPropNames<Media, Fact>];
 
       if (typeof value === 'function') {
-        const res = value(mediaFn());
-        acc[key as DnaPropNames<Fact>] = res;
+        const [first, ...rest] = value(mediaFn());
+        acc[key as DnaPropNames<Media, Fact>] = [[first, '_base'], ...rest];
       } else if (typeof value === 'object') {
-        acc[key as DnaPropNames<Fact>] = [
-          applier(value as ThemeDnaProps<Fact>),
+        acc[key as DnaPropNames<Media, Fact>] = [
+          [applier(value as ThemeDnaProps<Media, Fact>), '_base'],
         ];
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        acc[key as DnaPropNames<Fact>] = [value] as any;
+        acc[key as DnaPropNames<Media, Fact>] = [[value, '_base']] as any;
       }
       return acc;
     }, {});

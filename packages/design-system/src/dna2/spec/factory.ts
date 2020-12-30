@@ -3,18 +3,18 @@ import { ThemeFont, ThemeFontDefinition, ThemeFontAttributes } from './fonts';
 import { ThemeMedia } from './media';
 import { ThemeSpacing } from './spacing';
 
-export type BaseFactory = IFactory<
-  ThemeMedia,
+export type BaseFactory<Media extends ThemeMedia> = IFactory<
+  Media,
   ThemeColors,
-  ThemeFontAttributes<ThemeMedia>,
-  ThemeFont<ThemeMedia, ThemeFontAttributes<ThemeMedia>>,
+  ThemeFontAttributes,
+  ThemeFont<Media, ThemeFontAttributes>,
   ThemeSpacing
 >;
 
 export interface IFactory<
   Media extends ThemeMedia,
   Colors extends ThemeColors,
-  FontAttributes extends ThemeFontAttributes<Media>,
+  FontAttributes extends ThemeFontAttributes,
   Fonts extends ThemeFont<Media, FontAttributes>,
   Space extends ThemeSpacing
 > {
@@ -22,12 +22,13 @@ export interface IFactory<
   fonts: ThemeFontDefinition<Media, FontAttributes, Fonts>;
   colors: Colors;
   spacing: Space;
+  rank: (keyof Media['breakpoints'] | '_base')[];
 }
 
 export const createFactory = <
   Media extends ThemeMedia,
   Colors extends ThemeColors,
-  FontAttributes extends ThemeFontAttributes<Media>,
+  FontAttributes extends ThemeFontAttributes,
   Fonts extends ThemeFont<Media, FontAttributes>,
   Space extends ThemeSpacing
 >(options: {
@@ -36,5 +37,15 @@ export const createFactory = <
   colors: Colors;
   spacing: Space;
 }): IFactory<Media, Colors, FontAttributes, Fonts, Space> => {
-  return options;
+  return {
+    ...options,
+    get rank() {
+      return [
+        '_base',
+        ...Object.entries(options.media.breakpoints)
+          .sort((a, b) => parseFloat(a[1]) - parseFloat(b[1]))
+          .map(val => val[0]),
+      ];
+    },
+  };
 };

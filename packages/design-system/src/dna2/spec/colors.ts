@@ -21,5 +21,5 @@ export type ColorKeys<C extends ThemeColors> = {
     ? C[Key] extends string
       ? Key
       : `${Key}.${NumberKeys<keyof C[Key]>}`
-    : never;
+    : string;
 }[keyof C];

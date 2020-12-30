@@ -1,6 +1,6 @@
 import { applyGenerator } from '../build';
 import { normalizeTree } from '../build/normalize';
-import { cssTransformer } from '../transforms/css';
+import { createValueTransform } from '../transforms/value';
 import { colorArray, generateColors } from './colors';
 import { createFactory } from './factory';
 import { generateFonts } from './fonts';
@@ -49,8 +49,8 @@ const fonts = generateFonts<typeof media>()({
     },
     h2: {
       family: 'main',
-      weight: 'normal',
-      sizeClass: 'h2',
+      weight: _ => ['normal', _.tablet('bold')],
+      sizeClass: _ => ['h2', _.desktop('h1')],
     },
     h3: {
       family: 'main',
@@ -87,10 +87,9 @@ const res = applier({
   bg: 'black',
   fg: 'greys.3',
   m: '2x',
-  my: $ => ['2x', $.tablet('3x')],
-  font: $ => ['h4', $.active('h2'), $.hover('h3'), $.tablet('h2')],
+  font: _ => ['h2', _.desktop('h3')],
   $active: {
-    bg: $ => ['black', $.desktop('greys.0')],
+    bg: _ => ['black', _.desktop('greys.3')],
   },
   $hover: {
     fg: 'greys.2',
@@ -100,5 +99,10 @@ const res = applier({
 console.log(JSON.stringify(res, undefined, 2));
 const normalizedTree = normalizeTree(res, media);
 console.log(normalizedTree);
+const valueTransform = createValueTransform<typeof media, typeof factory>();
 
-console.log(cssTransformer(factory, normalizedTree));
+const transformed = valueTransform(mediaFn, factory, res);
+console.log(JSON.stringify(transformed, undefined, 2));
+console.log(JSON.stringify(normalizeTree(transformed, media), undefined, 2));
+
+//console.log(cssTransformer(mediaFn, factory, normalizedTree));

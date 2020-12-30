@@ -31,9 +31,17 @@ export type MediaFn<T, Media extends ThemeMedia> = (
   val: T
 ) => MediaProperty<T, Media>;
 
-export type MediableProperty<T, Media extends ThemeMedia> =
-  | T
-  | (($: MediaSelector<T, Media>) => [T, ...[T, MediaIterable<Media>][]]);
+export type MediableState = 'expanded' | 'default' | 'disabled';
+
+export type MediableProperty<
+  T,
+  Media extends ThemeMedia,
+  State extends MediableState = 'default'
+> = State extends 'default'
+  ? T | (($: MediaSelector<T, Media>) => [T, ...[T, MediaIterable<Media>][]])
+  : State extends 'expanded'
+  ? [T, MediaIterable<Media> | '_base'][]
+  : never;
 
 export const createSelectors = <K extends string, T extends K[]>(
   ...values: T
