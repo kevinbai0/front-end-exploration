@@ -1,6 +1,9 @@
 import { BaseFactory } from '../spec/factory';
 import { MediaSelectorFn, ThemeMedia } from '../spec/media';
+import { createTransforms } from '../transforms';
 import { StringKey } from '../types';
+import { normalizeTree } from './normalize';
+import { DnaTransformer, serializer } from './serializer';
 import { DnaPropNames, ThemeDnaProps } from './types';
 
 type Value<
@@ -55,21 +58,32 @@ const generateStyleTree = <
 
 export const applyGenerator = <
   Media extends ThemeMedia,
-  Fact extends BaseFactory<Media>
+  Fact extends BaseFactory<Media>,
+  TransformReturnType,
+  JoinType extends unknown,
+  OutputType extends unknown
 >(
   media: Media,
-  factory: Fact
-) => <Return>(
-  transformer: (
-    tree: StyleTree<Media, Fact>,
-    mediaFn: MediaSelectorFn<Media>,
-    factory: Fact
-  ) => Return
+  factory: Fact,
+  dnaTransform: DnaTransformer<
+    Media,
+    Fact,
+    TransformReturnType,
+    JoinType,
+    OutputType
+  >
 ) => {
   type Props = ThemeDnaProps<Media, Fact>;
   const applier = (props: Props) => {
     const tree = generateStyleTree(props, factory.mediaFn);
-    return transformer(tree, factory.mediaFn, factory);
+    const transformedTree = createTransforms(
+      factory.mediaFn,
+      factory,
+      dnaTransform.merger
+    )(tree);
+
+    const normalized = normalizeTree(factory, transformedTree);
+    return serializer(normalized, factory, dnaTransform);
   };
 
   return applier;

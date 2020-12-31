@@ -19,18 +19,15 @@ export interface IFont<
   Media extends ThemeMedia,
   Attributes extends ThemeFontAttributes
 > {
-  family: MediableProperty<StringKey<keyof Attributes['families']>, Media>;
-  weight: MediableProperty<StringKey<keyof Attributes['weights']>, Media>;
-  sizeClass: MediableProperty<
-    StringKey<keyof Attributes['sizeClasses']>,
-    Media
-  >;
+  family: MediableProperty<StringKey<keyof Attributes['family']>, Media>;
+  weight: MediableProperty<StringKey<keyof Attributes['weight']>, Media>;
+  sizeClass: MediableProperty<StringKey<keyof Attributes['sizeClass']>, Media>;
 }
 
 export type ThemeFontAttributes = {
-  families: ThemeFontFamily;
-  weights: ThemeFontWeight;
-  sizeClasses: ThemeFontSizeClass;
+  family: ThemeFontFamily;
+  weight: ThemeFontWeight;
+  sizeClass: ThemeFontSizeClass;
 };
 
 export type ThemeFontFamily = Record<string, string>;
@@ -46,28 +43,22 @@ export type ThemeFontDefinition<
   FontAttributes extends ThemeFontAttributes,
   Fonts extends ThemeFont<Media, FontAttributes>
 > = {
-  base: Pick<
-    FontAttributes & {
-      fonts: Fonts;
-    },
-    Exclude<keyof FontAttributes, 'fonts'>
-  >;
-  fonts: Fonts;
+  properties: FontAttributes;
+  aliases: Fonts;
 };
 
 export const generateFonts = <Media extends ThemeMedia>() => <
   FontAttributes extends ThemeFontAttributes,
-  Fonts extends ThemeFont<Media, FontAttributes>
+  Fonts extends ThemeFont<Media, FontAttributes>,
+  FontDefinition extends ThemeFontDefinition<Media, FontAttributes, Fonts>
 >(
-  options: FontAttributes & {
-    fonts: Fonts;
-  }
-): ThemeFontDefinition<Media, FontAttributes, Fonts> => {
-  const { fonts, ...rest } = options;
+  options: FontDefinition
+): FontDefinition => {
+  const { properties, aliases } = options;
   return {
-    base: rest,
-    fonts,
-  };
+    properties,
+    aliases,
+  } as FontDefinition;
 };
 
 export type FontKeys<
@@ -77,4 +68,4 @@ export type FontKeys<
     ThemeFontAttributes,
     ThemeFont<Media, ThemeFontAttributes>
   >
-> = StringKey<keyof FontDefinition['fonts']>;
+> = StringKey<keyof FontDefinition['aliases']>;

@@ -32,7 +32,7 @@ export const fontTransform = <
     ['font'],
     (value, mediaType, media, factory) => {
       if (typeof value === 'string') {
-        const font = factory.fonts.fonts[value as string];
+        const font = factory.fonts.aliases[value as string];
 
         const family = transformFamily(media, factory, font);
         const sizeClass = transformSizeClasses(media, factory, font);
@@ -91,14 +91,14 @@ const transformFamily = <
 >(
   media: <T>() => MediaSelector<T, Media>,
   factory: Fact,
-  font: IFont<Media, Fact['fonts']['base']>
+  font: IFont<Media, Fact['fonts']['properties']>
 ) => {
   if (typeof font.family === 'string') {
-    return factory.fonts.base.families[font.family];
+    return factory.fonts.properties.family[font.family];
   }
   const values = normalizeResponsiveArray(font.family(media()));
   return values.map(
-    val => [factory.fonts.base.families[val[0]], val[1]] as const
+    val => [factory.fonts.properties.family[val[0]], val[1]] as const
   );
 };
 
@@ -108,14 +108,14 @@ const transformSizeClasses = <
 >(
   media: <T>() => MediaSelector<T, Media>,
   factory: Fact,
-  font: IFont<Media, Fact['fonts']['base']>
+  font: IFont<Media, Fact['fonts']['properties']>
 ) => {
   if (typeof font.sizeClass === 'string') {
-    return factory.fonts.base.sizeClasses[font.sizeClass];
+    return factory.fonts.properties.sizeClass[font.sizeClass];
   }
   const values = normalizeResponsiveArray(font.sizeClass(media()));
   return values.map(
-    val => [factory.fonts.base.sizeClasses[val[0]], val[1]] as const
+    val => [factory.fonts.properties.sizeClass[val[0]], val[1]] as const
   );
 };
 
@@ -125,13 +125,13 @@ const transformWeight = <
 >(
   media: <T>() => MediaSelector<T, Media>,
   factory: Fact,
-  font: IFont<Media, Fact['fonts']['base']>
+  font: IFont<Media, Fact['fonts']['properties']>
 ) => {
   if (typeof font.weight === 'string') {
-    return factory.fonts.base.weights[font.weight];
+    return factory.fonts.properties.weight[font.weight];
   }
   const values = normalizeResponsiveArray(font.weight(media()));
   return values.map(
-    val => [factory.fonts.base.weights[val[0]], val[1]] as const
+    val => [factory.fonts.properties.weight[val[0]], val[1]] as const
   );
 };

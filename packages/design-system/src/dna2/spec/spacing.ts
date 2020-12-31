@@ -7,9 +7,7 @@ export type ThemeSpacing = {
   aliases: Record<string, SpaceMultiplier>;
 };
 
-export const generateSpacing = () => <Space extends ThemeSpacing>(
-  options: Space
-) => {
+export const generateSpacing = <Space extends ThemeSpacing>(options: Space) => {
   return options;
 };
 

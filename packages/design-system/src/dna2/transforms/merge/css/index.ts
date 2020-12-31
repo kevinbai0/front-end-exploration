@@ -1,6 +1,7 @@
 import { DnaTransformer } from '../../../build/serializer';
 import { BaseFactory } from '../../../spec/factory';
 import { ThemeMedia } from '../../../spec/media';
+import { layoutMergeTransform } from './layout';
 import { colorMergeTransform } from './color';
 import { fontMergeTransform } from './fonts';
 import { spaceMergeTransform } from './space';
@@ -12,6 +13,7 @@ export const createCSSTransformer = <
   const fonts = fontMergeTransform<Media, Fact>();
   const colors = colorMergeTransform<Media, Fact>();
   const space = spaceMergeTransform<Media, Fact>();
+  const layout = layoutMergeTransform<Media, Fact>();
 
   return {
     initialValue: '',
@@ -19,6 +21,7 @@ export const createCSSTransformer = <
       ...fonts,
       ...colors,
       ...space,
+      ...layout,
     },
     joinSet: types => {
       return types.join('');

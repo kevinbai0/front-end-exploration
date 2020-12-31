@@ -3,10 +3,14 @@ import {
   createValueTransform,
   ValueTransformFn,
 } from '../transforms/value/base';
-import { spaceTransform } from '../transforms/value/space';
 import { StringKey } from '../types';
 import { ThemeColors } from './colors';
 import { ThemeFont, ThemeFontDefinition, ThemeFontAttributes } from './fonts';
+import {
+  ThemeLayout,
+  ThemeLayoutAliases,
+  ThemeLayoutProperties,
+} from './layout';
 import { MediaSelector, ThemeMedia } from './media';
 import { ThemeSpacing } from './spacing';
 
@@ -15,7 +19,15 @@ export type BaseFactory<Media extends ThemeMedia> = IFactory<
   ThemeColors,
   ThemeFontAttributes,
   ThemeFont<Media, ThemeFontAttributes>,
-  ThemeSpacing
+  ThemeFontDefinition<
+    Media,
+    ThemeFontAttributes,
+    ThemeFont<Media, ThemeFontAttributes>
+  >,
+  ThemeSpacing,
+  ThemeLayoutProperties<Media>,
+  ThemeLayoutAliases<Media>,
+  ThemeLayout<Media, ThemeLayoutProperties<Media>, ThemeLayoutAliases<Media>>
 >;
 
 export interface IFactory<
@@ -23,12 +35,17 @@ export interface IFactory<
   Colors extends ThemeColors,
   FontAttributes extends ThemeFontAttributes,
   Fonts extends ThemeFont<Media, FontAttributes>,
-  Space extends ThemeSpacing
+  FontDefinition extends ThemeFontDefinition<Media, FontAttributes, Fonts>,
+  Space extends ThemeSpacing,
+  LayoutProperties extends ThemeLayoutProperties<Media>,
+  LayoutAlias extends ThemeLayoutAliases<Media>,
+  Layout extends ThemeLayout<Media, LayoutProperties, LayoutAlias>
 > {
   media: Media;
-  fonts: ThemeFontDefinition<Media, FontAttributes, Fonts>;
+  fonts: FontDefinition;
   colors: Colors;
   spacing: Space;
+  layout: Layout;
   rank: (StringKey<keyof Media['breakpoints']> | '_base')[];
   mediaFn: <T>() => MediaSelector<T, Media>;
 }
@@ -38,15 +55,28 @@ export const createFactory = <
   Colors extends ThemeColors,
   FontAttributes extends ThemeFontAttributes,
   Fonts extends ThemeFont<Media, FontAttributes>,
-  Space extends ThemeSpacing
+  FontDefinition extends ThemeFontDefinition<Media, FontAttributes, Fonts>,
+  Space extends ThemeSpacing,
+  LayoutProperties extends ThemeLayoutProperties<Media>,
+  LayoutAlias extends ThemeLayoutAliases<Media>,
+  Layout extends ThemeLayout<Media, LayoutProperties, LayoutAlias>
 >(options: {
   media: Media;
-  fonts: ThemeFontDefinition<Media, FontAttributes, Fonts>;
+  fonts: FontDefinition;
   colors: Colors;
   spacing: Space;
-}): IFactory<Media, Colors, FontAttributes, Fonts, Space> => {
-  type Fact = IFactory<Media, Colors, FontAttributes, Fonts, Space>;
-
+  layout: Layout;
+}): IFactory<
+  Media,
+  Colors,
+  FontAttributes,
+  Fonts,
+  FontDefinition,
+  Space,
+  LayoutProperties,
+  LayoutAlias,
+  Layout
+> => {
   return {
     ...options,
     get rank() {
