@@ -1,8 +1,9 @@
 import { applyGenerator } from '../build';
 import { normalizeTree } from '../build/normalize';
 import { createCSSTransformer } from '../transforms/merge/css';
-import { createTransforms } from '../transforms/merge';
+import { createTransforms } from '../transforms';
 import { serializer } from '../build/serializer';
+import { createCssInJsTransformer } from '../transforms/merge/css-in-js';
 import { colorArray, generateColors } from './colors';
 import { createFactory } from './factory';
 import { generateFonts } from './fonts';
@@ -83,7 +84,7 @@ const factory = createFactory({
   spacing,
 });
 
-const cssTransformer = createCSSTransformer<typeof media, typeof factory>();
+const cssTransformer = createCssInJsTransformer<typeof media, typeof factory>();
 
 const applier = applyGenerator(
   media,

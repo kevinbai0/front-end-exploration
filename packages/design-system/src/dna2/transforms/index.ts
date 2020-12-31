@@ -1,8 +1,8 @@
-import { StyleTree, StyleTreeValueTuple } from '../../build';
-import { DnaPropNames, SelectorPropNames } from '../../build/types';
-import { BaseFactory } from '../../spec/factory';
-import { MediaSelector, ThemeMedia } from '../../spec/media';
-import { ValueAndMergeTransformPair } from '../merge/base';
+import { StyleTree, StyleTreeValueTuple } from '../build';
+import { DnaPropNames, SelectorPropNames } from '../build/types';
+import { BaseFactory } from '../spec/factory';
+import { MediaSelector, ThemeMedia } from '../spec/media';
+import { ValueAndMergeTransformPair } from './merge/base';
 
 const selectorTransform = <T extends string>(value: T) => `$${value}` as const;
 

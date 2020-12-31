@@ -106,7 +106,6 @@ export const normalizeTree = <
     });
   });
 
-  console.log(newTree);
   return newTree;
 };
 
@@ -131,7 +130,6 @@ function mergeSelectorToTree<
       [selector]: value,
     };
   }
-  console.log(tree);
 }
 
 function mergeToTree<Media extends ThemeMedia, Fact extends BaseFactory<Media>>(
