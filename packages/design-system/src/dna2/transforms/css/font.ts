@@ -14,10 +14,7 @@ export const fontTransformer = <
   value,
   fact
 ) => {
-  const val = fact.fonts.fonts[value].sizeClass;
-  if (typeof val === 'function') {
-    console.log(val(mediaFn()));
-  }
+  console.log(value);
   return {
     start: '',
     end: '',

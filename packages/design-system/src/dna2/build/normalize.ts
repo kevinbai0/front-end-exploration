@@ -39,10 +39,10 @@ export const normalizeTree = <
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>
 >(
-  tree: StyleTree<Media, Fact>,
-  media: Fact['media']
+  media: Fact['media'],
+  tree: StyleTree<Media, Fact>
 ): MediaTree<Media, Fact> => {
-  type CurrStyleTree = typeof tree;
+  type CurrStyleTree = StyleTree<Media, Fact>;
   const newTree: MediaTree<Media, Fact> = {};
 
   iterateTree(tree, (key, properties) => {
@@ -64,7 +64,10 @@ export const normalizeTree = <
           );
         }
       } else if (media.selectors.find(selector => selector === key.slice(1))) {
-        const newValue = normalizeTree(value as CurrStyleTree, media);
+        const newValue = normalizeTree<Media, Fact>(
+          media,
+          value as CurrStyleTree
+        );
         Object.entries(newValue).forEach(([m, values]) => {
           addToTree(newTree, m as MediaIterable<Fact['media']>, key, values!);
         });
@@ -72,7 +75,7 @@ export const normalizeTree = <
         if (Array.isArray(value)) {
           const newStyleTree: StyleTree<Media, Fact> = {};
           newStyleTree[key] = value;
-          const values = normalizeTree(newStyleTree, media);
+          const values = normalizeTree<Media, Fact>(media, newStyleTree);
           Object.entries(values).forEach(([m, values]) => {
             mergeToTree(newTree, m as MediaIterable<Fact['media']>, values!);
           });

@@ -1,13 +1,15 @@
 import { applyGenerator } from '../build';
 import { normalizeTree } from '../build/normalize';
-import { createValueTransform } from '../transforms/value';
+import { createCSSTransformer } from '../transforms/merge/css';
+import { createTransforms } from '../transforms/merge';
+import { serializer } from '../build/serializer';
 import { colorArray, generateColors } from './colors';
 import { createFactory } from './factory';
 import { generateFonts } from './fonts';
 import { createSelectors, generateMedia } from './media';
 import { generateSpacing } from './spacing';
 
-const { media, mediaFn } = generateMedia({
+const media = generateMedia({
   breakpoints: {
     tablet: '768px',
     desktop: '1024px',
@@ -81,7 +83,17 @@ const factory = createFactory({
   spacing,
 });
 
-const applier = applyGenerator(mediaFn, factory);
+const cssTransformer = createCSSTransformer<typeof media, typeof factory>();
+
+const applier = applyGenerator(
+  media,
+  factory
+)((tree, mediaFn, factory) => {
+  const transforms = createTransforms(mediaFn, factory, cssTransformer.merger);
+  const transformedTree = transforms(tree);
+  const normalized = normalizeTree(factory.media, transformedTree);
+  return serializer(normalized, factory, cssTransformer);
+});
 
 const res = applier({
   bg: 'black',
@@ -96,13 +108,9 @@ const res = applier({
   },
 });
 
-console.log(JSON.stringify(res, undefined, 2));
-const normalizedTree = normalizeTree(res, media);
-console.log(normalizedTree);
-const valueTransform = createValueTransform<typeof media, typeof factory>();
+console.log(res);
 
-const transformed = valueTransform(mediaFn, factory, res);
+/*
 console.log(JSON.stringify(transformed, undefined, 2));
 console.log(JSON.stringify(normalizeTree(transformed, media), undefined, 2));
-
-//console.log(cssTransformer(mediaFn, factory, normalizedTree));
+*/

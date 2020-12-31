@@ -1,6 +1,7 @@
+import { StringKey } from '../types';
 import { ThemeColors } from './colors';
 import { ThemeFont, ThemeFontDefinition, ThemeFontAttributes } from './fonts';
-import { ThemeMedia } from './media';
+import { MediaSelector, ThemeMedia } from './media';
 import { ThemeSpacing } from './spacing';
 
 export type BaseFactory<Media extends ThemeMedia> = IFactory<
@@ -22,7 +23,8 @@ export interface IFactory<
   fonts: ThemeFontDefinition<Media, FontAttributes, Fonts>;
   colors: Colors;
   spacing: Space;
-  rank: (keyof Media['breakpoints'] | '_base')[];
+  rank: (StringKey<keyof Media['breakpoints']> | '_base')[];
+  mediaFn: <T>() => MediaSelector<T, Media>;
 }
 
 export const createFactory = <
@@ -45,7 +47,18 @@ export const createFactory = <
         ...Object.entries(options.media.breakpoints)
           .sort((a, b) => parseFloat(a[1]) - parseFloat(b[1]))
           .map(val => val[0]),
-      ];
+      ] as (StringKey<keyof Media['breakpoints']> | '_base')[];
+    },
+    mediaFn: <T>() => {
+      return [
+        ...Object.keys(options.media.breakpoints),
+        ...options.media.selectors,
+      ].reduce<MediaSelector<T, Media>>((acc, breakpoint) => {
+        return {
+          ...acc,
+          [breakpoint]: (val: T) => [val, breakpoint],
+        };
+      }, {} as MediaSelector<T, Media>);
     },
   };
 };

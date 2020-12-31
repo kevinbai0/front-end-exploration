@@ -23,6 +23,10 @@ type MediaBreakpoint<T, Media extends ThemeMedia> = {
 export type MediaProperty<T, Media extends ThemeMedia> = Out<T, Media> &
   MediaBreakpoint<T, Media>;
 
+export type MediaSelectorFn<Media extends ThemeMedia> = <T>() => MediaSelector<
+  T,
+  Media
+>;
 export type MediaSelector<T, Media extends ThemeMedia> = {
   [Key in MediaIterable<Media>]: (value: T) => [T, Key];
 };
@@ -50,16 +54,5 @@ export const createSelectors = <K extends string, T extends K[]>(
 };
 
 export const generateMedia = <Media extends ThemeMedia>(options: Media) => {
-  function mediaFn<T>() {
-    return [...Object.keys(options.breakpoints), ...options.selectors].reduce<
-      MediaSelector<T, Media>
-    >((acc, breakpoint) => {
-      return {
-        ...acc,
-        [breakpoint]: (val: T) => [val, breakpoint],
-      };
-    }, {} as MediaSelector<T, Media>);
-  }
-
-  return { mediaFn, media: options };
+  return options;
 };

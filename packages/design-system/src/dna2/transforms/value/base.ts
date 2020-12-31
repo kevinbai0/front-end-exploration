@@ -1,40 +1,49 @@
 import { DnaPropNames, ThemeDnaProps } from '../../build/types';
 import { BaseFactory } from '../../spec/factory';
-import { MediaSelector, ThemeMedia } from '../../spec/media';
+import { MediaSelectorFn, ThemeMedia } from '../../spec/media';
+import { StringKey } from '../../types';
+
+export type ValueTransformFn<
+  Media extends ThemeMedia,
+  Fact extends BaseFactory<Media>,
+  Keys extends DnaPropNames<Media, Fact>,
+  Return
+> = (
+  value: ThemeDnaProps<Media, Fact>[Keys],
+  mediaFn: MediaSelectorFn<Media>,
+  factory: Fact
+) => [Return, string][];
+
+export type ValueTransformSet<
+  Media extends ThemeMedia,
+  Fact extends BaseFactory<Media>,
+  Keys extends DnaPropNames<Media, Fact>,
+  Return
+> = Record<Keys, ValueTransformFn<Media, Fact, Keys, Return>>;
 
 export const createValueTransform = <
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>
->() => <T extends DnaPropNames<Media, Fact>[], Return>(
-  ...props: [
-    ...T,
-    (
-      value: ThemeDnaProps<Media, Fact>[T[number]],
-      mediaFn: <T>() => MediaSelector<T, Media>,
-      factory: Fact
-    ) => Return
-  ]
-) => {
-  const keys = props.slice(0, props.length - 1) as T;
-  const callback = props.slice(-1)[0] as (
-    value: ThemeDnaProps<Media, Fact>[T[number]],
-    mediaFn: <T>() => MediaSelector<T, Media>,
-    factory: Fact
-  ) => Return;
+>() => <Keys extends DnaPropNames<Media, Fact>, Return>(
+  keys: Keys[],
+  callback: ValueTransformFn<Media, Fact, Keys, Return>
+): ValueTransformSet<Media, Fact, Keys, Return> => {
+  //const keys = props.slice(0, props.length - 1) as T;
+  // const callback = props.slice(-1)[0];
 
   const set = new Set(keys);
   return Array.from(set).reduce(
     (acc, prop) => ({
       ...acc,
-      [prop as T[number]]: callback,
+      [prop as Keys]: callback,
     }),
     {} as Record<
-      T[number],
+      Keys,
       (
-        value: ThemeDnaProps<Media, Fact>[T[number]],
-        mediaFn: <T>() => MediaSelector<T, Media>,
+        value: ThemeDnaProps<Media, Fact>[Keys],
+        mediaFn: MediaSelectorFn<Media>,
         factory: Fact
-      ) => [Return, string][]
+      ) => [Return, StringKey<keyof Media['breakpoints']> | '_base'][]
     >
   );
 };
