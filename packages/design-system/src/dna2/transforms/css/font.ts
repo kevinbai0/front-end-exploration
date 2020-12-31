@@ -14,7 +14,6 @@ export const fontTransformer = <
   value,
   fact
 ) => {
-  console.log(value);
   return {
     start: '',
     end: '',

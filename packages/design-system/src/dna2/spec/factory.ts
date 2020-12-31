@@ -1,3 +1,9 @@
+import { DnaPropNames } from '../build/types';
+import {
+  createValueTransform,
+  ValueTransformFn,
+} from '../transforms/value/base';
+import { spaceTransform } from '../transforms/value/space';
 import { StringKey } from '../types';
 import { ThemeColors } from './colors';
 import { ThemeFont, ThemeFontDefinition, ThemeFontAttributes } from './fonts';
@@ -39,6 +45,8 @@ export const createFactory = <
   colors: Colors;
   spacing: Space;
 }): IFactory<Media, Colors, FontAttributes, Fonts, Space> => {
+  type Fact = IFactory<Media, Colors, FontAttributes, Fonts, Space>;
+
   return {
     ...options,
     get rank() {
@@ -59,6 +67,23 @@ export const createFactory = <
           [breakpoint]: (val: T) => [val, breakpoint],
         };
       }, {} as MediaSelector<T, Media>);
+    },
+  };
+};
+
+const factoryExtender = <
+  Media extends ThemeMedia,
+  Fact extends BaseFactory<Media>
+>(
+  fact: Fact
+) => {
+  const returnObj = {
+    addTransform: <Keys extends DnaPropNames<Media, Fact>, Return>(
+      keys: Keys[],
+      callback: ValueTransformFn<Media, Fact, Keys, Return>
+    ) => {
+      const transform = createValueTransform<Media, Fact>()(keys, callback);
+      return factoryExtender<Media, Fact>(fact);
     },
   };
 };

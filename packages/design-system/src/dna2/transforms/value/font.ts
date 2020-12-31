@@ -28,59 +28,62 @@ export const fontTransform = <
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>
 >() =>
-  createValueTransform<Media, Fact>()(['font'], (value, media, factory) => {
-    if (typeof value === 'string') {
-      const font = factory.fonts.fonts[value as string];
+  createValueTransform<Media, Fact>()(
+    ['font'],
+    (value, mediaType, media, factory) => {
+      if (typeof value === 'string') {
+        const font = factory.fonts.fonts[value as string];
 
-      const family = transformFamily(media, factory, font);
-      const sizeClass = transformSizeClasses(media, factory, font);
-      const weight = transformWeight(media, factory, font);
-      const familyReduce = mapFontProp<Media, string>(
-        family,
-        typeof family === 'string'
-      );
-      const sizeClassReduce = mapFontProp<Media, FontSizeClass>(
-        sizeClass,
-        !Array.isArray(sizeClass[0])
-      );
-      const weightReduce = mapFontProp<Media, FontWeightPrimitive>(
-        weight,
-        typeof weight === 'number'
-      );
+        const family = transformFamily(media, factory, font);
+        const sizeClass = transformSizeClasses(media, factory, font);
+        const weight = transformWeight(media, factory, font);
+        const familyReduce = mapFontProp<Media, string>(
+          family,
+          typeof family === 'string'
+        );
+        const sizeClassReduce = mapFontProp<Media, FontSizeClass>(
+          sizeClass,
+          !Array.isArray(sizeClass[0])
+        );
+        const weightReduce = mapFontProp<Media, FontWeightPrimitive>(
+          weight,
+          typeof weight === 'number'
+        );
 
-      const families = factory.rank.reduce(
-        (acc, rank) => {
-          if (
-            !familyReduce[rank] &&
-            !weightReduce[rank] &&
-            !sizeClassReduce[rank]
-          ) {
-            return acc;
+        const families = factory.rank.reduce(
+          (acc, rank) => {
+            if (
+              !familyReduce[rank] &&
+              !weightReduce[rank] &&
+              !sizeClassReduce[rank]
+            ) {
+              return acc;
+            }
+            const next = {
+              family: familyReduce[rank] ?? acc.prev.family,
+              weight: weightReduce[rank] ?? acc.prev.weight,
+              sizeClass: sizeClassReduce[rank] ?? acc.prev.sizeClass,
+            };
+
+            return {
+              prev: next,
+              acc: acc.acc.concat([[next, rank]]),
+            };
+          },
+          {
+            prev: {} as Font,
+            acc: [],
+          } as {
+            prev: Font;
+            acc: [Font, '_base' | StringKey<keyof Media['breakpoints']>][];
           }
-          const next = {
-            family: familyReduce[rank] ?? acc.prev.family,
-            weight: weightReduce[rank] ?? acc.prev.weight,
-            sizeClass: sizeClassReduce[rank] ?? acc.prev.sizeClass,
-          };
+        );
 
-          return {
-            prev: next,
-            acc: acc.acc.concat([[next, rank]]),
-          };
-        },
-        {
-          prev: {} as Font,
-          acc: [],
-        } as {
-          prev: Font;
-          acc: [Font, '_base' | StringKey<keyof Media['breakpoints']>][];
-        }
-      );
-
-      return families.acc;
+        return families.acc;
+      }
+      return [];
     }
-    return [];
-  });
+  );
 
 const transformFamily = <
   Media extends ThemeMedia,

@@ -29,8 +29,8 @@ export const createCSSTransformer = <
       }
       return `@media only screen and (min-width: ${breakpoints[media]}) {${joined}}`;
     },
-    handleSelector: selector => {
-      return '';
+    handleSelector: (selector, body) => {
+      return `:${selector} {${body}}`;
     },
     joinAll: (curr, next) => `${curr}${next}`,
   };

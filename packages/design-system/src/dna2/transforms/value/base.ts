@@ -10,9 +10,10 @@ export type ValueTransformFn<
   Return
 > = (
   value: ThemeDnaProps<Media, Fact>[Keys],
+  mediaType: '_base' | StringKey<keyof Media['breakpoints']>,
   mediaFn: MediaSelectorFn<Media>,
   factory: Fact
-) => [Return, string][];
+) => [Return, string][] | Return;
 
 export type ValueTransformSet<
   Media extends ThemeMedia,
@@ -37,13 +38,6 @@ export const createValueTransform = <
       ...acc,
       [prop as Keys]: callback,
     }),
-    {} as Record<
-      Keys,
-      (
-        value: ThemeDnaProps<Media, Fact>[Keys],
-        mediaFn: MediaSelectorFn<Media>,
-        factory: Fact
-      ) => [Return, StringKey<keyof Media['breakpoints']> | '_base'][]
-    >
+    {} as Record<Keys, ValueTransformFn<Media, Fact, Keys, Return>>
   );
 };

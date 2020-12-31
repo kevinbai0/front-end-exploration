@@ -39,7 +39,7 @@ export const normalizeTree = <
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>
 >(
-  media: Fact['media'],
+  factory: Fact,
   tree: StyleTree<Media, Fact>
 ): MediaTree<Media, Fact> => {
   type CurrStyleTree = StyleTree<Media, Fact>;
@@ -53,7 +53,7 @@ export const normalizeTree = <
       | '_base' = '_base';
     properties.forEach(([value, mediaType]) => {
       // if we find a .$selector tag, then it goes with the first breakpoints tag before that
-      if (media.selectors.find(selector => selector === mediaType)) {
+      if (factory.media.selectors.find(selector => selector === mediaType)) {
         const newMediaType = lastBreakpointValue;
         if (typeof value === 'string') {
           addToTree(
@@ -63,9 +63,11 @@ export const normalizeTree = <
             createBasePropertyTree(key, value as Props[typeof key])
           );
         }
-      } else if (media.selectors.find(selector => selector === key.slice(1))) {
+      } else if (
+        factory.media.selectors.find(selector => selector === key.slice(1))
+      ) {
         const newValue = normalizeTree<Media, Fact>(
-          media,
+          factory,
           value as CurrStyleTree
         );
         Object.entries(newValue).forEach(([m, values]) => {
@@ -75,7 +77,7 @@ export const normalizeTree = <
         if (Array.isArray(value)) {
           const newStyleTree: StyleTree<Media, Fact> = {};
           newStyleTree[key] = value;
-          const values = normalizeTree<Media, Fact>(media, newStyleTree);
+          const values = normalizeTree<Media, Fact>(factory, newStyleTree);
           Object.entries(values).forEach(([m, values]) => {
             mergeToTree(newTree, m as MediaIterable<Fact['media']>, values!);
           });

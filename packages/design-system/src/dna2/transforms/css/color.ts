@@ -1,14 +1,13 @@
 import { ColorKeys } from '../../spec/colors';
 import { BaseFactory } from '../../spec/factory';
-import { MediaSelector, ThemeMedia } from '../../spec/media';
+import { ThemeMedia } from '../../spec/media';
 import { Transformer } from './types';
 
 export const colorTransformer = <
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>
 >(
-  key: 'fg' | 'bg',
-  mediaFn: <T>() => MediaSelector<T, Media>
+  key: 'fg' | 'bg'
 ): Transformer<Media, Fact, ColorKeys<Fact['colors']>> => (value, fact) => {
   const split = value.split('.');
   const identifier = key === 'fg' ? 'color' : 'background-color';

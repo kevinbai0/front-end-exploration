@@ -1,7 +1,6 @@
 import { BaseFactory } from '../spec/factory';
 import { ThemeMedia } from '../spec/media';
 import { StringKey } from '../types';
-import { DnaTransformer } from '../transforms/merge/css';
 import { ValueAndMergeTransformPair } from '../transforms/merge/base';
 import { MediaTree } from './normalize';
 import { DnaPropNames, SelectorPropNames } from './types';
@@ -13,7 +12,7 @@ export type DnaTransformer<
   JoinType,
   OutputType
 > = {
-  initialValue: FinalType;
+  initialValue: OutputType;
   merger: {
     [key in Exclude<
       DnaPropNames<Media, Fact>,
@@ -21,19 +20,22 @@ export type DnaTransformer<
     >]: ValueAndMergeTransformPair<Media, Fact, any, any, ReturnType>;
   };
   joinSet: (types: ReturnType[]) => JoinType;
+  handleSelector: (
+    media: Media['selectors'][number],
+    body: JoinType
+  ) => ReturnType;
   handleMedia: (
     media: StringKey<keyof Media['breakpoints']> | '_base',
     breakpoints: Media['breakpoints'],
     body: JoinType
   ) => OutputType;
-  handleSelector: (media: Media['selectors'][number]) => OutputType;
   joinAll: (acc: OutputType, set: OutputType) => OutputType;
 };
 
 export const serializer = <
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>,
-  FinalReturnType,
+  TransformReturnType,
   JoinType extends unknown,
   OutputType extends unknown
 >(
@@ -42,17 +44,30 @@ export const serializer = <
   transformer: DnaTransformer<
     Media,
     Fact,
-    FinalReturnType,
+    TransformReturnType,
     JoinType,
     OutputType
   >
 ) => {
   type MediaKey = keyof typeof normalized;
-  return Object.keys(normalized).reduce((acc, key) => {
-    const properties = normalized[key as MediaKey];
+
+  const transformBodyToArray = (
+    properties: MediaTree<Media, Fact>[MediaKey]
+  ) => {
     type PropKey = keyof typeof properties;
-    const arrayValues = Object.keys(properties ?? {}).reduce<FinalReturnType[]>(
+
+    const res = Object.keys(properties ?? {}).reduce<TransformReturnType[]>(
       (newAcc, prop) => {
+        const find = factory.media.selectors.find(val => val === prop.slice(1));
+        if (find) {
+          return [
+            ...newAcc,
+            transformer.handleSelector(
+              find,
+              transformBodyToArray(properties[prop])
+            ),
+          ];
+        }
         return [
           ...newAcc,
           transformer.merger[prop as keyof typeof transformer.merger].merge(
@@ -63,8 +78,12 @@ export const serializer = <
       },
       []
     );
+    return transformer.joinSet(res);
+  };
 
-    const finalValue = transformer.joinSet(arrayValues);
+  return Object.keys(normalized).reduce((acc, key) => {
+    const properties = normalized[key as MediaKey];
+    const finalValue = transformBodyToArray(properties);
 
     if (factory.media.breakpoints[key] || key === '_base') {
       const nextTreatment = transformer.handleMedia(

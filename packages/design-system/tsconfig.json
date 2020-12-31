@@ -11,6 +11,7 @@
         "skipLibCheck": true,
         "strict": true,
         "esModuleInterop": true,
+        "useDefineForClassFields": true,
         "forceConsistentCasingInFileNames": true 
     },
     "exclude": ["examples/**/*", "dist/**/*"],

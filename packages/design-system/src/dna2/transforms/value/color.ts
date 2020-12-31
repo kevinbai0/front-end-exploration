@@ -9,15 +9,15 @@ export const colorTransform = <
 >() =>
   createValueTransform<Media, Fact>()(
     ['fg', 'bg'],
-    (value, mediaFn, factory) => {
+    (value, mediaType, mediaFn, factory) => {
       if (typeof value === 'string') {
         const split = value.split('.');
         if (split.length === 1) {
-          return [[factory.colors[value as string] as Color<never>, '_base']];
+          return factory.colors[value as string] as Color<never>;
         }
 
         const [arr, index] = [factory.colors[split[0]], Number(split[1])];
-        return [[arr[index], '_base']];
+        return arr[index];
       }
       return [];
     }

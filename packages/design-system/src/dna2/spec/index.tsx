@@ -90,18 +90,19 @@ const applier = applyGenerator(
   factory
 )((tree, mediaFn, factory) => {
   const transforms = createTransforms(mediaFn, factory, cssTransformer.merger);
+
   const transformedTree = transforms(tree);
-  const normalized = normalizeTree(factory.media, transformedTree);
+  const normalized = normalizeTree(factory, transformedTree);
   return serializer(normalized, factory, cssTransformer);
 });
 
 const res = applier({
   bg: 'black',
   fg: 'greys.3',
-  m: '2x',
-  font: _ => ['h2', _.desktop('h3')],
+  m: _ => ['2x', _.desktop('3x')],
+  font: _ => ['h2', _.desktop('h3'), _.active('h2')],
   $active: {
-    bg: _ => ['black', _.desktop('greys.3')],
+    bg: _ => ['white', _.desktop('greys.3')],
   },
   $hover: {
     fg: 'greys.2',
@@ -109,8 +110,3 @@ const res = applier({
 });
 
 console.log(res);
-
-/*
-console.log(JSON.stringify(transformed, undefined, 2));
-console.log(JSON.stringify(normalizeTree(transformed, media), undefined, 2));
-*/
