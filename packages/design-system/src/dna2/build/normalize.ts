@@ -62,6 +62,18 @@ export const normalizeTree = <
             mediaType as SelectorPropNames<Media, Fact>,
             createBasePropertyTree(key, value as Props[typeof key])
           );
+        } else if (Array.isArray(value)) {
+          const newStyleTree: StyleTree<Media, Fact> = {};
+          newStyleTree[key] = value;
+          const values = normalizeTree<Media, Fact>(factory, newStyleTree);
+          Object.entries(values).forEach(([m, values]) => {
+            mergeSelectorToTree(
+              newTree,
+              `$${mediaType}`,
+              m as MediaIterable<Fact['media']>,
+              values!
+            );
+          });
         }
       } else if (
         factory.media.selectors.find(selector => selector === key.slice(1))
@@ -94,8 +106,33 @@ export const normalizeTree = <
     });
   });
 
+  console.log(newTree);
   return newTree;
 };
+
+function mergeSelectorToTree<
+  Media extends ThemeMedia,
+  Fact extends BaseFactory<Media>
+>(
+  tree: MediaTree<Media, Fact>,
+  selector: Fact['media']['selectors'][number],
+  media: MediaIterable<Fact['media']> | '_base',
+  value: BasePropertyTree<Media, Fact>
+) {
+  const baseProperties = tree[media] as any;
+  if (baseProperties[selector]) {
+    baseProperties[selector] = {
+      ...baseProperties,
+      ...value,
+    };
+  } else {
+    tree[media] = {
+      ...tree[media],
+      [selector]: value,
+    };
+  }
+  console.log(tree);
+}
 
 function mergeToTree<Media extends ThemeMedia, Fact extends BaseFactory<Media>>(
   tree: MediaTree<Media, Fact>,
