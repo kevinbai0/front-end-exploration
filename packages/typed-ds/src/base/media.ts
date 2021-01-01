@@ -31,6 +31,6 @@ export const createSelectors = <K extends string, T extends K[]>(
   return values;
 };
 
-export const generateMedia = <Media extends ThemeMedia>(options: Media) => {
+export const generate = <Media extends ThemeMedia>(options: Media) => {
   return options;
 };

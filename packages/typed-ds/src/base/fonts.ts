@@ -47,7 +47,7 @@ export type ThemeFontDefinition<
   aliases: Fonts;
 };
 
-export const generateFonts = <Media extends ThemeMedia>() => <
+export const generate = <Media extends ThemeMedia>() => <
   FontAttributes extends ThemeFontAttributes,
   Fonts extends ThemeFont<Media, FontAttributes>,
   FontDefinition extends ThemeFontDefinition<Media, FontAttributes, Fonts>

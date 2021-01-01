@@ -9,7 +9,7 @@ import { spaceMergeTransform } from './space';
 export const createCSSTransformer = <
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>
->(): DnaTransformer<Media, Fact, string, string, string> => {
+>(): DnaTransformer<Media, Fact, string, string> => {
   const fonts = fontMergeTransform<Media, Fact>();
   const colors = colorMergeTransform<Media, Fact>();
   const space = spaceMergeTransform<Media, Fact>();

@@ -60,18 +60,11 @@ export const applyGenerator = <
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>,
   TransformReturnType,
-  JoinType extends unknown,
-  OutputType extends unknown
+  JoinType extends unknown
 >(
   media: Media,
   factory: Fact,
-  dnaTransform: DnaTransformer<
-    Media,
-    Fact,
-    TransformReturnType,
-    JoinType,
-    OutputType
-  >
+  dnaTransform: DnaTransformer<Media, Fact, TransformReturnType, JoinType>
 ) => {
   type Props = ThemeDnaProps<Media, Fact>;
   const applier = (props: Props) => {

@@ -1,30 +1,30 @@
-import { applyGenerator } from '../process';
-import { ThemeDnaProps } from '../process/types';
-import { createCSSTransformer } from '../transforms/merge/css';
-import { createCssInJsTransformer } from '../transforms/merge/css-in-js';
-import { colorArray, generateColors } from './colors';
-import { createFactory } from './factory';
-import { generateFonts } from './fonts';
-import { generateLayout } from './layout';
-import { createSelectors, generateMedia } from './media';
-import { generateSpacing } from './spacing';
+import { applyGenerator } from '../../process';
+import { ThemeDnaProps } from '../../process/types';
+import { createCSSTransformer } from '../../transforms/merge/css';
+import { createCssInJsTransformer } from '../../transforms/merge/css-in-js';
+import * as colorsFactory from '../colors';
+import * as themeFactory from '../factory';
+import * as fontFactory from '../fonts';
+import * as layoutFactory from '../layout';
+import * as mediaFactory from '../media';
+import * as spaceFactory from '../spacing';
 
-export const media = generateMedia({
+export const media = mediaFactory.generate({
   breakpoints: {
     tablet: '768px',
     desktop: '1024px',
     xLarge: '1440px',
   },
-  selectors: createSelectors('focus', 'hover', 'active'),
+  selectors: mediaFactory.createSelectors('focus', 'hover', 'active'),
 });
 
-const colors = generateColors({
+const colors = colorsFactory.generate({
   white: '#ffffff',
   black: '#131313',
-  greys: colorArray('#eeeeee', '#cccccc', '#aaaaaa', '#888888'),
+  greys: colorsFactory.colorArray('#eeeeee', '#cccccc', '#aaaaaa', '#888888'),
 });
 
-const fonts = generateFonts<typeof media>()({
+const fonts = fontFactory.generate<typeof media>()({
   properties: {
     family: {
       main: 'Calibri',
@@ -69,7 +69,7 @@ const fonts = generateFonts<typeof media>()({
   },
 });
 
-const spacing = generateSpacing({
+const spacing = spaceFactory.generate({
   baseMultiplier: '8px',
   aliases: {
     gap: '1x',
@@ -78,7 +78,7 @@ const spacing = generateSpacing({
   },
 });
 
-const layout = generateLayout<typeof media>()({
+const layout = layoutFactory.generate<typeof media>()({
   properties: {
     display: {
       row: 'row',
@@ -97,7 +97,7 @@ const layout = generateLayout<typeof media>()({
   aliases: {},
 });
 
-export const factory = createFactory({
+export const factory = themeFactory.generate({
   media,
   fonts,
   colors,

@@ -8,7 +8,7 @@ export type Color<T extends (RGBA | Hex)[] = (RGBA | Hex)[]> =
 export type ThemeColors = Record<string, Color>;
 type NumberKeys<T> = T extends `${number}` ? T : never;
 
-export const generateColors = <T extends ThemeColors>(colors: T) => {
+export const generate = <T extends ThemeColors>(colors: T) => {
   return colors;
 };
 

@@ -4,7 +4,7 @@ import { StringKey } from '../types';
 import { DnaPropNames, SelectorPropNames, ThemeDnaProps } from './types';
 import { StyleTree, StyleTreeValueTuple } from './index';
 
-type BasePropertyTree<
+export type BasePropertyTree<
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>
 > = {

@@ -44,7 +44,7 @@ export type ThemeLayout<
   aliases: Aliases;
 };
 
-export const generateLayout = <Media extends ThemeMedia>() => <
+export const generate = <Media extends ThemeMedia>() => <
   Props extends ThemeLayoutProperties<Media>,
   Aliases extends ThemeLayoutAliases<Media>,
   Options extends ThemeLayout<Media, Props, Aliases>

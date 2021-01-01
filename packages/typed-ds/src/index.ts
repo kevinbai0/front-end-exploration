@@ -1,18 +1,10 @@
-import { generateMedia } from './base/media';
-import { generateFonts } from './base/fonts';
-import { generateLayout } from './base/layout';
-import { generateColors } from './base/colors';
-import { generateSpacing } from './base/spacing';
-import { applyGenerator as transformer } from './process';
-
-const themeDna = {
-  generateMedia,
-  generateFonts,
-  generateLayout,
-  generateColors,
-  generateSpacing,
-};
-
-export { createFactory } from './base/factory';
-export { themeDna };
-export { transformer };
+export * as mediaFactory from './base/media';
+export * as fontFactory from './base/fonts';
+export * as layoutFactory from './base/layout';
+export * as colorsFactory from './base/colors';
+export * as spaceFactory from './base/spacing';
+import { applyGenerator as generator } from './process';
+export * as themeFactory from './base/factory';
+export { createCssInJsTransformer } from './transforms/merge/css-in-js';
+export { createCSSTransformer } from './transforms/merge/css';
+export { generator };

@@ -45,7 +45,7 @@ export interface IFactory<
   mediaFn: <T>() => MediaSelector<T, Media>;
 }
 
-export const createFactory = <
+export const generate = <
   Media extends ThemeMedia,
   Colors extends ThemeColors,
   FontAttributes extends ThemeFontAttributes,

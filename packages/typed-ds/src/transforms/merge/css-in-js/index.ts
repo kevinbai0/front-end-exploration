@@ -13,7 +13,6 @@ export const createCssInJsTransformer = <
   Media,
   Fact,
   Record<string, unknown>,
-  Record<string, unknown>,
   Record<string, unknown>
 > => {
   const fonts = fontMergeTransform<Media, Fact>();

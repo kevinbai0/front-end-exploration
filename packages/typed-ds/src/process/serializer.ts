@@ -2,17 +2,16 @@ import { BaseFactory } from '../base/factory';
 import { ThemeMedia } from '../base/media';
 import { StringKey } from '../types';
 import { ValueAndMergeTransformPair } from '../transforms/merge/base';
-import { MediaTree } from './normalize';
+import { MediaTree, BasePropertyTree } from './normalize';
 import { DnaPropNames, SelectorPropNames } from './types';
 
 export type DnaTransformer<
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>,
   ReturnType,
-  JoinType,
-  OutputType
+  JoinType
 > = {
-  initialValue: OutputType;
+  initialValue: JoinType;
   merger: {
     [key in Exclude<
       DnaPropNames<Media, Fact>,
@@ -28,33 +27,26 @@ export type DnaTransformer<
     media: StringKey<keyof Media['breakpoints']> | '_base',
     breakpoints: Media['breakpoints'],
     body: JoinType
-  ) => OutputType;
-  joinAll: (acc: OutputType, set: OutputType) => OutputType;
+  ) => JoinType;
+  joinAll: (acc: JoinType, set: JoinType) => JoinType;
 };
 
 export const serializer = <
   Media extends ThemeMedia,
   Fact extends BaseFactory<Media>,
   TransformReturnType,
-  JoinType extends unknown,
-  OutputType extends unknown
+  JoinType extends unknown
 >(
   normalized: MediaTree<Media, Fact>,
   factory: Fact,
-  transformer: DnaTransformer<
-    Media,
-    Fact,
-    TransformReturnType,
-    JoinType,
-    OutputType
-  >
+  transformer: DnaTransformer<Media, Fact, TransformReturnType, JoinType>
 ) => {
   type MediaKey = keyof typeof normalized;
 
   const transformBodyToArray = (
     properties: MediaTree<Media, Fact>[MediaKey]
-  ) => {
-    type PropKey = keyof typeof properties;
+  ): JoinType => {
+    type PropKey = keyof BasePropertyTree<Media, Fact>;
 
     const res = Object.keys(properties ?? {}).reduce<TransformReturnType[]>(
       (newAcc, prop) => {
@@ -64,7 +56,7 @@ export const serializer = <
             ...newAcc,
             transformer.handleSelector(
               find,
-              transformBodyToArray(properties[prop])
+              transformBodyToArray(properties![prop as PropKey]!)
             ),
           ];
         }
@@ -85,18 +77,11 @@ export const serializer = <
     const properties = normalized[key as MediaKey];
     const finalValue = transformBodyToArray(properties);
 
-    if (factory.media.breakpoints[key] || key === '_base') {
-      const nextTreatment = transformer.handleMedia(
-        key as '_base' | StringKey<keyof Media['breakpoints']>,
-        factory.media.breakpoints,
-        finalValue
-      );
-
-      return transformer.joinAll(acc, nextTreatment);
+    if (!factory.media.breakpoints[key] && key !== '_base') {
+      throw new Error(`Invalid key ${key}`);
     }
-
-    const nextTreatment = transformer.handleSelector(
-      key as Media['selectors'][number],
+    const nextTreatment = transformer.handleMedia(
+      key as '_base' | StringKey<keyof Media['breakpoints']>,
       factory.media.breakpoints,
       finalValue
     );
