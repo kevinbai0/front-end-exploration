@@ -1,16 +1,33 @@
 # Design UI
 
-A monorepo for an exploration of design-systems, a design language, and a design tool.
+A monorepo for exploring projects everything related to front-end.
 
-The project structure looks like:
+## Projects
 
-```none
-├── packages
-    ├── design-system
-    ├── design-ui
-    ├── style-x
-```
+Each "project" is essentially a different folder under `packages`. Some projects are related related, but all projects are organized horizontally in `packages/` rather than nested trees.
 
-1. `design-system` contains a repo of a current design system setup that I use.
-2. `style-x` is a language I'm working on that takes advantage of the current concepts inside of `design-system`.
-3. `design-ui` is a design tool and its goal is to create a Figma-like tool that can generate purely front-end code for UIs.
+### Primary Active projects
+
+#### [typed-ds](packages/typed-ds/README.md)
+
+Exploring a way to create a framework agnostic type-based design system. Goal is to integrate with selectors such as `hover` and `focus`, media query breakpoints, theme, and variants concisely for rapid development.
+
+### Sub-projects
+
+#### [typed-ds-samples](./packages/typed-ds-samples/README.md)
+
+Samples and exploring usage with [typed-ds](#typed-ds) project
+
+### Archived Projects
+
+#### [design-system](./packages/design-system/README.md) 
+
+A design system iterated over many projects - inspired by Styled System. Essentially wrote my own version of it to better handle types for design systems.
+
+#### [style-ui](./packages/style-x/README.md)
+
+A design language I began working on. Wrote a lexer/parser and began writing a simple parser. Objective was to transpile a powerful layout/style spec to functional React components (so logic is handled in Javascript, but layout/style was generated from the language).
+
+#### [design-ui](./packages/design-ui/README.md)
+
+Explored creating a figma-like design tool - created a zooming/panning features (tested on Mac trackpad) and ability to add/translate/delete rectangles.

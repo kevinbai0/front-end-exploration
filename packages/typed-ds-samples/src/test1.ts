@@ -10,7 +10,7 @@ const media = mediaFactory.generate({
 })
 
 const colors = colorsFactory.generate({
-  white: '#ff'
+  white: '#ffffff'
 })
 
 const fonts = fontFactory.generate<typeof media>()({
