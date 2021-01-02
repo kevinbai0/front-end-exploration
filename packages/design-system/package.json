@@ -1,6 +1,6 @@
 {
   "name": "typed-ds",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Typescript design system",
   "main": "./build/index.js",
   "types": "./dist/index.d.ts",

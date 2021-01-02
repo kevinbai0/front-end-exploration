@@ -19,13 +19,14 @@ const matchFontToTheme = (
   const fontFamily =
     props.theme.fontFamily[family as ThemeFontFamily<ThemeExtension>] || family;
   const fontSize =
-    props.theme.fontSizes[size as ThemeFontSize<ThemeExtension>] || [];
+    props.theme.fontSizes[size as ThemeFontSize<ThemeExtension>] ||
+    parseInt(size);
 
   if (typeof fontSize === 'number') {
     return [`${weight} ${fontSize}px ${fontFamily}`];
   }
 
-  return fontSize.map((sz) => `${weight} ${sz}px ${fontFamily}`);
+  return (fontSize as number[]).map(sz => `${weight} ${sz}px ${fontFamily}`);
 };
 
 const getReactNativeFontSize = (
