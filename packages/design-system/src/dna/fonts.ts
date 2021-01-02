@@ -15,7 +15,7 @@ const matchFontToTheme = (
   prop: ThemeFont<ThemeExtension>
 ) => {
   if (!props.theme.fonts[prop]) return [];
-  const { family, size, weight } = props.theme.fonts[prop];
+  const { family, size, weight, lineHeight } = props.theme.fonts[prop];
   const fontFamily =
     props.theme.fontFamily[family as ThemeFontFamily<ThemeExtension>] || family;
   const fontSize =
@@ -23,10 +23,12 @@ const matchFontToTheme = (
     parseInt(size);
 
   if (typeof fontSize === 'number') {
-    return [`${weight} ${fontSize}px ${fontFamily}`];
+    return [`${weight} ${fontSize}px/${lineHeight}px ${fontFamily}`];
   }
 
-  return (fontSize as number[]).map(sz => `${weight} ${sz}px ${fontFamily}`);
+  return (fontSize as number[]).map(
+    sz => `${weight} ${sz}px/${lineHeight}px ${fontFamily}`
+  );
 };
 
 const getReactNativeFontSize = (
@@ -115,5 +117,14 @@ export const injectFonts: InjectProperties<Font<ThemeExtension>> = (
       ),
     ];
   }
-  return [splitStyle('font', ['font'], matchFontToTheme, props, defaultProps)];
+  return [
+    splitStyle('font', ['font'], matchFontToTheme, props, defaultProps),
+    splitStyle(
+      'font',
+      ['letter-spacing'],
+      matchLetterSpacingToTheme,
+      props,
+      defaultProps
+    ),
+  ];
 };
