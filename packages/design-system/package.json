@@ -1,8 +1,8 @@
 {
   "name": "@kbai/design-system",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Typescript design system",
-  "main": "./build/index.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "babel src --out-dir dist --extensions \".ts,.tsx\"",
