@@ -57,17 +57,20 @@ export const withDNAPropsBase = <Type extends keyof typeof Types = 'DNA'>(
   type?: Type
 ) => {
   type NewDNA = Pick<DNA, Types[Type][number]>;
-  return <T extends {}>(
+  return <T extends {}, Ref extends {}>(
     Comp: React.ComponentType<T & { dna: NewDNA }>
-  ): React.FC<Omit<T, 'dna'> & NewDNA & { style?: object }> => {
-    return props => {
+  ) => {
+    return React.forwardRef<
+      Ref,
+      Omit<T, 'dna'> & NewDNA & { style?: object; className?: string }
+    >((props, ref) => {
       const [dnaProps, otherProps] = extractDNAProps(props);
       if (type && type !== 'DNA') {
         const [selected] = pickDNAProps(Types[type])(dnaProps);
         return <Comp {...(otherProps as any)} dna={selected} />;
       }
-      return <Comp {...(otherProps as any)} dna={dnaProps} />;
-    };
+      return <Comp ref={ref} {...(otherProps as any)} dna={dnaProps} />;
+    });
   };
 };
 
