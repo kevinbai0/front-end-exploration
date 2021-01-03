@@ -1,11 +1,11 @@
 {
   "name": "@kbai/design-system",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Typescript design system",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "babel src --out-dir dist --extensions \".ts,.tsx\"",
+    "build": "babel src --out-dir dist --extensions \".ts,.tsx\" && yarn tsc",
     "tsc": "tsc",
     "prepublishOnly": "npm run build",
     "dev": "webpack --watch"

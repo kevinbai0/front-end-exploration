@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { DNA } from '../theme/types';
 import { extractDNAProps } from './extractDna';
 
@@ -62,7 +62,8 @@ export const withDNAPropsBase = <Type extends keyof typeof Types = 'DNA'>(
   ) => {
     return React.forwardRef<
       Ref,
-      Omit<T, 'dna'> & NewDNA & { style?: object; className?: string }
+      Omit<T, 'dna'> &
+        NewDNA & { style?: object; className?: string; children?: ReactNode }
     >((props, ref) => {
       const [dnaProps, otherProps] = extractDNAProps(props);
       if (type && type !== 'DNA') {
