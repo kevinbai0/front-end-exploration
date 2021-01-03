@@ -57,7 +57,7 @@ export const withDNAPropsBase = <Type extends keyof typeof Types = 'DNA'>(
   type?: Type
 ) => {
   type NewDNA = Pick<DNA, Types[Type][number]>;
-  return <T extends {}, Ref extends {}>(
+  return <T extends {}, Ref = null>(
     Comp: React.ComponentType<T & { dna: NewDNA }>
   ) => {
     return React.forwardRef<
