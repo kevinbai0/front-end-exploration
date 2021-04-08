@@ -103,7 +103,7 @@ export const injectStyle: InjectProperties<Style<ThemeExtension>> = (
   return [
     splitStyle(
       'bg',
-      ['background-color'],
+      ['background'],
       matchColorToTheme,
       props,
       defaultProps

@@ -1,6 +1,6 @@
 {
   "name": "@kbai/design-system",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Typescript design system",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
