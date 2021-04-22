@@ -105,9 +105,9 @@ export type ThemeSpace<T = ThemeExtension> = keyof Theme<T>['space'];
 export type ThemeFont<T = ThemeExtension> = keyof Theme<T>['fonts'];
 export type ThemeFontFamily<T = ThemeExtension> = keyof Theme<T>['fontFamily'];
 export type ThemeFontSize<T = ThemeExtension> = keyof Theme<T>['fontSizes'];
-export type ThemeBorderRadius<T = ThemeExtension> = keyof Theme<
-  T
->['borderRadius'];
+export type ThemeBorderRadius<
+  T = ThemeExtension
+> = keyof Theme<T>['borderRadius'];
 export type ThemeBorder<T = ThemeExtension> = keyof Theme<T>['borders'];
 export type ThemeLayout<T = ThemeExtension> = keyof Theme<T>['layout'];
 export type ThemeShadow<T = ThemeExtension> = keyof Theme<T>['shadows'];

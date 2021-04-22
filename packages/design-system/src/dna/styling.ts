@@ -72,13 +72,16 @@ export const matchBorderToTheme = (
   if (!color.length) return [];
 
   // map colors so that border switches to right color for breakpoint
-  return color.map((c) => `${value.width}px ${value.style} ${c}`);
+  return color.map(c => `${value.width}px ${value.style} ${c}`);
 };
 
 export const matchBorderRadiusToTheme = (
   { theme }: DNA<ThemeExtension> & ThemeObject<ThemeExtension>,
-  prop: ThemeBorderRadius<ThemeExtension>
+  prop: ThemeBorderRadius<ThemeExtension> | number
 ) => {
+  if (typeof prop === 'number') {
+    return [`${prop}px`];
+  }
   const radius = (theme.borderRadius[prop] ?? []) as number | number[];
   if (!(radius as number[]).length) return [radius + 'px'];
   if (typeof radius === 'number') return [radius + 'px'];
@@ -101,13 +104,7 @@ export const injectStyle: InjectProperties<Style<ThemeExtension>> = (
   defaultProps
 ) => {
   return [
-    splitStyle(
-      'bg',
-      ['background'],
-      matchColorToTheme,
-      props,
-      defaultProps
-    ),
+    splitStyle('bg', ['background'], matchColorToTheme, props, defaultProps),
     splitStyle('fg', ['color'], matchColorToTheme, props, defaultProps),
     splitStyle('border', ['border'], matchBorderToTheme, props, defaultProps),
     splitStyle(
