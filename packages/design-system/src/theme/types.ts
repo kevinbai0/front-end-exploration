@@ -85,7 +85,8 @@ export type LayoutItems =
   | 'end'
   | 'stretch'
   | 'flex-start'
-  | 'flex-end';
+  | 'flex-end'
+  | 'baseline';
 
 export type DNA<T = Theme> = Spacing<T> &
   Style<T> &
