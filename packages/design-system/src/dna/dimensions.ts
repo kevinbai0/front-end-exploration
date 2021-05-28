@@ -9,9 +9,7 @@ export const matchDimension = (
   if (typeof prop === 'number') return [prop + 'px'];
   if (typeof prop === 'string') return [prop];
 
-  return prop.map((value) =>
-    typeof value === 'string' ? value : value + 'px'
-  );
+  return prop.map(value => (typeof value === 'string' ? value : value + 'px'));
 };
 
 const mapSize = (prop: string, key: 'width' | 'height') => {
@@ -32,7 +30,7 @@ export const matchSizeProp = (
   if (typeof prop === 'number') return [prop + 'px'];
   if (typeof prop === 'string') return [mapSize(prop, key)];
 
-  return prop.map((value) =>
+  return prop.map(value =>
     typeof value === 'string' ? mapSize(value, key) : value + 'px'
   );
 };

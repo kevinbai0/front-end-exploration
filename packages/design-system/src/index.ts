@@ -1,7 +1,7 @@
 import styled, { ThemeProvider, ThemeContext } from 'styled-components';
 import { createTheme } from './theme/index';
 import { extractDNAProps } from './helpers/extractDna';
-import { injectDNA } from './dna/index';
+import { injectDNA, injectDNAProps } from './dna/index';
 
 import {
   DNA,
@@ -48,4 +48,5 @@ export {
   LayoutItems,
   FontWeight,
   injectDNA,
+  injectDNAProps,
 };

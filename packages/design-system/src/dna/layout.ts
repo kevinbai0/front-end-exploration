@@ -17,7 +17,7 @@ export const matchLayoutToTheme = (
 ) => {
   if (!theme.layout) return [];
   if (Array.isArray(prop)) {
-    return prop.map((value) => {
+    return prop.map(value => {
       return theme.layout[value];
     });
   }

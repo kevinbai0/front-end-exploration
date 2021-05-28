@@ -31,7 +31,7 @@ const injectStyles = (
   ...methods: InjectProperties<PrimitiveInjection>[]
 ) => {
   return methods
-    .map((method) => {
+    .map(method => {
       const styles = method(props, defaultProps, platform);
       // for each breakpoint, return the right styles
       const reduced = props.theme.breakpoints.map((_, i) => ({
@@ -41,16 +41,16 @@ const injectStyles = (
               accum[style.property] = style.value[i];
             else
               style.property.map(
-                (property) => (accum[property] = style.value[i])
+                property => (accum[property] = style.value[i])
               );
             if (style.property.length === 0) {
               if (style.value[i])
                 style.value[i]
                   .trim()
                   .split(';')
-                  .forEach((propGroup) => {
+                  .forEach(propGroup => {
                     if (!propGroup.length) return;
-                    const split = propGroup.split(':').map((val) => val.trim());
+                    const split = propGroup.split(':').map(val => val.trim());
                     if (split.length !== 2)
                       throw new Error(
                         'Invalid CSS for value of: ' + style.value[i]
@@ -68,7 +68,7 @@ const injectStyles = (
           if (!entries.length) return '';
           if (i === 0) {
             return ` ${entries
-              .map((entry) => `${entry[0]}: ${entry[1]}; `)
+              .map(entry => `${entry[0]}: ${entry[1]}; `)
               .join('')}`;
           }
           // no media queries on react native
@@ -78,7 +78,7 @@ const injectStyles = (
           return `@media only screen and (min-width: ${
             props.theme.breakpoints[i]
           }px) {
-            ${entries.map((entry) => `${entry[0]}: ${entry[1]}; `).join('')}
+            ${entries.map(entry => `${entry[0]}: ${entry[1]}; `).join('')}
           };`;
         })
         .join('')
@@ -105,4 +105,10 @@ export const injectDNA = (
         )}
     `.replace(/^\s+|\s+$|\s+(?=\s)/g, '');
   return dna;
+};
+
+export const injectDNAProps = (defaultProps?: Partial<DNA<ThemeExtension>>) => (
+  props: DNA & ThemeObject<ThemeExtension>
+) => {
+  return injectDNA(props, defaultProps);
 };

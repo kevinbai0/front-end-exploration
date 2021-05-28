@@ -24,23 +24,23 @@ export const matchSpaceToTheme = (
       space as ThemeSpace<ThemeExtension>
     ] ?? [space]) as number | (number | string)[];
     if (typeof themeSpace === 'number') return [themeSpace + 'px'];
-    return themeSpace.map((value) =>
+    return themeSpace.map(value =>
       typeof value === 'string' ? value : value + 'px'
     );
   }
   if (space.length === 0) return [];
   if (typeof space[0] === 'number') {
-    return (space as number[]).map((value) => value + 'px');
+    return (space as number[]).map(value => value + 'px');
   }
 
   if (
     typeof space[0] === 'string' &&
     props.theme.space[space[0] as ThemeSpace<ThemeExtension>] === undefined
   ) {
-    return (space as string[]).map((value) => value);
+    return (space as string[]).map(value => value);
   }
   // add up the spacing
-  const expansion = (space as ThemeSpace<ThemeExtension>[]).map((value) => {
+  const expansion = (space as ThemeSpace<ThemeExtension>[]).map(value => {
     const themeSpace =
       props.theme.space[value] ?? props.theme.breakpoints.map(() => 0);
     if (typeof themeSpace === 'number')
