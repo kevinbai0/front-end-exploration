@@ -3,48 +3,48 @@ import { InitialTheme } from './index';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface PrimitiveInjection {}
 export interface Style<T> extends PrimitiveInjection {
-  fg?: ThemeColor<T>;
-  bg?: ThemeColor<T>;
-  border?: ThemeBorder<T>;
-  radius?: number | ThemeBorderRadius<T>;
-  shadow?: ThemeShadow<T>;
-  opacity?: number;
+  fg?: ThemeColor<T> | undefined;
+  bg?: ThemeColor<T> | undefined;
+  border?: ThemeBorder<T> | undefined;
+  radius?: number | ThemeBorderRadius<T> | undefined;
+  shadow?: ThemeShadow<T> | undefined;
+  opacity?: number | undefined;
 }
 
 export interface Spacing<T = ThemeExtension> extends PrimitiveInjection {
-  m?: number | number[] | ThemeSpace<T> | string | string[];
-  p?: number | number[] | ThemeSpace<T> | string | string[];
-  mx?: number | number[] | ThemeSpace<T> | string | string[];
-  my?: number | number[] | ThemeSpace<T> | string | string[];
-  px?: number | number[] | ThemeSpace<T> | string | string[];
-  py?: number | number[] | ThemeSpace<T> | string | string[];
-  mt?: number | number[] | ThemeSpace<T> | string | string[];
-  mb?: number | number[] | ThemeSpace<T> | string | string[];
-  ml?: number | number[] | ThemeSpace<T> | string | string[];
-  mr?: number | number[] | ThemeSpace<T> | string | string[];
-  pt?: number | number[] | ThemeSpace<T> | string | string[];
-  pb?: number | number[] | ThemeSpace<T> | string | string[];
-  pl?: number | number[] | ThemeSpace<T> | string | string[];
-  pr?: number | number[] | ThemeSpace<T> | string | string[];
+  m?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  p?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  mx?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  my?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  px?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  py?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  mt?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  mb?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  ml?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  mr?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  pt?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  pb?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  pl?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  pr?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
 }
 
 export interface Font<T> extends PrimitiveInjection {
-  font?: ThemeFont<T>;
-  weight?: 400 | 500 | 600 | 700;
+  font?: ThemeFont<T> | undefined;
+  weight?: 400 | 500 | 600 | 700 | undefined;
 }
 
 export interface Layout<T = ThemeExtension> extends PrimitiveInjection {
-  display?: ThemeLayout<T> | ThemeLayout<T>[];
-  rowLayout?: string;
-  colLayout?: string;
-  alignItems?: LayoutItems;
-  justifyItems?: LayoutItems;
-  alignContent?: LayoutContent;
-  justifyContent?: LayoutContent;
-  gap?: number | number[] | ThemeSpace<T> | string | string[];
-  align?: LayoutItems;
-  justify?: LayoutItems;
-  flex?: number;
+  display?: ThemeLayout<T> | ThemeLayout<T>[] | undefined;
+  rowLayout?: string | undefined;
+  colLayout?: string | undefined;
+  alignItems?: LayoutItems | undefined;
+  justifyItems?: LayoutItems | undefined;
+  alignContent?: LayoutContent | undefined;
+  justifyContent?: LayoutContent | undefined;
+  gap?: number | number[] | ThemeSpace<T> | string | string[] | undefined;
+  align?: LayoutItems | undefined;
+  justify?: LayoutItems | undefined;
+  flex?: number | undefined;
 }
 
 export interface Position extends PrimitiveInjection {
@@ -52,20 +52,21 @@ export interface Position extends PrimitiveInjection {
     | 'absolute'
     | 'relative'
     | 'sticky'
-    | ('absolute' | 'relative' | 'sticky')[];
-  left?: number | string | (number | string)[];
-  right?: number | string | (number | string)[];
-  top?: number | string | (number | string)[];
-  bottom?: number | string | (number | string)[];
+    | ('absolute' | 'relative' | 'sticky')[]
+    | undefined;
+  left?: number | string | (number | string)[] | undefined;
+  right?: number | string | (number | string)[] | undefined;
+  top?: number | string | (number | string)[] | undefined;
+  bottom?: number | string | (number | string)[] | undefined;
 }
 
 export interface Dimension extends PrimitiveInjection {
-  width?: number | string | (number | string)[];
-  height?: number | string | (number | string)[];
-  maxWidth?: number | string | (number | string)[];
-  maxHeight?: number | string | (number | string)[];
-  minWidth?: number | string | (number | string)[];
-  minHeight?: number | string | (number | string)[];
+  width?: number | string | (number | string)[] | undefined;
+  height?: number | string | (number | string)[] | undefined;
+  maxWidth?: number | string | (number | string)[] | undefined;
+  maxHeight?: number | string | (number | string)[] | undefined;
+  minWidth?: number | string | (number | string)[] | undefined;
+  minHeight?: number | string | (number | string)[] | undefined;
 }
 
 export type LayoutContent =
