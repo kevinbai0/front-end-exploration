@@ -20,16 +20,27 @@ const matchFontToTheme = (
     props.theme.fontFamily[family as ThemeFontFamily<ThemeExtension>] || family;
   const fontSize =
     (props.theme.fontSizes[size as ThemeFontSize<ThemeExtension>] ||
-    parseInt(size)) as number | string | (number | string)[];
+    (() => {
+      if (typeof size === 'string') {
+        if (size.endsWith('em')) {
+          return size;
+        }
+      }
+      return parseInt(size)
+    })()) as number | string | (number | string)[];
 
   const weightWithOverride = props.weight || weight;
 
+  function renderAsPxOrRow(val: number | string) {
+    return typeof val === 'number' ? `${val}px` : val
+  }
+
   if (typeof fontSize === 'number' || typeof fontSize === 'string') {
-    return [`${weightWithOverride} ${typeof fontSize === 'number' ? `${fontSize}px` : fontSize}/${lineHeight}px ${fontFamily}`];
+    return [`${weightWithOverride} ${renderAsPxOrRow(fontSize)}/${renderAsPxOrRow(lineHeight)} ${fontFamily}`];
   }
 
   return (fontSize as (number | string)[]).map(
-    sz => `${weightWithOverride} ${typeof sz === 'number' ? `${sz}px` : sz}/${lineHeight}px ${fontFamily}`
+    sz => `${weightWithOverride} ${renderAsPxOrRow(sz)}/${renderAsPxOrRow(lineHeight)} ${fontFamily}`
   );
 };
 
