@@ -1,6 +1,6 @@
 {
   "name": "@kbai/design-system",
-  "version": "0.2.0",
+  "version": "0.2.4",
   "description": "Typescript design system",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -28,7 +28,7 @@
     "babel-loader": "^8.2.1",
     "react": "^17.0.1",
     "react-native": "^0.62.2",
-    "@tabtabapp/lint-rules": "^1.0.6",
+    "@kevinbai/lint-rules": "^1.0.2",
     "typescript": "^4.4.4",
     "webpack": "^5.11.1",
     "webpack-cli": "^4.3.1"

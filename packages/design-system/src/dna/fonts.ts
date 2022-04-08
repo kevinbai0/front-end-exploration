@@ -19,15 +19,17 @@ const matchFontToTheme = (
   const fontFamily =
     props.theme.fontFamily[family as ThemeFontFamily<ThemeExtension>] || family;
   const fontSize =
-    props.theme.fontSizes[size as ThemeFontSize<ThemeExtension>] ||
-    parseInt(size);
+    (props.theme.fontSizes[size as ThemeFontSize<ThemeExtension>] ||
+    parseInt(size)) as number | string | (number | string)[];
 
-  if (typeof fontSize === 'number') {
-    return [`${weight} ${fontSize}px/${lineHeight}px ${fontFamily}`];
+  const weightWithOverride = props.weight || weight;
+
+  if (typeof fontSize === 'number' || typeof fontSize === 'string') {
+    return [`${weightWithOverride} ${typeof fontSize === 'number' ? `${fontSize}px` : fontSize}/${lineHeight}px ${fontFamily}`];
   }
 
-  return (fontSize as number[]).map(
-    sz => `${weight} ${sz}px/${lineHeight}px ${fontFamily}`
+  return (fontSize as (number | string)[]).map(
+    sz => `${weightWithOverride} ${typeof sz === 'number' ? `${sz}px` : sz}/${lineHeight}px ${fontFamily}`
   );
 };
 
@@ -42,6 +44,9 @@ const getReactNativeFontSize = (
 
   if (typeof fontSize === 'number') {
     return `${fontSize}px`;
+  }
+  else if (typeof fontSize === 'string') {
+    return fontSize;
   }
   return `14px`;
 };
