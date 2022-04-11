@@ -30,7 +30,7 @@ export interface Spacing<T = ThemeExtension> extends PrimitiveInjection {
 
 export interface Font<T> extends PrimitiveInjection {
   font?: ThemeFont<T> | undefined;
-  weight?: 400 | 500 | 600 | 700 | undefined;
+  weight?: FontWeight | undefined;
 }
 
 export interface Layout<T = ThemeExtension> extends PrimitiveInjection {
@@ -123,7 +123,7 @@ export type ThemeProperties<T = ThemeExtension> =
   | ThemeBorderRadius<T>
   | ThemeBorder<T>;
 
-export type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800;
+export type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
 export type ThemeObject<T = ThemeExtension> = {
   theme: Theme<T>;
