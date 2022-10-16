@@ -89,7 +89,7 @@ export type LayoutItems =
   | 'flex-end'
   | 'baseline';
 
-export type DNA<T = Theme> = Spacing<T> &
+export type DNA<T = ITheme> = Spacing<T> &
   Style<T> &
   Font<T> &
   Layout<T> &
@@ -100,19 +100,19 @@ export type DNATypes<T = ThemeExtension> = Spacing<T> | Style<T> | Font<T>;
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ThemeExtension {}
 
-export type Theme<T = ThemeExtension> = InitialTheme & T;
+export type ITheme<T = ThemeExtension> = InitialTheme & T;
 
-export type ThemeColor<T = ThemeExtension> = keyof Theme<T>['colors'];
-export type ThemeSpace<T = ThemeExtension> = keyof Theme<T>['space'];
-export type ThemeFont<T = ThemeExtension> = keyof Theme<T>['fonts'];
-export type ThemeFontFamily<T = ThemeExtension> = keyof Theme<T>['fontFamily'];
-export type ThemeFontSize<T = ThemeExtension> = keyof Theme<T>['fontSizes'];
+export type ThemeColor<T = ThemeExtension> = keyof ITheme<T>['colors'];
+export type ThemeSpace<T = ThemeExtension> = keyof ITheme<T>['space'];
+export type ThemeFont<T = ThemeExtension> = keyof ITheme<T>['fonts'];
+export type ThemeFontFamily<T = ThemeExtension> = keyof ITheme<T>['fontFamily'];
+export type ThemeFontSize<T = ThemeExtension> = keyof ITheme<T>['fontSizes'];
 export type ThemeBorderRadius<
   T = ThemeExtension
-> = keyof Theme<T>['borderRadius'];
-export type ThemeBorder<T = ThemeExtension> = keyof Theme<T>['borders'];
-export type ThemeLayout<T = ThemeExtension> = keyof Theme<T>['layout'];
-export type ThemeShadow<T = ThemeExtension> = keyof Theme<T>['shadows'];
+> = keyof ITheme<T>['borderRadius'];
+export type ThemeBorder<T = ThemeExtension> = keyof ITheme<T>['borders'];
+export type ThemeLayout<T = ThemeExtension> = keyof ITheme<T>['layout'];
+export type ThemeShadow<T = ThemeExtension> = keyof ITheme<T>['shadows'];
 
 export type ThemeProperties<T = ThemeExtension> =
   | ThemeColor<T>
@@ -126,10 +126,10 @@ export type ThemeProperties<T = ThemeExtension> =
 export type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
 export type ThemeObject<T = ThemeExtension> = {
-  theme: Theme<T>;
+  theme: ITheme<T>;
 };
 
-declare module 'styled-components' {
+declare module '@emotion/react' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  export interface DefaultTheme extends Theme<ThemeExtension> {}
+  export interface DefaultTheme extends ITheme<ThemeExtension> {}
 }

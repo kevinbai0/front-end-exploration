@@ -1,11 +1,11 @@
-import styled, { ThemeProvider, ThemeContext } from 'styled-components';
+import styled, { ThemeProvider, ThemeContext } from '@emotion/react';
 import { createTheme } from './theme/index';
 import { extractDNAProps } from './helpers/extractDna';
 import { injectDNA, injectDNAProps } from './dna/index';
 
 import {
   DNA,
-  Theme,
+  ITheme,
   ThemeColor,
   ThemeBorder,
   ThemeBorderRadius,
@@ -31,7 +31,7 @@ export {
   ThemeContext,
   extractDNAProps,
   DNA,
-  Theme,
+  ITheme,
   ThemeColor,
   ThemeBorder,
   ThemeBorderRadius,

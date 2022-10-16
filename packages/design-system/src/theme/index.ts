@@ -1,4 +1,4 @@
-import { Theme, ThemeExtension } from './types';
+import { ITheme, ThemeExtension } from './types';
 
 const breakpoints = [0, 768, 1024, 1440];
 
@@ -175,13 +175,13 @@ const defaultTheme = {
 
 export type InitialTheme = typeof defaultTheme;
 
-export const createTheme = <NewTheme>(props: NewTheme) => {
+export const createTheme = <NewTheme extends Partial<ITheme<ThemeExtension>>>(props: NewTheme) => {
   return extendTheme(props);
 };
 
-const extendTheme = <T extends Partial<Theme<ThemeExtension>>>(
+const extendTheme = <T extends Partial<ITheme<ThemeExtension>>>(
   themeOptions: T
-): Theme<T> => {
+): ITheme<T> => {
   return {
     ...themeOptions,
     breakpoints: [...defaultTheme.breakpoints],
