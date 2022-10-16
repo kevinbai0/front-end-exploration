@@ -175,7 +175,7 @@ const defaultTheme = {
 
 export type InitialTheme = typeof defaultTheme;
 
-export const createTheme = <NewTheme extends Partial<ITheme<ThemeExtension>>>(props: NewTheme) => {
+export const createTheme = <NewTheme>(props: NewTheme) => {
   return extendTheme(props);
 };
 

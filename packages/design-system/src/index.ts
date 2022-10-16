@@ -1,6 +1,7 @@
-import styled, { ThemeProvider, ThemeContext } from '@emotion/react';
+import { ThemeProvider, ThemeContext } from '@emotion/react';
 import { createTheme } from './theme/index';
 import { extractDNAProps } from './helpers/extractDna';
+import styled from '@emotion/styled';
 import { injectDNA, injectDNAProps } from './dna/index';
 
 import {

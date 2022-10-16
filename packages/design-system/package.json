@@ -1,6 +1,6 @@
 {
   "name": "@kbai/design-system",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Typescript design system",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -23,6 +23,7 @@
     "@babel/preset-react": "^7.12.10",
     "@babel/preset-typescript": "^7.12.7",
     "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
     "@kevinbai/lint-rules": "^1.0.2",
     "@types/react": "^17.0.0",
     "@types/react-native": "^0.63.42",
@@ -37,7 +38,8 @@
   "dependencies": {},
   "peerDependencies": {
     "react": ">= 17.0",
-    "styled-components": "5.x"
+    "@emotion/react": "*",
+    "@emotion/styled": "*"
   },
   "resolutions": {
     "@babel/preset-env": "^7.8.7"
